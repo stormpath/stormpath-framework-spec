@@ -35,13 +35,15 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 
 ## <a name="Option_Descriptions"></a> Option Descriptions
 
-#### AUTO_LOGIN
+#### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
 If enabled AND the the request is `Accept: text/html` AND an account is
 successfully created AND the account status is ENABLED, then issue a 302
 Redirect to the POST_REGISTRATION_URL
 
-#### POST_REGISTRATION_URL
+<a href="#top">Back to Top</a>
+
+#### <a name="POST_REGISTRATION_URL"></a> POST_REGISTRATION_URL
 
 This is the URI portion of an entire URL that the framework will handle GET and
 POST requests for.
@@ -60,6 +62,8 @@ The form MAY:
  * REQUIRE_SURNAME
  * REQUIRE_GIVEN_NAME
  * REQUIRE_PASSWORD_CONFIRMATION
+
+<a href="#top">Back to Top</a>
 
 ## <a name="POST_Body_Format"></a> POST Body Format
 
@@ -97,6 +101,7 @@ when creating the account
 }
 ```
 
+<a href="#top">Back to Top</a>
 
 ##  <a name="POST_Error_Handling"></a> POST Error Handling
 
