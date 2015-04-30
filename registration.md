@@ -2,13 +2,13 @@
 
 # Account Registration
 
-* [Default Options](#default_options)
-* [Option Descriptions](#option_descriptions)
+* [Default Options](#Default_Options)
+* [Option Descriptions](#Option_Descriptions)
   * [AUTO_LOGIN](#AUTO_LOGIN)
   * [POST_REGISTRATION_URL](#POST_REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
-* [POST_Response_Handling](#POST Response Handling)
+* [POST Response Handling](#POST_Response_Handling)
 
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
@@ -17,7 +17,7 @@ If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
 incoming requests for the POST_REGISTRATION_URL and either render a registration
 form or handle a POST request from the registration form.
 
-## Default Options
+## <a name="Default_Options"></a> Default Options
 
 This table is a list of all the options that are required by this feature.
 Detailed descriptions follow.  How the option names are translated into the
@@ -33,7 +33,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | REQUIRE_PASSWORD_CONFIRMATION    | false         |
 | REQUIRE_SURNAME                  | true          |
 
-## Option Descriptions
+## <a name="Option_Descriptions"></a> Option Descriptions
 
 #### AUTO_LOGIN
 
