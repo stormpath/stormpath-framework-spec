@@ -2,6 +2,15 @@
 
 # Account Registration
 
+This document describes the endpoints and logic that must exist in order to
+facilitate self-service registration of user accounts.
+
+If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
+incoming requests for the POST_REGISTRATION_URL and either render a registration
+form or handle a POST request from the registration form.
+
+## Table of Contents
+
 * [Default Options](#Default_Options)
 * [Option Descriptions](#Option_Descriptions)
   * [AUTO_LOGIN](#AUTO_LOGIN)
@@ -9,13 +18,6 @@
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
-
-This document describes the endpoints and logic that must exist in order to
-facilitate self-service registration of user accounts.
-
-If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
-incoming requests for the POST_REGISTRATION_URL and either render a registration
-form or handle a POST request from the registration form.
 
 ## <a name="Default_Options"></a> Default Options
 
