@@ -19,9 +19,9 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
-If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
+If enabled via the ENABLE_REGISTRATION option, our library MUST intercept
 incoming requests for the REGISTRATION_URL and either render a registration
-form or handle a POST request from the registration form.
+form (GET) or handle a POST request from the registration form.
 
 GET requests should serve an HTML Page OR Single Page Application, in either
 case the user should be presented with a registration form.
@@ -34,9 +34,9 @@ The form MUST:
 The form MAY:
 
 * Have other fields, as controlled by these options:
- * REQUIRE_SURNAME
- * REQUIRE_GIVEN_NAME
+ * ENABLE_GIVEN_NAME
  * ENABLE_PASSWORD_CONFIRMATION
+ * ENABLE_SURNAME
 
 
 ## <a name="Options"></a> Options
@@ -71,12 +71,12 @@ Works in conjunction with our Email Verification feature.
 
 #### <a name="ENABLE_REGISTRATION"></a> ENABLE_REGISTRATION
 
-If `True` this feature will be enabled and will intercept requests at the
-[REGISTRATION_URL](#REGISTRATION_URL)
+If `True` this feature will be enabled and our library will intercept requests
+at the [REGISTRATION_URL](#REGISTRATION_URL)
 
 If `False` this feature is disabled and the base framework will be responsible
 for the [REGISTRATION_URL](#REGISTRATION_URL), likely resulting in a 404
-not found error.
+Not Found error.
 
 <a href="#top">Back to Top</a>
 
@@ -95,8 +95,8 @@ Where to send the user after successful registration, if
 
 #### <a name="REGISTRATION_URL"></a> REGISTRATION_URL
 
-This is the URI portion of an entire URL that the framework will handle GET and
-POST requests for, this is the entry for this feature.
+This is the URI portion of an entire URL that our library will attach an
+interceptor to for GET and POST requests.
 
 <a href="#top">Back to Top</a>
 
