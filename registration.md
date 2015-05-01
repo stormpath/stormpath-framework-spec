@@ -2,12 +2,6 @@
 
 # Account Registration
 
-This document describes the endpoints and logic that must exist in order to
-facilitate self-service registration of user accounts.
-
-If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
-incoming requests for the REGISTRATION_URL and either render a registration
-form or handle a POST request from the registration form.
 
 ## Table of Contents
 
@@ -18,6 +12,31 @@ form or handle a POST request from the registration form.
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
+
+## Feature Description
+
+This document describes the endpoints and logic that must exist in order to
+facilitate self-service registration of user accounts.
+
+If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
+incoming requests for the REGISTRATION_URL and either render a registration
+form or handle a POST request from the registration form.
+
+GET requests should serve an HTML Page OR Single Page Application, in either
+case the user should be presented with a registration form.
+
+The form MUST:
+
+* Require an email address
+* Require a password
+
+The form MAY:
+
+* Have other fields, as controlled by these options:
+ * REQUIRE_SURNAME
+ * REQUIRE_GIVEN_NAME
+ * REQUIRE_PASSWORD_CONFIRMATION
+
 
 ## <a name="Default_Options"></a> Default Options
 
@@ -49,22 +68,7 @@ Works in conjunction with our Email Verification feature.
 #### <a name="REGISTRATION_URL"></a> REGISTRATION_URL
 
 This is the URI portion of an entire URL that the framework will handle GET and
-POST requests for.
-
-GET requests should serve an HTML Page OR Single Page Application, in either
-case the user should be presented with a registration form.
-
-The form MUST:
-
-* It must require an email address
-* It must require a password
-
-The form MAY:
-
-* Have other fields, as controlled by these options:
- * REQUIRE_SURNAME
- * REQUIRE_GIVEN_NAME
- * REQUIRE_PASSWORD_CONFIRMATION
+POST requests for, this is the entry for this feature.
 
 <a href="#top">Back to Top</a>
 
