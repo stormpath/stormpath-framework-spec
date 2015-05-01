@@ -33,17 +33,17 @@ The form MUST:
 
 The form MAY:
 
-* Have other fields, as controlled by these options:
- * ENABLE_GIVEN_NAME
- * ENABLE_MIDDLE_NAME
- * ENABLE_PASSWORD_CONFIRMATION
- * ENABLE_SURNAME
+* Have other fields:
+ * Username
+ * Given Name
+ * Middle Name
+ * Surname
+ * Password confirmation field
 
 If the following account properties are not specified by the user in the form
 POST, our library MUST set the value to 'UNKNOWN' when we create the account:
 
  * Given Name
- * Middle Name
  * Surname
 
 ## <a name="Options"></a> Options
@@ -60,11 +60,13 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | ENABLE_PASSWORD_CONFIRMATION     | False         |
 | ENABLE_REGISTRATION              | False         |
 | ENABLE_SURNAME                   | False         |
+| ENABLE_USERNAME                  | False         |
 | REDIRECT_URL                     | /             |
 | REGISTRATION_URL                 | /register     |
 | REQUIRE_GIVEN_NAME               | False         |
 | REQUIRE_MIDDLE_NAME              | False         |
 | REQUIRE_SURNAME                  | False         |
+| REQUIRE_USERNAME                 | False         |
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
@@ -80,7 +82,7 @@ Works in conjunction with our Email Verification feature.
 
 #### <a name="ENABLE_GIVEN_NAME"></a> ENABLE_GIVEN_NAME
 
-If enabled, expose a field on the form for entering he user's first name.
+If enabled, expose a field on the form for entering the user's first name.
 
 <a href="#top">Back to Top</a>
 
@@ -89,7 +91,7 @@ If enabled, expose a field on the form for entering he user's first name.
 
 #### <a name="ENABLE_MIDDLE_NAME"></a> ENABLE_MIDDLE_NAME
 
-If enabled, expose a field on the form for entering he user's middle name.
+If enabled, expose a field on the form for entering the user's middle name.
 
 <a href="#top">Back to Top</a>
 
@@ -112,7 +114,17 @@ Not Found error.
 
 #### <a name="ENABLE_SURNAME"></a> ENABLE_SURNAME
 
-If enabled, expose a field on the form for entering he user's last name.
+If enabled, expose a field on the form for entering the user's last name.
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="ENABLE_USERNAME"></a> ENABLE_USERNAME
+
+If enabled, expose a field on the form for entering a username that is separate
+from the email address.
 
 <a href="#top">Back to Top</a>
 
@@ -168,6 +180,16 @@ is False, the field should still be shown if this property is True
 
 
 
+#### <a name="REQUIRE_USERNAME"></a> REQUIRE_USERNAME
+
+If enabled, the user must specify a username that is separate from the email
+address.  Even if ENABLE_USERNAME is False, the field should still be shown if
+this property is True
+
+<a href="#top">Back to Top</a>
+
+
+
 
 ## <a name="POST_Body_Format"></a> POST Body Format
 
@@ -188,12 +210,18 @@ Every POST body MUST contain, at a minimum, these fields:
 
 If those fields are omitted, it is an error.
 
-If any of the options REQUIRE_GIVEN_NAME, ENABLE_PASSWORD_CONFIRMATION,
-REQUIRE_SURNAME are enabled, it should be considered an error if the relevant
-fields are missing.
+If any of the options are enabled:
+
+ * ENABLE_PASSWORD_CONFIRMATION
+ * REQUIRE_GIVEN_NAME
+ * REQUIRE_MIDDLE_NAME
+ * REQUIRE_SURNAME
+ * REQUIRE_USERNAME
+
+It should be considered an error if the relevant fields are missing.
 
 The POST body may contain custom data, which should be passed along to the
-Stormpath API when creating the account
+Stormpath API when creating the account.
 
 ```json
 {
