@@ -35,9 +35,16 @@ The form MAY:
 
 * Have other fields, as controlled by these options:
  * ENABLE_GIVEN_NAME
+ * ENABLE_MIDDLE_NAME
  * ENABLE_PASSWORD_CONFIRMATION
  * ENABLE_SURNAME
 
+If the following account properties are not specified by the user in the form
+POST, our library MUST set the value to 'UNKNOWN' when we create the account:
+
+ * Given Name
+ * Middle Name
+ * Surname
 
 ## <a name="Options"></a> Options
 
@@ -49,13 +56,15 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | -------------------------------- |---------------|
 | AUTO_LOGIN                       | True          |
 | ENABLE_GIVEN_NAME                | False         |
+| ENABLE_MIDDLE_NAME               | False         |
 | ENABLE_PASSWORD_CONFIRMATION     | False         |
 | ENABLE_REGISTRATION              | False         |
 | ENABLE_SURNAME                   | False         |
 | REDIRECT_URL                     | /             |
 | REGISTRATION_URL                 | /register     |
-| REQUIRE_GIVEN_NAME               | True          |
-| REQUIRE_SURNAME                  | True          |
+| REQUIRE_GIVEN_NAME               | False         |
+| REQUIRE_MIDDLE_NAME              | False         |
+| REQUIRE_SURNAME                  | False         |
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
@@ -63,6 +72,24 @@ If enabled, will create the `access_token` cookie and redirect the user to the
 REDIRECT_URL if they have successfully registered.  See the
 [POST Response Handling](#POST_Response_Handling) section for more details.
 Works in conjunction with our Email Verification feature.
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="ENABLE_GIVEN_NAME"></a> ENABLE_GIVEN_NAME
+
+If enabled, expose a field on the form for entering he user's first name.
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="ENABLE_MIDDLE_NAME"></a> ENABLE_MIDDLE_NAME
+
+If enabled, expose a field on the form for entering he user's middle name.
 
 <a href="#top">Back to Top</a>
 
@@ -83,6 +110,15 @@ Not Found error.
 
 
 
+#### <a name="ENABLE_SURNAME"></a> ENABLE_SURNAME
+
+If enabled, expose a field on the form for entering he user's last name.
+
+<a href="#top">Back to Top</a>
+
+
+
+
 #### <a name="REDIRECT_URL"></a> REDIRECT_URL
 
 Where to send the user after successful registration, if
@@ -97,6 +133,36 @@ Where to send the user after successful registration, if
 
 This is the URI portion of an entire URL that our library will attach an
 interceptor to for GET and POST requests.
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="REQUIRE_GIVEN_NAME"></a> REQUIRE_GIVEN_NAME
+
+If enabled, the user must specify their first name.  Even if ENABLE_MIDDLE_NAME
+is False, the field should still be shown if this property is True
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="REQUIRE_MIDDLE_NAME"></a> REQUIRE_MIDDLE_NAME
+
+If enabled, the user must specify their middle name.  Even if ENABLE_MIDDLE_NAME
+is False, the field should still be shown if this property is True
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="REQUIRE_SURNAME"></a> REQUIRE_SURNAME
+
+If enabled, the user must specify their last name.  Even if ENABLE_SURNAME
+is False, the field should still be shown if this property is True
 
 <a href="#top">Back to Top</a>
 
