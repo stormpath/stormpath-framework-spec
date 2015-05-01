@@ -258,7 +258,7 @@ successfully created.
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
     is:
-    * `True`: issue a 302 Redirect to the POST_REGISTRATION_URL and create set
+    * `True`: issue a 302 Redirect to the REDIRECT_URL and create set
       `access_token` cookie on the client
     * `False`: inform the user that their account has been created and they may
       now login
