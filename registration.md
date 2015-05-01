@@ -5,9 +5,10 @@
 
 ## Table of Contents
 
-* [Default Options](#Default_Options)
-* [Option Descriptions](#Option_Descriptions)
+* [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
+  * [ENABLE_REGISTRATION](#ENABLE_REGISTRATION)
+  * [POST_REGISTRATION_REDIRECT_URL](#POST_REGISTRATION_REDIRECT_URL)
   * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
@@ -38,7 +39,7 @@ The form MAY:
  * REQUIRE_PASSWORD_CONFIRMATION
 
 
-## <a name="Default_Options"></a> Default Options
+## <a name="Options"></a> Options
 
 This table is a list of all the options that are required by this feature.
 Detailed descriptions follow.  How the option names are translated into the
@@ -54,8 +55,6 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | REQUIRE_PASSWORD_CONFIRMATION    | false         |
 | REQUIRE_SURNAME                  | true          |
 
-## <a name="Option_Descriptions"></a> Option Descriptions
-
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
 If enabled, will create the `access_token` cookie and redirect the user to the
@@ -65,12 +64,42 @@ Works in conjunction with our Email Verification feature.
 
 <a href="#top">Back to Top</a>
 
+
+
+
+#### <a name="ENABLE_REGISTRATION"></a> ENABLE_REGISTRATION
+
+If `True` this feature will be enabled and will intercept requests at the
+[REGISTRATION_URL](#REGISTRATION_URL)
+
+If `False` this feature is disabled and the base framework will be responsible
+for the [REGISTRATION_URL](#REGISTRATION_URL), likely resulting in a 404
+not found error.
+
+<a href="#top">Back to Top</a>
+
+
+
+
+#### <a name="POST_REGISTRATION_REDIRECT_URL"></a> POST_REGISTRATION_REDIRECT_URL
+
+Where to send the user after successful registration, if
+[AUTO_LOGIN](#AUTO_LOGIN) is `True`
+
+<a href="#top">Back to Top</a>
+
+
+
+
 #### <a name="REGISTRATION_URL"></a> REGISTRATION_URL
 
 This is the URI portion of an entire URL that the framework will handle GET and
 POST requests for, this is the entry for this feature.
 
 <a href="#top">Back to Top</a>
+
+
+
 
 ## <a name="POST_Body_Format"></a> POST Body Format
 
