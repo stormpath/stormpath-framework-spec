@@ -6,7 +6,7 @@ This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
 If enabled via the ENABLE_REGISTRATION option, the framework MUST intercept
-incoming requests for the POST_REGISTRATION_URL and either render a registration
+incoming requests for the REGISTRATION_URL and either render a registration
 form or handle a POST request from the registration form.
 
 ## Table of Contents
@@ -14,7 +14,7 @@ form or handle a POST request from the registration form.
 * [Default Options](#Default_Options)
 * [Option Descriptions](#Option_Descriptions)
   * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [POST_REGISTRATION_URL](#POST_REGISTRATION_URL)
+  * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
@@ -30,7 +30,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | AUTO_LOGIN                       | false         |
 | ENABLE_REGISTRATION              | true          |
 | POST_REGISTRATION_REDIRECT_URL   | /             |
-| POST_REGISTRATION_URL            | /register     |
+| REGISTRATION_URL                 | /register     |
 | REQUIRE_GIVEN_NAME               | true          |
 | REQUIRE_PASSWORD_CONFIRMATION    | false         |
 | REQUIRE_SURNAME                  | true          |
@@ -40,13 +40,13 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
 If enabled, will create the `access_token` cookie and redirect the user to the
-POST_REGISTRATION_REDIRECT_URL if they have successfully registerd.  See the
+POST_REGISTRATION_REDIRECT_URL if they have successfully registered.  See the
 [POST Response Handling](#POST_Response_Handling) section for more details.
 Works in conjunction with our Email Verification feature.
 
 <a href="#top">Back to Top</a>
 
-#### <a name="POST_REGISTRATION_URL"></a> POST_REGISTRATION_URL
+#### <a name="REGISTRATION_URL"></a> REGISTRATION_URL
 
 This is the URI portion of an entire URL that the framework will handle GET and
 POST requests for.
@@ -132,7 +132,7 @@ want to leak any information that may have been associated with this account
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
     is:
-    * `True`: issue a 302 Redirect to the POST_REGISTRATION_URL and create set
+    * `True`: issue a 302 Redirect to the REGISTRATION_URL and create set
       `access_token` cookie on the client
     * `False`: inform the user that their account has been created and they may
       now login
