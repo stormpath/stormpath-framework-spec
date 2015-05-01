@@ -29,7 +29,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | -------------------------------- |---------------|
 | AUTO_LOGIN                       | false         |
 | ENABLE_REGISTRATION              | true          |
-| POST_REGISTRATION_REDIRECT       | /             |
+| POST_REGISTRATION_REDIRECT_URL   | /             |
 | POST_REGISTRATION_URL            | /register     |
 | REQUIRE_GIVEN_NAME               | true          |
 | REQUIRE_PASSWORD_CONFIRMATION    | false         |
@@ -39,9 +39,10 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
-If enabled AND the the request is `Accept: text/html` AND an account is
-successfully created AND the account status is ENABLED, then issue a 302
-Redirect to the POST_REGISTRATION_URL
+If enabled, will create the `access_token` cookie and redirect the user to the
+POST_REGISTRATION_REDIRECT_URL if they have successfully registerd.  See the
+[POST Response Handling](#POST_Response_Handling) section for more details.
+Works in conjunction with our Email Verification feature.
 
 <a href="#top">Back to Top</a>
 
@@ -90,8 +91,8 @@ If any of the options REQUIRE_GIVEN_NAME, REQUIRE_PASSWORD_CONFIRMATION,
 REQUIRE_SURNAME are enabled, it should be considered an error if the relevant
 fields are missing.
 
-The POST body may contain custom data, which should be passed along to the API
-when creating the account
+The POST body may contain custom data, which should be passed along to the
+Stormpath API when creating the account
 
 ```json
 {
@@ -107,7 +108,7 @@ when creating the account
 
 ##  <a name="POST_Error_Handling"></a> POST Error Handling
 
-For any errors indicated below, the following should happen:
+For any errors indicated in this document, the following should happen:
 
 * If the request is `Accept: text/html`, the response should be 200 OK and the
 form should be re-rendered with a UX that indicates which field is in error and
@@ -117,12 +118,25 @@ what can be done to fix the problem.
 object of the format `{ error: String }` where String is a user-friendly message
 and the status of the response should be 400.
 
-## <a name="POST_Response_Handling"></a> POST Response Handling (Account was created)
+## <a name="POST_Response_Handling"></a> POST Response Handling
 
-If the request is `Accept: application/json`, the response should always be
+This describes how we handle the response, after an account has been
+successfully created.
+
+* If the request is `Accept: application/json`, the response should always be
 status 200 and the body should be a JSON body which is the account object that
 was created, but DO NOT expand any resource on the account object.  We do not
 want to leak any information that may have been associated with this account
 (i.e. custom data)
+
+* If the request is `Accept: text/html`, and..
+  * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
+    is:
+    * `True`: issue a 302 Redirect to the POST_REGISTRATION_URL and create set
+      `access_token` cookie on the client
+    * `False`: inform the user that their account has been created and they may
+      now login
+  * The newly created account status is UNVERIFIED, then render a view which
+  tells the user to check their email for a verification link
 
 <a href="#top">Back to Top</a>
