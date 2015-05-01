@@ -8,7 +8,7 @@
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
   * [ENABLE_REGISTRATION](#ENABLE_REGISTRATION)
-  * [POST_REGISTRATION_REDIRECT_URL](#POST_REGISTRATION_REDIRECT_URL)
+  * [REDIRECT_URL](#REDIRECT_URL)
   * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
@@ -36,7 +36,7 @@ The form MAY:
 * Have other fields, as controlled by these options:
  * REQUIRE_SURNAME
  * REQUIRE_GIVEN_NAME
- * REQUIRE_PASSWORD_CONFIRMATION
+ * ENABLE_PASSWORD_CONFIRMATION
 
 
 ## <a name="Options"></a> Options
@@ -47,18 +47,20 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 
 | Option                           | Default Value |
 | -------------------------------- |---------------|
-| AUTO_LOGIN                       | false         |
-| ENABLE_REGISTRATION              | true          |
-| POST_REGISTRATION_REDIRECT_URL   | /             |
+| AUTO_LOGIN                       | True          |
+| ENABLE_GIVEN_NAME                | False         |
+| ENABLE_PASSWORD_CONFIRMATION     | False         |
+| ENABLE_REGISTRATION              | False         |
+| ENABLE_SURNAME                   | False         |
+| REDIRECT_URL                     | /             |
 | REGISTRATION_URL                 | /register     |
-| REQUIRE_GIVEN_NAME               | true          |
-| REQUIRE_PASSWORD_CONFIRMATION    | false         |
-| REQUIRE_SURNAME                  | true          |
+| REQUIRE_GIVEN_NAME               | True          |
+| REQUIRE_SURNAME                  | True          |
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
 If enabled, will create the `access_token` cookie and redirect the user to the
-POST_REGISTRATION_REDIRECT_URL if they have successfully registered.  See the
+REDIRECT_URL if they have successfully registered.  See the
 [POST Response Handling](#POST_Response_Handling) section for more details.
 Works in conjunction with our Email Verification feature.
 
@@ -81,7 +83,7 @@ not found error.
 
 
 
-#### <a name="POST_REGISTRATION_REDIRECT_URL"></a> POST_REGISTRATION_REDIRECT_URL
+#### <a name="REDIRECT_URL"></a> REDIRECT_URL
 
 Where to send the user after successful registration, if
 [AUTO_LOGIN](#AUTO_LOGIN) is `True`
@@ -120,7 +122,7 @@ Every POST body MUST contain, at a minimum, these fields:
 
 If those fields are omitted, it is an error.
 
-If any of the options REQUIRE_GIVEN_NAME, REQUIRE_PASSWORD_CONFIRMATION,
+If any of the options REQUIRE_GIVEN_NAME, ENABLE_PASSWORD_CONFIRMATION,
 REQUIRE_SURNAME are enabled, it should be considered an error if the relevant
 fields are missing.
 
@@ -156,16 +158,13 @@ and the status of the response should be 400.
 This describes how we handle the response, after an account has been
 successfully created.
 
-* If the request is `Accept: application/json`, the response should always be
-status 200 and the body should be a JSON body which is the account object that
-was created, but DO NOT expand any resource on the account object.  We do not
-want to leak any information that may have been associated with this account
-(i.e. custom data)
+* If the request is `Accept: application/json`, the response should be status
+  200 with an empty body.
 
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
     is:
-    * `True`: issue a 302 Redirect to the REGISTRATION_URL and create set
+    * `True`: issue a 302 Redirect to the POST_REGISTRATION_URL and create set
       `access_token` cookie on the client
     * `False`: inform the user that their account has been created and they may
       now login
