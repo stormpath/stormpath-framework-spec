@@ -152,7 +152,7 @@ redirect the user to the `REDIRECT_URL` url.
 #### <a name="LINKEDIN_CALLBACK_URL"></a> LINKEDIN_CALLBACK_URL
 
 This is the URI portion of an entire URL that our library will attach an
-interceptor to GET requests in order to handle the Github Login flow.
+interceptor to GET requests in order to handle the LinkedIn Login flow.
 
 This interceptor will read in the access token from the query parameters, create
 or update the account in Stormpath, create a session for the user, and finally
