@@ -8,7 +8,8 @@
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
   * [FORGOT_PASSWORD_URL](#FORGOT_PASSWORD_URL)
-  * [REDIRECT_URL](#REDIRECT_URL)
+  * [NEXT_URI](#NEXT_URI)
+  * [ERROR_URI](#ERROR_URI)
   * [RESET_PASSWORD_URL](#RESET_PASSWORD_URL)
 
 * [GET Handling, FORGOT_PASSWORD_URL](#GET_FORGOT_PASSWORD_URL)
@@ -40,18 +41,19 @@ This table is a list of all the options that are required by this feature.
 Detailed descriptions follow.  How the option names are translated into the
 framework language (e.g. to camel case, or not)? Is not specified here.
 
-| Option                           | Default Value       |
-| -------------------------------- |---------------------|
-| AUTO_LOGIN                       | False               |
-| FORGOT_PASSWORD_URL              | /forgot             |
-| REDIRECT_URL                     | /                   |
-| RESET_PASSWORD_URL               | /reset              |
+| Option                           | Default Value                     |
+| -------------------------------- |-----------------------------------|
+| AUTO_LOGIN                       | False                             |
+| ERORR_URI                        | /forgot?status=INVALID_SP_TOKEN   |
+| FORGOT_PASSWORD_URL              | /forgot                           |
+| NEXT_URI                         | /login?status=RESET               |
+| RESET_PASSWORD_URL               | /reset                            |
 
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
 
 If enabled, will create the `access_token` cookie and redirect the user to the
-`REDIRECT_URL` after they have reset their password.
+`NEXT_URI` after they have reset their password.
 
 <a href="#top">Back to Top</a>
 
@@ -72,9 +74,17 @@ interceptor to for GET and POST requests.
 <a href="#top">Back to Top</a>
 
 
-#### <a name="REDIRECT_URL"></a> REDIRECT_URL
+#### <a name="ERROR_URI"></a> ERROR_URI
 
-Where to send the user after password reset, if AUTO_LOGIN is True.
+Where to send the user to, if they arrive on the RESET_PASSWORD_URL with an
+invalid `spToken`
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="NEXT_URI"></a> NEXT_URI
+
+Where to send the user after a successful password reset.
 
 <a href="#top">Back to Top</a>
 
@@ -87,6 +97,9 @@ This describes how we handle the response for GET requests to the
 The response should be an HTML page or SPA that provides a form with an email
 address field, allowing the user to give the email address of the account that
 they want to trigger a password reset email for.
+
+The view must have a conditional block for showing an error message, if the user
+arrives here with the param `?status=INVALID_SP_TOKEN`
 
 <a href="#top">Back to Top</a>
 
@@ -101,9 +114,10 @@ The POST request must be of this format:
 }
 ```
 
-Regardless of whether or not the login corresponds to an account, we must render
-a success message along the lines of *"If the email address you entered was
-associated with an account, you will receive an email from us shortly."*
+Regardless of whether or not the login corresponds to an account, we redirect to
+the NEXT_URI.  By default, this is our login page which displays a mesage: *"If
+the email is  associated with an account, you will receive an email from us
+shortly."*
 
 If the request is `Accept: application/json`, the status of the response should
 be an HTTP 200 and there should be no body.
@@ -129,15 +143,12 @@ body
 
 If the token is invalid or expired:
 
-* If the request is `Accept: text/html`, send a view which explains
-the error and provides a link to the `FORGOT_PASSWORD_URL`, so that the user can
-request a new password reset token.
+* Redirect to the ERROR_URI
 
 * If the request is `Accept: application/json`, reply with status 400 and a JSON
 body of the format `{ error: String  }`
 
 <a href="#top">Back to Top</a>
-
 
 
 
@@ -158,17 +169,14 @@ so that it cannot be used for future requets.
 If the operation is successful:
 
  * And the request is `Accept: text/html`:
-  * Show a success message
-  * If AUTO_LOGIN is False, show a link to the login page.  Otherwise, redirect
-    to `REDIRECT_URL` after 10 seconds
+  * Redirect to `NEXT_URI`
  * If the request is `Accept: application/json`, the status of the response must
    be an HTTP 200 and there should be no body.
 
 If the operation fails:
 
-* If the request is `Accept: text/html`, send a view which explains
-the error and provides a link to the `FORGOT_PASSWORD_URL`, so that the user can
-request a new password reset token.
+* If the request is `Accept: text/html`, re-render the forgot password form with
+an error message.
 
 * If the request is `Accept: application/json`, reply with status 400 and a JSON
 body of the format `{ error: String  }`
