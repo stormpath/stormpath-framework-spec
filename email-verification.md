@@ -49,7 +49,7 @@ framework language (*e.g. to camel case, or not*)?  Is not specified here.
 ### <a name="autoLogin"></a> autoLogin
 
 If enabled, will create the `access_token` cookie and redirect the user to the
-`nextUri` if they have successfully verified their account.
+`nextUri?status=verified` if they have successfully verified their account.
 
 <a href="#top">Back to Top</a>
 
