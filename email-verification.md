@@ -7,7 +7,6 @@
 
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [EMAIL_VERIFICATION_RESEND_URL](#EMAIL_VERIFICATION_RESEND_URL)
   * [EMAIL_VERIFICATION_URL](#EMAIL_VERIFICATION_URL)
   * [REDIRECT_URL](#REDIRECT_URL)
 * [GET Error Handling](#GET_Error_Handling)
@@ -39,7 +38,6 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | Option                           | Default Value       |
 | -------------------------------- |---------------------|
 | AUTO_LOGIN                       | True                |
-| EMAIL_VERIFICATION_RESEND_URL    | /verify/resend      |
 | EMAIL_VERIFICATION_URL           | /verify             |
 | REDIRECT_URL                     | /                   |
 
@@ -48,14 +46,6 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 
 If enabled, will create the `access_token` cookie and redirect the user to the
 `REDIRECT_URL` if they have successfully verified their account.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="EMAIL_VERIFICATION_RESEND_URL"></a> EMAIL_VERIFICATION_RESEND_URL
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to for GET requests.
 
 <a href="#top">Back to Top</a>
 
@@ -107,12 +97,9 @@ True).
 If the request is `Accept: application/json`, the status of the response should
 be an HTTP 200 and there should be no body.
 
-This describes how we handle the response for the `EMAIL_VERIFICATION_RESEND_URL`
-controller, after the user has arrived at our site.
-
-This should render an HTML page with a form that allows the user to enter their
-account email address and will attempt to resend the verification email to the
-user.
+If not `spToken` param is present, this should render an HTML page with a form
+that allows the user to enter their account email address and will attempt to
+resend the verification email to the user.
 
 <a href="#top">Back to Top</a>
 
@@ -132,9 +119,8 @@ be an HTTP 200 and there should be no body.
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 
-This describes how we handle the POST response for the
-`EMAIL_VERIFICATION_RESEND_URL` controller, after the user has submitted form
-data.
+This describes how we handle the POST response for the `EMAIL_VERIFICATION_URL`
+controller, after the user has submitted form data.
 
 Regardless of whether or not the email address the user entered was successful,
 we should render a success message along the lines of *"If the email address you
