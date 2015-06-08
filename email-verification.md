@@ -35,11 +35,15 @@ This table is a list of all the options that are required by this feature.
 Detailed descriptions follow.  How the option names are translated into the
 framework language (e.g. to camel case, or not)? Is not specified here.
 
-| Option                           | Default Value       |
-| -------------------------------- |---------------------|
-| AUTO_LOGIN                       | False               |
-| EMAIL_VERIFICATION_URL           | /verify             |
-| REDIRECT_URL                     | /                   |
+```json
+{
+  "verifyEmail": {
+    "autoLogin": false,
+    "uri": "/verify",
+    "nextUri": "/"
+  }
+}
+```
 
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
