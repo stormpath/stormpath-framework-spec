@@ -1,0 +1,177 @@
+<a name="#top">Back to Top</a>
+
+# Password Reset
+
+
+## Table of Contents
+
+* [Options](#Options)
+  * [AUTO_LOGIN](#AUTO_LOGIN)
+  * [FORGOT_PASSWORD_URL](#FORGOT_PASSWORD_URL)
+  * [REDIRECT_URL](#REDIRECT_URL)
+  * [RESET_PASSWORD_URL](#RESET_PASSWORD_URL)
+
+* [GET Handling, FORGOT_PASSWORD_URL](#GET_FORGOT_PASSWORD_URL)
+* [POST Handling, FORGOT_PASSWORD_URL](#POST_FORGOT_PASSWORD_URL)
+* [GET Handling, RESET_PASSWORD_URL](#GET_RESET_PASSWORD_URL)
+* [POST Handling, RESET_PASSWORD_URL](#POST_RESET_PASSWORD_URL)
+
+
+## Feature Description
+
+This document describes the endpoints and logic that must exist in order to
+facilitate self-service password reset of existing user accounts.
+
+If an application's default account store has the password reset workflow
+enabled, our library MUST intercept incoming GET requests for the
+`FORGOT_PASSWORD_URL` AND `RESET_PASSWORD_URL` and render the appropriate
+view, as an HTML Page or Single Page Application.
+
+The `FORGOT_PASSWORD_URL` should render a form which allows the user to request
+a password reset token to be sent to their email address.
+
+The `RESET_PASSWORD_URL` should render a form which allows the user to reset
+their password, but only after verifying the `sptoken` that is in the URL (they
+arrived by clicking on the link that we sent to their email address).
+
+## <a name="Options"></a> Options
+
+This table is a list of all the options that are required by this feature.
+Detailed descriptions follow.  How the option names are translated into the
+framework language (e.g. to camel case, or not)? Is not specified here.
+
+| Option                           | Default Value       |
+| -------------------------------- |---------------------|
+| AUTO_LOGIN                       | False               |
+| FORGOT_PASSWORD_URL              | /forgot             |
+| REDIRECT_URL                     | /                   |
+| RESET_PASSWORD_URL               | /reset              |
+
+
+#### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
+
+If enabled, will create the `access_token` cookie and redirect the user to the
+`REDIRECT_URL` after they have reset their password.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="RESET_PASSWORD_URL"></a> RESET_PASSWORD_URL
+
+This is the URI portion of an entire URL that our library will attach an
+interceptor to for GET and POST requests.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="FORGOT_PASSWORD_URL"></a> FORGOT_PASSWORD_URL
+
+This is the URI portion of an entire URL that our library will attach an
+interceptor to for GET and POST requests.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="REDIRECT_URL"></a> REDIRECT_URL
+
+Where to send the user after password reset, if AUTO_LOGIN is True.
+
+<a href="#top">Back to Top</a>
+
+
+## <a name="GET_FORGOT_PASSWORD_URL"></a> GET Handling, FORGOT_PASSWORD_URL
+
+This describes how we handle the response for GET requests to the
+`FORGOT_PASSWORD_URL`.
+
+The response should be an HTML page or SPA that provides a form with an email
+address field, allowing the user to give the email address of the account that
+they want to trigger a password reset email for.
+
+<a href="#top">Back to Top</a>
+
+
+## <a name="POST_FORGOT_PASSWORD_URL"></a> POST Handling, FORGOT_PASSWORD_URL
+
+The POST request must be of this format:
+
+```
+{
+  "login": "email or username"
+}
+```
+
+Regardless of whether or not the login corresponds to an account, we must render
+a success message along the lines of *"If the email address you entered was
+associated with an account, you will receive an email from us shortly."*
+
+If the request is `Accept: application/json`, the status of the response should
+be an HTTP 200 and there should be no body.
+
+<a href="#top">Back to Top</a>
+
+
+## <a name="GET_RESET_PASSWORD_URL"></a> GET Handling, RESET_PASSWORD_URL
+
+This describes how we handle the response for GET requests to the
+`RESET_PASSWORD_URL`, when the user has arrived at our site with an `spToken`
+URL parameter.
+
+The request handler must verify the `spToken` with the Stormpath API but should
+NOT consume the token as this point.
+
+If the token is valid:
+
+* Render a form for setting a new password on the account
+
+* If the request is `Accept: application/json`, reply with 200 OK and an empty
+body
+
+If the token is invalid or expired:
+
+* If the request is `Accept: text/html`, send a view which explains
+the error and provides a link to the `FORGOT_PASSWORD_URL`, so that the user can
+request a new password reset token.
+
+* If the request is `Accept: application/json`, reply with status 400 and a JSON
+body of the format `{ error: String  }`
+
+<a href="#top">Back to Top</a>
+
+
+
+
+## <a name="POST_RESET_PASSWORD_URL"></a> POST Handling, RESET_PASSWORD_URL
+
+The POST request must be of this format:
+
+```
+{
+  "sptoken": "the sent token",
+  "password": "new password"
+}
+```
+
+The token and password should be supplied to the Stormpath API, consuming the token
+so that it cannot be used for future requets.
+
+If the operation is successful:
+
+ * And the request is `Accept: text/html`:
+  * Show a success message
+  * If AUTO_LOGIN is False, show a link to the login page.  Otherwise, redirect
+    to `REDIRECT_URL` after 10 seconds
+ * If the request is `Accept: application/json`, the status of the response must
+   be an HTTP 200 and there should be no body.
+
+If the operation fails:
+
+* If the request is `Accept: text/html`, send a view which explains
+the error and provides a link to the `FORGOT_PASSWORD_URL`, so that the user can
+request a new password reset token.
+
+* If the request is `Accept: application/json`, reply with status 400 and a JSON
+body of the format `{ error: String  }`
+
+<a href="#top">Back to Top</a>
+
