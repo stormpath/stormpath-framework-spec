@@ -37,7 +37,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 
 | Option                           | Default Value       |
 | -------------------------------- |---------------------|
-| AUTO_LOGIN                       | True                |
+| AUTO_LOGIN                       | False               |
 | EMAIL_VERIFICATION_URL           | /verify             |
 | REDIRECT_URL                     | /                   |
 
