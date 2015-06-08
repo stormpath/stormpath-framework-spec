@@ -46,7 +46,7 @@ framework language (*e.g. to camel case, or not*)?  Is not specified here.
 ```
 
 
-#### <a name="autoLogin"></a> autoLogin
+### <a name="autoLogin"></a> autoLogin
 
 If enabled, will create the `access_token` cookie and redirect the user to the
 `nextUri` if they have successfully verified their account.
@@ -54,7 +54,7 @@ If enabled, will create the `access_token` cookie and redirect the user to the
 <a href="#top">Back to Top</a>
 
 
-#### <a name="uri"></a> uri
+### <a name="uri"></a> uri
 
 This is the URI portion of an entire URL that our library will attach an
 interceptor to for GET requests.
@@ -62,7 +62,7 @@ interceptor to for GET requests.
 <a href="#top">Back to Top</a>
 
 
-#### <a name="nextUri"></a> nextUri
+### <a name="nextUri"></a> nextUri
 
 Where to send the user after successful verification.  This is where we'll send
 the user after showing them a confirmation message for 5 seconds.
