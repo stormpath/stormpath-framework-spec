@@ -211,3 +211,18 @@ the site administrator for help.
 
 
 <a href="#top">Back to Top</a>
+
+
+## <a name="GET_Request_Handling"></a> GET Request Handling
+
+This describes how we render the login page after receiving a GET request.
+
+We should render a login page with a form that accepts either a username or
+email address and a password.
+
+If a `status` parameter is specified in the query string, and the status value
+is set to `verified`, then we should display a success message above the login
+form which says that this account was successfully verified, and that the user
+can log into their account below.
+
+<a href="#top">Back to Top</a>
