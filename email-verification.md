@@ -9,10 +9,10 @@
   * [autoLogin](#autoLogin)
   * [uri](#uri)
   * [nextUri](#nextUri)
-* [GET Error Handling](#GET_Error_Handling)
-* [GET Response Handling](#GET_Response_Handling)
-* [POST Error Handling](#POST_Error_Handling)
-* [POST Response Handling](#POST_Response_Handling)
+* [GET Error Handling](#GET_ERROR_HANDLING)
+* [GET Response Handling](#GET_RESPONSE_HANDLING)
+* [POST Error Handling](#POST_ERROR_HANDLING)
+* [POST Response Handling](#POST_RESPONSE_HANDLING)
 
 
 ## Feature Description
@@ -56,29 +56,29 @@ If enabled, will create the `access_token` cookie and redirect the user to the
 
 ### <a name="uri"></a> uri
 
-This is the URI portion of an entire URL that our library will attach an
-interceptor to for GET requests.
+This is URI is what we'll attach an interceptor to for GET and POST requests.
 
 <a href="#top">Back to Top</a>
 
 
 ### <a name="nextUri"></a> nextUri
 
-Where to send the user after successful verification.  This is where we'll send
-the user after showing them a confirmation message for 5 seconds.
+Where to send the user after successful verification.
 
 <a href="#top">Back to Top</a>
 
 
-## <a name="GET_Error_Handling"></a> GET Error Handling
+## <a name="GET_ERROR_HANDLING"></a> GET Error Handling
 
-This describes how we handle the response for the `uri`
-controller after the user has arrived at our site with an `spToken` URL
-parameter.
+This describes how we handle the response for the `uri` controller after the
+user has arrived at our site with an `spToken` URL parameter.
 
-If the `spToken` is invalid, we'll render a failure view to the user which
-contains a link to another page where a user can optionally resend their
-verification email to themselves.
+If the `spToken` query parameter is invalid, we'll render a failure view to the
+user which contains a form that:
+
+- Displays an error message, and
+- Allows a user to enter their email address to resend the verification email to
+  themselves.
 
 If the request is `Accept: application/json`, the response should be a JSON
 object of the format `{ error: String  }` where String is a user-friendly
@@ -87,28 +87,23 @@ message and the status of the response should be 400.
 <a href="#top">Back to Top</a>
 
 
-## <a name="GET_Response_Handling"></a> GET Response Handling
+## <a name="GET_RESPONSE_HANDLING"></a> GET Response Handling
 
-This describes how we handle the response for the `uri`
-controller, after the user has arrived at our site with an `spToken` URL
-parameter.
+This describes how we handle the response for the `uri` controller, after the
+user has arrived at our site with an `spToken` query parameter.
 
-If the `spToken` is valid, we'll render the confirmation view to the user and
+If `spToken` is valid, we'll render the confirmation view to the user and
 consume the `spToken` with our underlying API -- then eventually redirect the
-user to the `REDIECT_URL` setting with a new user session (if `autoLogin` is
-True).
+user to the `nextUri?status=verified` setting with a new user session (if
+`autoLogin` is `true`).
 
 If the request is `Accept: application/json`, the status of the response should
 be an HTTP 200 and there should be no body.
 
-If not `spToken` param is present, this should render an HTML page with a form
-that allows the user to enter their account email address and will attempt to
-resend the verification email to the user.
-
 <a href="#top">Back to Top</a>
 
 
-## <a name="POST_Error_Handling"></a> POST Error Handling
+## <a name="POST_ERROR_HANDLING"></a> POST Error Handling
 
 Regardless of whether or not the email address the user entered was successful,
 we should render a success message along the lines of *"If the email address you
@@ -121,7 +116,7 @@ be an HTTP 200 and there should be no body.
 <a href="#top">Back to Top</a>
 
 
-## <a name="POST_Response_Handling"></a> POST Response Handling
+## <a name="POST_RESPONSE_HANDLING"></a> POST Response Handling
 
 This describes how we handle the POST response for the `uri`
 controller, after the user has submitted form data.
