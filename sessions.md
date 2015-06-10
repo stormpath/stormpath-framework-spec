@@ -13,6 +13,7 @@
   * [path](#path)
   * [domain](#domain)
 * [Incoming Request Handling](#incoming-request-handling)
+* [/me Handling](#me-handling)
 
 
 ## Feature Description
@@ -160,5 +161,67 @@ must:
   retrieve the user's account using the `href` property directly.  We should
   then make this account object available to the developer's code so the
   developer can recognize the user making the request.
+
+<a href="#top">Back to Top</a>
+
+
+## <a name="me-handling"></a> /me Handling
+
+In situations where a cookie cannot be accessed via Javascript (eg: httpOnly is
+true), in order to retrieve the current user's account information, our
+libraries should provide an optional route (`/me`), which returns the current
+user's account information as a JSON object.
+
+**Example Request**
+
+```
+GET /me
+```
+
+**Example Response**
+
+```json
+{
+  href: "https://api.stormpath.com/v1/accounts/xxx",
+  username: "robert@stormpath.com",
+  email: "robert@stormpath.com",
+  givenName: "Robert",
+  middleName: null,
+  surname: "Damphousse",
+  fullName: "Robert Damphousse",
+  status: "ENABLED",
+  createdAt: "2014-04-07T16:38:44.000Z",
+  modifiedAt: "2014-08-28T22:35:10.000Z",
+  emailVerificationToken: null,
+  customData: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/customData"
+  },
+  providerData: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/providerData"
+  },
+  directory: {
+    href: "https://api.stormpath.com/v1/directories/xxx"
+  },
+  tenant: {
+    href: "https://api.stormpath.com/v1/tenants/xxx"
+  },
+  groups: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/groups"
+  },
+  applications: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/applications"
+  },
+  groupMemberships: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/groupMemberships"
+  },
+  apiKeys: {
+    href: "https://api.stormpath.com/v1/accounts/xxx/apiKeys"
+  }
+}
+```
+
+**NOTE**: If a request is made to `/me?`, and query strings used will be passed
+into our underlying SDK.  This is useful for things like expanding custom data,
+etc.
 
 <a href="#top">Back to Top</a>
