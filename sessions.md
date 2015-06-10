@@ -6,14 +6,8 @@
 ## Table of Contents
 
 * [Options](#Options)
-  * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLE_LOGIN](#ENABLE_LOGIN)
-  * [REDIRECT_URL](#REDIRECT_URL)
-  * [LOGIN_URL](#LOGIN_URL)
-  * [GOOGLE_CALLBACK_URL](#GOOGLE_CALLBACK_URL)
-  * [FACEBOOK_CALLBACK_URL](#FACEBOOK_CALLBACK_URL)
-  * [GITHUB_CALLBACK_URL](#GITHUB_CALLBACK_URL)
-  * [LINKEDIN_CALLBACK_URL](#LINKEDIN_CALLBACK_URL)
+  * [ttl](#ttl)
+  * [tti](#tti)
 * [Incoming Request Handling](#incoming-request-handling)
 
 
@@ -53,42 +47,48 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 ```json
 {
   "session": {
-    
+    "ttl": 3600,
+    "tti": 900
+    "httpOnly": true,
+    "secure": null,
+    "path": "/",
+    "domain": null,
   }
 }
 ```
 
 
-#### <a name="AUTO_REDIRECT"></a> AUTO_REDIRECT
+#### <a name="ttl"></a> ttl
 
-If enabled, and a user already has a valid session, instead of re-rendering the
-login page we will redirect this user to the URL specified by `REDIRECT_URL`.
+This option represents the maximum amount of time (*in seconds*) that a user
+may remain logged in via a session.
 
-If disabled, we won't redirect the user anywhere and will simply re-render the
-login page.  However -- in this case we will *also* destroy any existing user
-sessions.  This ensures that odd edge cases won't come up wherein a user is
-viewing a login page but can see their account information in some place (like a
-menu bar).
+Once this time has passed, a new session will need to be created.
+
+When a user first authenticates to the website, this setting's value will be
+used as the JWT's expiration timestamp.
+
+**NOTE**: If this value is set to `0`, this is a special case.  Our library will
+set the `ttl` value to ten years in the future (*essentially, forever*).
 
 <a href="#top">Back to Top</a>
 
 
-#### <a name="ENABLE_LOGIN"></a> ENABLE_LOGIN
+#### <a name="tti"></a> tti
 
-If `True` this feature will be enabled and our library will intercept requests
-at the [LOGIN_URL](#LOGIN_URL).  When the application server starts, we will
-query the user's Stormpath Application to discover what Account Store Mappings
-are available.  We will then pre-load these so that the login page displays all
-available forms of login (*this might include username / email and password
-login, Facebook Login, Google Login, etc.*).
+This option represents the maximum amount of time (*in seconds*) that a user
+may remain logged in via a session *before the session's length is extended*.
 
-If `False` this feature is disabled and the base framework will be responsible
-for the [LOGIN_URL](#LOGIN_URL), likely resulting in a 404 Not Found error.
+Once this time has passed, a new session will need to be created.
 
-**NOTE**: If this feature is enabled, and no Account Stores are mapped to this
-Application -- we will throw an error during initialization since there are no
-possible ways for a user to authenticate.
+Each time an authenticated user makes a request to the website, the `tti` value
+will be used to update the cookie's expiration time by this amount.  This lets
+you build websites where unless a user is inactive (*or the maximum session ttl
+has been reached*), a user can continue browsing the site with an active session
+indefinitely.
 
+**NOTE**: If this value is set to `0`, this is a special case.  Our library will
+set the `tti` value to 10 years in the future (*essentially, forever*).
 
 <a href="#top">Back to Top</a>
 
