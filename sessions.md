@@ -182,40 +182,40 @@ GET /me
 
 ```json
 {
-  href: "https://api.stormpath.com/v1/accounts/xxx",
-  username: "robert@stormpath.com",
-  email: "robert@stormpath.com",
-  givenName: "Robert",
-  middleName: null,
-  surname: "Damphousse",
-  fullName: "Robert Damphousse",
-  status: "ENABLED",
-  createdAt: "2014-04-07T16:38:44.000Z",
-  modifiedAt: "2014-08-28T22:35:10.000Z",
-  emailVerificationToken: null,
-  customData: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/customData"
+  "href": "https://api.stormpath.com/v1/accounts/xxx",
+  "username": "robert@stormpath.com",
+  "email": "robert@stormpath.com",
+  "givenName": "Robert",
+  "middleName": null,
+  "surname": "Damphousse",
+  "fullName": "Robert Damphousse",
+  "status": "ENABLED",
+  "createdAt": "2014-04-07T16:38:44.000Z",
+  "modifiedAt": "2014-08-28T22:35:10.000Z",
+  "emailVerificationToken": null,
+  "customData": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/customData"
   },
-  providerData: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/providerData"
+  "providerData": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/providerData"
   },
-  directory: {
-    href: "https://api.stormpath.com/v1/directories/xxx"
+  "directory": {
+    "href": "https://api.stormpath.com/v1/directories/xxx"
   },
-  tenant: {
-    href: "https://api.stormpath.com/v1/tenants/xxx"
+  "tenant": {
+    "href": "https://api.stormpath.com/v1/tenants/xxx"
   },
-  groups: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/groups"
+  "groups": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/groups"
   },
-  applications: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/applications"
+  "applications": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/applications"
   },
-  groupMemberships: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/groupMemberships"
+  "groupMemberships": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/groupMemberships"
   },
-  apiKeys: {
-    href: "https://api.stormpath.com/v1/accounts/xxx/apiKeys"
+  "apiKeys": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx/apiKeys"
   }
 }
 ```
