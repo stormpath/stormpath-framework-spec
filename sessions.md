@@ -8,6 +8,10 @@
 * [Options](#Options)
   * [ttl](#ttl)
   * [tti](#tti)
+  * [httpOnly](#http-only)
+  * [secure](#secure)
+  * [path](#path)
+  * [domain](#domain)
 * [Incoming Request Handling](#incoming-request-handling)
 
 
@@ -89,6 +93,54 @@ indefinitely.
 
 **NOTE**: If this value is set to `0`, this is a special case.  Our library will
 set the `tti` value to 10 years in the future (*essentially, forever*).
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="http-only"></a> httpOnly
+
+This option determines whether or not this cookie can be read by Javascript code
+on the browser.
+
+**NOTE**: Disabling this option is a potential security issue, as your access
+tokens could be hijacked via XSS.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="secure"></a> secure
+
+This option determines whether or not our cookies can be set over a non-https
+connection.  By default, this option is null, which means we will attempt to
+inspect the protocol of the incoming request, and make a decision of what to do
+automatically.
+
+Defining this value forces the `secure` mode to be either enabled or disabled
+all the time.
+
+**NOTE**: Disabling this option is a potential security issue, as setting
+cookies over a non-https connection is ripe for traffic inspection attacks.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="path"></a> path
+
+This option determines what URI paths will be able to read our cookies.  By
+default, this is set to the root path (`/`), meaning our cookies will be
+available to every URI on the web server.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="domain"></a> domain 
+
+This option determines what domain(s), can read this cookie value.  By default,
+this is `null`, meaning only the current domain where the cookie is set can use
+read this cookie value.
+
+The only time you might want to set this value is if you want to allow
+subdomains to access your cookies as well.
 
 <a href="#top">Back to Top</a>
 
