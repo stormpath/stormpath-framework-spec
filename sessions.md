@@ -8,6 +8,7 @@
 * [Options](#Options)
   * [ttl](#ttl)
   * [tti](#tti)
+  * [cookieName](#cookie-name)
   * [httpOnly](#http-only)
   * [secure](#secure)
   * [path](#path)
@@ -54,6 +55,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
   "session": {
     "ttl": 3600,
     "tti": 900,
+    "cookieName": "access_token",
     "httpOnly": true,
     "secure": null,
     "path": "/",
@@ -142,6 +144,14 @@ read this cookie value.
 
 The only time you might want to set this value is if you want to allow
 subdomains to access your cookies as well.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="cookie-name"></a> cookieName
+
+This option determines what the cookie name we store authentication information
+will be called.  By default, this is set to `"access_token"`.
 
 <a href="#top">Back to Top</a>
 
