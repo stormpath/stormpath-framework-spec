@@ -52,11 +52,11 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 {
   "session": {
     "ttl": 3600,
-    "tti": 900
+    "tti": 900,
     "httpOnly": true,
     "secure": null,
     "path": "/",
-    "domain": null,
+    "domain": null
   }
 }
 ```
