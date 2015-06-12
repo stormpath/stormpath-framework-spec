@@ -253,7 +253,14 @@ This describes how we handle the response, after an account has been
 successfully created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with an empty body.
+  200 with a JSON body.  The body should only contain a single JSON field:
+  `status`.  It should look something like this:
+
+```json
+{
+  "status": "VERIFIED"
+}
+```
 
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
