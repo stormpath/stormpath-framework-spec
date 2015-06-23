@@ -31,15 +31,8 @@ facilitate self-service password reset of existing user accounts.
 
 If an application's default account store has the password reset workflow
 enabled, our library MUST intercept incoming GET requests for the
-`FORGOT_PASSWORD_URL` AND `RESET_PASSWORD_URL` and render the appropriate
-view, as an HTML Page or Single Page Application.
-
-The `FORGOT_PASSWORD_URL` should render a form which allows the user to request
-a password reset token to be sent to their email address.
-
-The `RESET_PASSWORD_URL` should render a form which allows the user to reset
-their password, but only after verifying the `sptoken` that is in the URL (they
-arrived by clicking on the link that we sent to their email address).
+`uri` values presented in this document, and render the appropriate views as
+either an HTML page or Single Page Application.
 
 
 ## <a name="options"></a> Options
