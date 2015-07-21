@@ -253,13 +253,8 @@ This describes how we handle the response, after an account has been
 successfully created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with a JSON body.  The body should only contain a single JSON field:
-  `status`.  It should look something like this:
-
-```json
-{
-  "status": "VERIFIED"
-}
+  200 with a JSON body.  The body should be the account object that was returned
+  from the account creation call.
 ```
 
 * If the request is `Accept: text/html`, and..
@@ -270,6 +265,8 @@ successfully created.
     * `False`: inform the user that their account has been created and they may
       now login
   * The newly created account status is UNVERIFIED, then render a view which
-  tells the user to check their email for a verification link
+  tells the user to check their email for a verification link.  This view should
+  containa  link to the VERIFY view, reading "didn't get the email? click here
+  to re-send the message."
 
 <a href="#top">Back to Top</a>
