@@ -93,9 +93,10 @@ This describes how we handle the response for the `uri` controller, after the
 user has arrived at our site with an `spToken` query parameter.
 
 If `spToken` is valid, we'll render the confirmation view to the user and
-consume the `spToken` with our underlying API -- then eventually redirect the
+consume the `spToken` with our underlying API -- then redirect the
 user to the `nextUri?status=verified` setting with a new user session (if
-`autoLogin` is `true`).
+`autoLogin` is `true`).  If `autoLogin` is `false`, notify the user that their
+account is verified and provide a link to the login page.
 
 If the request is `Accept: application/json`, the status of the response should
 be an HTTP 200 and there should be no body.
