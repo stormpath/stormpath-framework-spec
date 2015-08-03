@@ -35,8 +35,8 @@ the configured Stormpath application
 
 - The cookies will always be named `accessToken` and `refreshToken`.
 
-- The Expiration time each cookie should be determed by the `exp` claim of
-the token
+- The Expiration time each cookie should be determined by the `exp` claim of
+the token, and this value is controlled by the Oauth Policy of the Application
 
 **NOTE**: We do NOT need to support server-side session storage, because the way
 this works is like so: a JWT is created which contains an account href.  The
