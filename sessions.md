@@ -6,13 +6,11 @@
 ## Table of Contents
 
 * [Options](#Options)
-  * [ttl](#ttl)
-  * [tti](#tti)
-  * [cookieName](#cookie-name)
   * [httpOnly](#http-only)
   * [secure](#secure)
   * [path](#path)
   * [domain](#domain)
+  * [validationStrategy](#validation-strategy)
 * [Incoming Request Handling](#incoming-request-handling)
 * [/me Handling](#me-handling)
 
@@ -24,18 +22,21 @@ sessions and session management.
 
 There are a few things we'll do in respect to user sessions:
 
-- We'll always store a signed JSON Web Token (JWT) in an unencrypted, unsigned
-  browser cookie.  If a user inspects their cookies in their browser, they
-  should be able to see the JWT directly.
+- We'll always store an access and refresh token in the browser,
+these tokens will be obtained by using the password grant flow on
+the configured Stormpath application
+
 - This cookie will always be set with the `HttpOnly` flag set, meaning that no
   Javascript access will be allowed to this cookie.
+
 - This cookie will be set with the `secure` flag if the application is in
   production -- this ensures that no cookies will be set over plain old HTTP
   (*leaking information to potential attackers*).
-- The cookie will always be named `access_token`.
-- The cookie will have a set `ttl` and `tti` which are developer-configurable.
-  NOTE: The `ttl` is the absolute expiration time of the JWT, while the `tti` is
-  the absolute expiration of the cookie itself.
+
+- The cookies will always be named `accessToken` and `refreshToken`.
+
+- The Expiration time each cookie should be determed by the `exp` claim of
+the token
 
 **NOTE**: We do NOT need to support server-side session storage, because the way
 this works is like so: a JWT is created which contains an account href.  The
@@ -53,52 +54,14 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 ```json
 {
   "session": {
-    "ttl": 3600,
-    "tti": 900,
-    "cookieName": "access_token",
     "httpOnly": true,
     "secure": null,
     "path": "/",
-    "domain": null
+    "domain": null,
+    "validationStrategy": "stormpath"
   }
 }
 ```
-
-
-#### <a name="ttl"></a> ttl
-
-This option represents the maximum amount of time (*in seconds*) that a user
-may remain logged in via a session.
-
-Once this time has passed, a new session will need to be created.
-
-When a user first authenticates to the website, this setting's value will be
-used as the JWT's expiration timestamp.
-
-**NOTE**: If this value is set to `0`, this is a special case.  Our library will
-set the `ttl` value to ten years in the future (*essentially, forever*).
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="tti"></a> tti
-
-This option represents the maximum amount of time (*in seconds*) that a user
-may remain logged in via a session *before the session's length is extended*.
-
-Once this time has passed, a new session will need to be created.
-
-Each time an authenticated user makes a request to the website, the `tti` value
-will be used to update the cookie's expiration time by this amount.  This lets
-you build websites where unless a user is inactive (*or the maximum session ttl
-has been reached*), a user can continue browsing the site with an active session
-indefinitely.
-
-**NOTE**: If this value is set to `0`, this is a special case.  Our library will
-set the `tti` value to 10 years in the future (*essentially, forever*).
-
-<a href="#top">Back to Top</a>
-
 
 #### <a name="http-only"></a> httpOnly
 
@@ -136,7 +99,7 @@ available to every URI on the web server.
 <a href="#top">Back to Top</a>
 
 
-#### <a name="domain"></a> domain 
+#### <a name="domain"></a> domain
 
 This option determines what domain(s), can read this cookie value.  By default,
 this is `null`, meaning only the current domain where the cookie is set can use
@@ -148,29 +111,39 @@ subdomains to access your cookies as well.
 <a href="#top">Back to Top</a>
 
 
-#### <a name="cookie-name"></a> cookieName
+#### <a name="validation-strategy"></a> validationStrategy
 
-This option determines what the cookie name we store authentication information
-will be called.  By default, this is set to `"access_token"`.
+Determines how we validate an access token.  There are three strategies:
+
+* **local** - only verify the signature, expiration, and issuer
+* **stormpath** - always validate against Stormpath, for additional checks
+such as Account and Application status.  This is the default, but the most
+consistent (will always be aware of Stormpath resource statuses).
+* **random** - 50/50 chance, per request, of **local** or **stormpath** being used.
+This balances speed with consistency.
 
 <a href="#top">Back to Top</a>
 
 
 ## <a name="incoming-request-handling"></a> Incoming Request Handling
 
-When a request is made to a user's web application, our Stormpath libraries
-must:
+For any request that comes into the framework, we attempt to validate the access
+token, and, if invalid, we'll attempt to extend the session by getting and
+setting a new access token (using the refresh token).
 
-- Intercept the incoming request before it reaches the developer's code.
-- Inspect the cookies, and look for an `access_token` cookie.
-- If the `access_token` cookie is present, we should retrieve the value inside
-  as a string, and decode this as a JWT.
-- If the JWT decoding fails for any reason (token is expired, invalid signature,
-  etc.) -- we should reject the request with a 401 UNAUTHORIZED and no body.
-- If the JWT is valid, we should retrieve the `href` property from the JWT, and
-  retrieve the user's account using the `href` property directly.  We should
-  then make this account object available to the developer's code so the
-  developer can recognize the user making the request.
+If the access token is valid, we'll simply fetch the account object and attach
+it to the request context.
+
+If for any reason, the refresh token is invalid, we'll immediately set the
+`accessToken` and `refreshToken` cookie values to empty strings, ensuring they
+are removed from the browser.
+
+If the developer has declared, "loginRequired" for this route, and if the
+requested content type is `json`, we'll return a 401 response -- otherwise if
+the content type  is HTML, we should 302 Redirect to the login view.  This flow
+ensures that both client side JS frameworks and server side frameworks work as
+expected.
+
 
 <a href="#top">Back to Top</a>
 
