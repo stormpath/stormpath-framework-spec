@@ -18,10 +18,22 @@ support:
 * LinkedIn
 
 For server-side rendered pages, we should implement the page-based redirect flow
-with the provider.  For front-end integrations, use the pop-up window approach.
+with the provider.  The login buttons which start the flow are rendered by the
+login page, see [login.md]()
+
+For front-end integrations, use the pop-up window approach and submit the
+authentication result from the provider to our API via the login JSON api, see
+[login.md]()
 
 In both situations, the default login form should render the login buttons for
 any social provider that is configured.  A good example of this is ID Site.
+
+All providers will register a callback URI in the framework.  This is to support
+the page-based social login flows.  This interceptor will read in the access
+token from the query parameters, create or update the account in Stormpath,
+create a session for the user, and finally redirect the user to the
+`REDIRECT_URL` url (for HTMK requests) or render the found account as JSON (for
+JSON requests).
 
 ## <a name="Options"></a> Options
 
@@ -62,9 +74,11 @@ the client ID is used by the provider's front-end JavaScript framework).
 ```json
 {
   "google": {
-    "clientID": "xxxx"
+    "clientId": "xxxx"
   }
 }
 ```
 
 <a href="#top">Back to Top</a>
+
+[login.md]: login.md
