@@ -7,7 +7,7 @@
 
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLE_REGISTRATION](#ENABLE_REGISTRATION)
+  * [ENABLED](#ENABLED)
   * [REDIRECT_URL](#REDIRECT_URL)
   * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
@@ -19,7 +19,7 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
-If enabled via the ENABLE_REGISTRATION option, our library MUST intercept
+If enabled via the ENABLED option, our library MUST intercept
 incoming requests for the REGISTRATION_URL and either render a registration
 form (GET) or handle a POST request from the registration form.
 
@@ -58,7 +58,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | ENABLE_GIVEN_NAME                | False         |
 | ENABLE_MIDDLE_NAME               | False         |
 | ENABLE_PASSWORD_CONFIRMATION     | False         |
-| ENABLE_REGISTRATION              | False         |
+| ENABLED              | False         |
 | ENABLE_SURNAME                   | False         |
 | ENABLE_USERNAME                  | False         |
 | REDIRECT_URL                     | /             |
@@ -98,7 +98,7 @@ If enabled, expose a field on the form for entering the user's middle name.
 
 
 
-#### <a name="ENABLE_REGISTRATION"></a> ENABLE_REGISTRATION
+#### <a name="ENABLED"></a> ENABLED
 
 If `True` this feature will be enabled and our library will intercept requests
 at the [REGISTRATION_URL](#REGISTRATION_URL)
