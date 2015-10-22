@@ -7,9 +7,9 @@
 
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLE_LOGIN](#ENABLE_LOGIN)
+  * [ENABLED](#ENABLED)
   * [REDIRECT_URL](#REDIRECT_URL)
-  * [LOGIN_URL](#LOGIN_URL)
+  * [URI](#URI)
   * [GOOGLE_CALLBACK_URL](#GOOGLE_CALLBACK_URL)
   * [FACEBOOK_CALLBACK_URL](#FACEBOOK_CALLBACK_URL)
   * [GITHUB_CALLBACK_URL](#GITHUB_CALLBACK_URL)
@@ -24,8 +24,8 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service login of user accounts.
 
-If enabled via the `ENABLE_LOGIN` option, our library MUST intercept
-incoming requests for the `LOGIN_URL` and either render a login form (GET) or
+If enabled via the `ENABLED` option, our library MUST intercept
+incoming requests for the `URI` and either render a login form (GET) or
 handle a POST request from the login form.
 
 GET requests should serve an HTML Page OR Single Page Application, in either
@@ -54,9 +54,9 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | Option                           | Default Value       |
 | -------------------------------- |---------------------|
 | AUTO_REDIRECT                    | True                |
-| ENABLE_LOGIN                     | False               |
+| ENABLED                          | True                |
 | REDIRECT_URL                     | /                   |
-| LOGIN_URL                        | /login              |
+| URI                              | /login              |
 | GOOGLE_CALLBACK_URL              | /callbacks/google   |
 | FACEBOOK_CALLBACK_URL            | /callbacks/facebook |
 | GITHUB_CALLBACK_URL              | /callbacks/github   |
@@ -77,17 +77,17 @@ menu bar).
 <a href="#top">Back to Top</a>
 
 
-#### <a name="ENABLE_LOGIN"></a> ENABLE_LOGIN
+#### <a name="ENABLED"></a> ENABLED
 
 If `True` this feature will be enabled and our library will intercept requests
-at the [LOGIN_URL](#LOGIN_URL).  When the application server starts, we will
+at the [URI](#URI).  When the application server starts, we will
 query the user's Stormpath Application to discover what Account Store Mappings
 are available.  We will then pre-load these so that the login page displays all
 available forms of login (*this might include username / email and password
 login, Facebook Login, Google Login, etc.*).
 
 If `False` this feature is disabled and the base framework will be responsible
-for the [LOGIN_URL](#LOGIN_URL), likely resulting in a 404 Not Found error.
+for the [URI](#URI), likely resulting in a 404 Not Found error.
 
 **NOTE**: If this feature is enabled, and no Account Stores are mapped to this
 Application -- we will throw an error during initialization since there are no
@@ -100,12 +100,12 @@ possible ways for a user to authenticate.
 #### <a name="REDIRECT_URL"></a> REDIRECT_URL
 
 Where to send the user after successful login, if
-[ENABLE_LOGIN](#ENABLE_LOGIN) is `True`
+[ENABLED](#ENABLED) is `True`
 
 <a href="#top">Back to Top</a>
 
 
-#### <a name="LOGIN_URL"></a> LOGIN_URL
+#### <a name="URI"></a> URI
 
 This is the URI portion of an entire URL that our library will attach an
 interceptor to for GET and POST requests.
