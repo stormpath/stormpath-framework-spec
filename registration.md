@@ -7,7 +7,7 @@
 
 * [Options](#Options)
   * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLE_REGISTRATION](#ENABLE_REGISTRATION)
+  * [ENABLED](#ENABLED)
   * [REDIRECT_URL](#REDIRECT_URL)
   * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
@@ -19,7 +19,7 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
-If enabled via the ENABLE_REGISTRATION option, our library MUST intercept
+If enabled via the ENABLED option, our library MUST intercept
 incoming requests for the REGISTRATION_URL and either render a registration
 form (GET) or handle a POST request from the registration form.
 
@@ -58,7 +58,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | ENABLE_GIVEN_NAME                | False         |
 | ENABLE_MIDDLE_NAME               | False         |
 | ENABLE_PASSWORD_CONFIRMATION     | False         |
-| ENABLE_REGISTRATION              | False         |
+| ENABLED              | False         |
 | ENABLE_SURNAME                   | False         |
 | ENABLE_USERNAME                  | False         |
 | REDIRECT_URL                     | /             |
@@ -98,7 +98,7 @@ If enabled, expose a field on the form for entering the user's middle name.
 
 
 
-#### <a name="ENABLE_REGISTRATION"></a> ENABLE_REGISTRATION
+#### <a name="ENABLED"></a> ENABLED
 
 If `True` this feature will be enabled and our library will intercept requests
 at the [REGISTRATION_URL](#REGISTRATION_URL)
@@ -253,7 +253,9 @@ This describes how we handle the response, after an account has been
 successfully created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with an empty body.
+  200 with a JSON body.  The body should be the account object that was returned
+  from the account creation call.
+```
 
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
@@ -263,6 +265,8 @@ successfully created.
     * `False`: inform the user that their account has been created and they may
       now login
   * The newly created account status is UNVERIFIED, then render a view which
-  tells the user to check their email for a verification link
+  tells the user to check their email for a verification link.  This view should
+  containa  link to the VERIFY view, reading "didn't get the email? click here
+  to re-send the message."
 
 <a href="#top">Back to Top</a>
