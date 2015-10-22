@@ -1,5 +1,7 @@
 ---
 web:
+  domain: null
+  basePath: null
   oauth2:
     enabled: true
     uri: "/oauth/token"
@@ -13,13 +15,13 @@ web:
     name: "access_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
   refreshTokenCookie:
     name: "refresh_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
   register:
     enabled: true

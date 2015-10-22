@@ -1,72 +1,109 @@
 <a name="#top">Back to Top</a>
 
-# Sessions
+# Cookie Authentication
 
+When a user authenticates with a web browser, we need to persist that authentication
+result so that the user does not have to present their credentials on every request.
+To achieve this we will use our OAuth2 password grant flow, and store the
+tokens in cookies.
 
-## Table of Contents
+**NOTE**: This is *not* a "session" implementation, there is no server-side
+state being managed for the developer.  This is pure authentication, using
+cookies as the secure storage location on the client.
 
-* [Options](#Options)
-  * [httpOnly](#http-only)
-  * [secure](#secure)
-  * [path](#path)
-  * [domain](#domain)
-  * [validationStrategy](#validation-strategy)
-* [Incoming Request Handling](#incoming-request-handling)
-* [/me Handling](#me-handling)
+### Authentication Flow
 
+1. The user visits the login page and submits their username and password
 
-## Feature Description
+2. The integration uses the SDK to perform the password grant exchange, using
+    the Stormpath Application's `/oauth/token` endpoint.
 
-This document describes the how our framework integrations should handle user
-sessions and session management.
+3. The integration collects the access token and refresh token from the SDK
+    response in the previous step.  It then responds to the browser request by
+    settings these values in cookies.
 
-There are a few things we'll do in respect to user sessions:
+4. Subsequent requests by the browser will supply these cookies which contain the
+    access and refresh tokens.  The integration should perform the following
+    logic, using the SDK's relevant JWT and OAuth authenticators:
 
-- We'll always store an access and refresh token in the browser,
-these tokens will be obtained by using the password grant flow on
-the configured Stormpath application
+  * If the access token is valid, authenticate the request
+  * If the access token is invalid, attempt to use the refresh token to get a
+  new access token
+  * If a new access token is obtained, authenticate the request and store this
+  new token value in the access token cookie
+  * If a new access token cannot be obtained, reject the request and delete the
+    refresh token cookie
 
-- This cookie will always be set with the `HttpOnly` flag set, meaning that no
-  Javascript access will be allowed to this cookie.
+### Rejecting Requests
 
-- This cookie will be set with the `secure` flag if the application is in
-  production -- this ensures that no cookies will be set over plain old HTTP
-  (*leaking information to potential attackers*).
+If the request cannot be authenticated, how to respond will depend on the
+accept type of the request:
 
-- The cookies will always be named `accessToken` and `refreshToken`.
+`Accept: text/html` - respond with a 302 redirect to the login view, with
+the requested url provided as the `?next=` parameter
 
-- The Expiration time each cookie should be determined by the `exp` claim of
-the token, and this value is controlled by the Oauth Policy of the Application
+`Accept: application/json` - respond with `401 Unauthorized` and an empty
+body
 
-**NOTE**: We do NOT need to support server-side session storage, because the way
-this works is like so: a JWT is created which contains an account href.  The
-account href is persisted in our internal Stormpath SDK cache.  This means no
-server side session storage is necessary as the caching optimizations are
-already handled internally (*by us*).
+### Cookie Flags
 
+For each cookie, access token and refresh token, use these rules to determine
+the flags to set on the cookies when you are sending them to the browser:
 
-## <a name="Options"></a> Options
+* The `expires` flag should be determined by the `ttl` value for the
+token, as defined by the Oauth Policy of the Stormpath Application.
 
-This table is a list of all the options that are required by this feature.
-Detailed descriptions follow.  How the option names are translated into the
-framework language (e.g. to camel case, or not)? Is not specified here.
+* The `HttpOnly` flag should be set as follows:
 
-```json
-{
-  "session": {
-    "httpOnly": true,
-    "secure": null,
-    "path": "/",
-    "domain": null,
-    "validationStrategy": "stormpath"
-  }
-}
+  * If `web.<accessTokenCookie|refreshTokenCookie>.httpOnly` is false, do not set this flag
+  * Othwerwise, set this flag to true
+
+* The `path` flag should be set as follows:
+
+  * If `web.<accessTokenCookie|refreshTokenCookie>.path` is defined, use that value
+  * Othwerwise, use `web.basePath` if defined
+  * Finally, fallback to "/" as the value
+
+* The `domain` flag should be set as follows:
+
+  * If `web.<accessTokenCookie|refreshTokenCookie>.domain` is defined, use that value
+  * Othwerwise, use `web.domain` if defined
+  * Finally, fallback to "" as the value
+
+* The `secure` flag should be set as follows:
+
+  * If `web.<accessTokenCookie|refreshTokenCookie>.secure` is defined, use that value
+  * Othwerwise, the framework should make a best effort to determine if the
+    incoming request is HTTPS and set the `secure` flag if so.
+
+## <a name="Configuration Options"></a> Configuration Options
+
+The developer has control over the name of the cookie and the flags that
+control the cookie behavior in the browser.  The lifetime of the cookies is
+controlled by the application's OAuth Policy, and as such is not represented
+in these option blocks.  But you will need to know what those policy settings
+are, and you will find them at `web.oauth2.password`.
+
+```yaml
+web:
+  accessTokenCookie:
+    name: "access_token"
+    httpOnly: true
+    secure: null
+    path: "/"
+    domain: null
+  refreshTokenCookie:
+    name: "refresh_token"
+    httpOnly: true
+    secure: null
+    path: "/"
+    domain: null
 ```
 
 #### <a name="http-only"></a> httpOnly
 
-This option determines whether or not this cookie can be read by Javascript code
-on the browser.
+This option determines whether or not this cookie can be read by JavaScript code
+on the browser.  By default this is true, as this is secure.
 
 **NOTE**: Disabling this option is a potential security issue, as your access
 tokens could be hijacked via XSS.
@@ -76,135 +113,33 @@ tokens could be hijacked via XSS.
 
 #### <a name="secure"></a> secure
 
-This option determines whether or not our cookies can be set over a non-https
-connection.  By default, this option is null, which means we will attempt to
-inspect the protocol of the incoming request, and make a decision of what to do
-automatically.
+This flag informs the browser what types of transport can be used for sending
+the cookie.  If this option is `true`, then the browser will only send the
+cookie if the connection to the server is using HTTPS.
 
-Defining this value forces the `secure` mode to be either enabled or disabled
-all the time.
+This value is null by default, which means that either (a) the developer must
+explicitly set this value or (b) the framework should make a best effort attempt
+to determine if the incoming request is occurring over an HTTPS connection.
 
-**NOTE**: Disabling this option is a potential security issue, as setting
-cookies over a non-https connection is ripe for traffic inspection attacks.
+It is our recommendation that the developer define this value as `true`, via
+configuration, in their production environment.
+
+**NOTE**: Setting this option to false is a security problem, as sending
+cookies over a non-https connection is vulnerable to man-in-the-middle attacks.
 
 <a href="#top">Back to Top</a>
 
 
 #### <a name="path"></a> path
 
-This option determines what URI paths will be able to read our cookies.  By
-default, this is set to the root path (`/`), meaning our cookies will be
-available to every URI on the web server.
+This option determines what URI paths will be able to read the cookie.
 
 <a href="#top">Back to Top</a>
 
 
 #### <a name="domain"></a> domain
 
-This option determines what domain(s), can read this cookie value.  By default,
-this is `null`, meaning only the current domain where the cookie is set can use
-read this cookie value.
-
-The only time you might want to set this value is if you want to allow
-subdomains to access your cookies as well.
+This option determines what domain(s), can read this cookie value.
 
 <a href="#top">Back to Top</a>
 
-
-#### <a name="validation-strategy"></a> validationStrategy
-
-Determines how we validate an access token.  There are three strategies:
-
-* **local** - only verify the signature, expiration, and issuer
-* **stormpath** - always validate against Stormpath, for additional checks
-such as Account and Application status.  This is the default, but the most
-consistent (will always be aware of Stormpath resource statuses).
-* **random** - 50/50 chance, per request, of **local** or **stormpath** being used.
-This balances speed with consistency.
-
-<a href="#top">Back to Top</a>
-
-
-## <a name="incoming-request-handling"></a> Incoming Request Handling
-
-For any request that comes into the framework, we attempt to validate the access
-token, and, if invalid, we'll attempt to extend the session by getting and
-setting a new access token (using the refresh token).
-
-If the access token is valid, we'll simply fetch the account object and attach
-it to the request context.
-
-If for any reason, the refresh token is invalid, we'll immediately set the
-`accessToken` and `refreshToken` cookie values to empty strings, ensuring they
-are removed from the browser.
-
-If the developer has declared, "loginRequired" for this route, and if the
-requested content type is `json`, we'll return a 401 response -- otherwise if
-the content type  is HTML, we should 302 Redirect to the login view.  This flow
-ensures that both client side JS frameworks and server side frameworks work as
-expected.
-
-
-<a href="#top">Back to Top</a>
-
-
-## <a name="me-handling"></a> /me Handling
-
-In situations where a cookie cannot be accessed via Javascript (eg: httpOnly is
-true), in order to retrieve the current user's account information, our
-libraries should provide an optional route (`/me`), which returns the current
-user's account information as a JSON object.
-
-**Example Request**
-
-```
-GET /me
-```
-
-**Example Response**
-
-```json
-{
-  "href": "https://api.stormpath.com/v1/accounts/xxx",
-  "username": "robert@stormpath.com",
-  "email": "robert@stormpath.com",
-  "givenName": "Robert",
-  "middleName": null,
-  "surname": "Damphousse",
-  "fullName": "Robert Damphousse",
-  "status": "ENABLED",
-  "createdAt": "2014-04-07T16:38:44.000Z",
-  "modifiedAt": "2014-08-28T22:35:10.000Z",
-  "emailVerificationToken": null,
-  "customData": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/customData"
-  },
-  "providerData": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/providerData"
-  },
-  "directory": {
-    "href": "https://api.stormpath.com/v1/directories/xxx"
-  },
-  "tenant": {
-    "href": "https://api.stormpath.com/v1/tenants/xxx"
-  },
-  "groups": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/groups"
-  },
-  "applications": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/applications"
-  },
-  "groupMemberships": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/groupMemberships"
-  },
-  "apiKeys": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/apiKeys"
-  }
-}
-```
-
-**NOTE**: If a request is made to `/me?`, and query strings used will be passed
-into our underlying SDK.  This is useful for things like expanding custom data,
-etc.
-
-<a href="#top">Back to Top</a>
