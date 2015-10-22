@@ -7,6 +7,8 @@ web:
       enabled: true
       accessToken:
         ttl: 3600
+    password:
+      enabled: true
   accessTokenCookie:
     name: "access_token"
     httpOnly: true
