@@ -23,11 +23,21 @@ web:
 
 By default we accept POSTS to this token uri and respond according to the
 grant type.  If the developer sets this value to false we should not attach any
-handler to this uri, allowing the framework to return it's standard 404
-response.
+handler to this uri, allowing the framework to return it's default 404 response.
 
-If enabled and the grant type is not `client_credentials` or `password`, then
-return `400 Unsupported Grant Type`.
+If enabled and the grant type is not `client_credentials` or `password`, then we
+should return the OAuth-compliant error code:
+
+    HTTP/1.1 400 Bad Request
+    Content-Type: application/json;charset=UTF-8
+    Cache-Control: no-store
+    Pragma: no-cache
+
+    {
+      "error": "unsupported_grant_type"
+    }
+
+If no grant type is specified, the error should be `invalid_request`
 
 ## Client Credentials Grant Flow
 
@@ -46,9 +56,9 @@ Authorization: Basic <base64UrlEncoded(apiKeyId:apiKeySecret)>
 grant_type=client_credentials
 ````
 
-The underlying Stormpath SDK is then used for generating the access token
-and verifying that the API key & secret is valid, and that the account is not
-disabled.  The response is an access token response, but this flow does not
+For this flow the underlying Stormpath SDK is used for generating the access
+token and verifying that the API key & secret is valid, and that the account is
+not disabled.  The response is an access token response, but this flow does not
 return a refresh token (only an access token):
 
 ```
@@ -58,7 +68,7 @@ Cache-Control: no-store
 Pragma: no-cache
 
 {
-  "access_token":"2YotnFZFEjr1zCsicMWpAA",
+  "access_token":"2YotnFZFEjr1zCsicMWpAA...",
   "expires_in":3600,
   "token_type":"Bearer"
 }
@@ -77,14 +87,12 @@ web:
 
 #### web.oauth2.client_credentials.enabled
 
-If set to false, the endpoint should return `400 Unsupported Grant Type` if a
-client requests this grant flow
+If set to false, the endpoint should return the `unsupported_grant_type` error
+(see above).
 
 #### web.oauth2.client_credentials.accessToken.ttl
 
-Determines how long the issued token should be valid for, as seconds.  The SDK
-should be accepting this option when it creates the access token for this flow.
-
+Determines how long the issued token should be valid for, as seconds.
 
 ## Password Grant Flow
 
@@ -133,19 +141,13 @@ web:
     password:
       enabled: true
       validationStrategies: ['local','stormpath']
-      accessToken:
-        ttl: "PT1H"
-      refreshToken:
-        ttl: "P60D"
-
 ```
 
 
 #### web.oauth2.password.enabled
 
-If set to false, the endpoint should return `400 Unsupported Grant Type` if a
-client requests this grant flow
-
+If set to false, the endpoint should return the `unsupported_grant_type` error
+(see above).
 
 #### web.oauth2.password.validationStrategies
 
@@ -157,17 +159,7 @@ Determines how we validate an access token.  There are two strategies:
   such as Account and Application status.  This is the default, but the most
   consistent (will always be aware of Stormpath resource statuses).
 
-It is the responsibility of the SDK to know how to implement these two
-strategies.
-
-#### web.oauth2.password.accessToken
-
-The `ttl` value of this property is store in the OAuth Policy of the configured
-Stormpath application.  The config parser should populate the value so that
-it's available to the framework, but the developer cannot set this value through
-static configuration.  It must be set through the REST API or by using the
-Stormpath Admin Console.
-
-#### web.oauth2.password.refreshToken
-
-Same as the previous option
+The underlying SDK must have authenticators which can do either type of
+validation.  The purpose of this configuration option is to inform the framework
+intergration as to which type of authenticator it should build and use for
+authentication attempts.

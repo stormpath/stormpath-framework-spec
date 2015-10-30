@@ -11,6 +11,7 @@ web:
         ttl: 3600
     password:
       enabled: true
+      validationStrategies: ['local','stormpath']
   accessTokenCookie:
     name: "access_token"
     httpOnly: true
