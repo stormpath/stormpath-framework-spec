@@ -140,7 +140,7 @@ web:
   oauth2:
     password:
       enabled: true
-      validationStrategies: ['local','stormpath']
+      validationStrategy: stormpath # or 'local' to do local JWT signature validation
 ```
 
 
