@@ -1,13 +1,10 @@
-<a name="#top">Back to Top</a>
-
 # Configuration Options
 
 The framework integration has a set of configuration options that are specific
-to web applications, this configuration extends the configuration for the
-underlying SDK.
+to web applications, this configuration extends the [base configuration for the
+underlying SDK](https://github.com/stormpath/stormpath-sdk-spec/blob/master/specifications/config.md).
 
-The entire configuration reference can be found in the
-[web-config.yaml](web-config.yaml) file.
+The entire framework configuration reference can be found in the [web-config.yaml](web-config.yaml) file.
 
-For detailed descriptions of each configuration option, please refer to the
-relevant feature documentation file in this repository.
+The configuration options inherently refer to high level features that the framework integration should implement, you will find
+that each high level feature has it's own markdown file in this repository.
