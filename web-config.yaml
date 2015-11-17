@@ -9,6 +9,11 @@ web:
         ttl: 3600
     password:
       enabled: true
+  expand:
+    apiKeys: false
+    customData: true
+    directory: false
+    groups: false
   accessTokenCookie:
     name: "access_token"
     httpOnly: true
