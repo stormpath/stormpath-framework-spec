@@ -38,12 +38,23 @@ framework language (*e.g. to camel case, or not*)?  Is not specified here.
 ```json
 {
   "verifyEmail": {
+    "enabled": false,
     "autoLogin": false,
     "uri": "/verify",
     "nextUri": "/"
   }
 }
 ```
+
+
+### <a name="enabled"></a> enabled
+
+If enabled, the framework should handle requests for the `uri`.  This option
+is disabled by default, but the configuration parser should enable it if the
+default account store of the provided application has the email verification
+workflow enabled
+
+<a href="#top">Back to Top</a>
 
 
 ### <a name="autoLogin"></a> autoLogin
