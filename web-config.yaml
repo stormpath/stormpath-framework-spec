@@ -11,7 +11,7 @@ web:
         ttl: 3600
     password:
       enabled: true
-      validationStrategies: ['local','stormpath']
+      validationStrategy: stormpath
   expand:
     apiKeys: false
     customData: true
