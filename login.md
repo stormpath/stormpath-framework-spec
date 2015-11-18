@@ -9,11 +9,7 @@
   * [AUTO_LOGIN](#AUTO_LOGIN)
   * [ENABLED](#ENABLED)
   * [REDIRECT_URL](#REDIRECT_URL)
-  * [URI](#URI)
-  * [GOOGLE_CALLBACK_URL](#GOOGLE_CALLBACK_URL)
-  * [FACEBOOK_CALLBACK_URL](#FACEBOOK_CALLBACK_URL)
-  * [GITHUB_CALLBACK_URL](#GITHUB_CALLBACK_URL)
-  * [LINKEDIN_CALLBACK_URL](#LINKEDIN_CALLBACK_URL)
+  * [LOGIN_URL](#LOGIN_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
@@ -35,14 +31,7 @@ The form MUST:
 
 * Require an email address / username AND password OR
 * At least one form of social login
-
-The form MAY:
-
-* Allow users to log in using social providers supported by Stormpath:
- * Facebook
- * Google
- * Github
- * LinkedIn
+* Render social login buttons, if social provider account stores exist (see [social.md][])
 
 
 ## <a name="Options"></a> Options
@@ -56,11 +45,7 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | AUTO_REDIRECT                    | True                |
 | ENABLED                          | True                |
 | REDIRECT_URL                     | /                   |
-| URI                              | /login              |
-| GOOGLE_CALLBACK_URL              | /callbacks/google   |
-| FACEBOOK_CALLBACK_URL            | /callbacks/facebook |
-| GITHUB_CALLBACK_URL              | /callbacks/github   |
-| LINKEDIN_CALLBACK_URL            | /callbacks/linkedin |
+| LOGIN_URL                        | /login              |
 
 
 #### <a name="AUTO_REDIRECT"></a> AUTO_REDIRECT
@@ -112,90 +97,69 @@ interceptor to for GET and POST requests.
 
 <a href="#top">Back to Top</a>
 
-
-#### <a name="GOOGLE_CALLBACK_URL"></a> GOOGLE_CALLBACK_URL
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to GET requests in order to handle the Google Login flow.
-
-This interceptor will read in the access token from the query parameters, create
-or update the account in Stormpath, create a session for the user, and finally
-redirect the user to the `REDIRECT_URL` url.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="FACEBOOK_CALLBACK_URL"></a> FACEBOOK_CALLBACK_URL
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to GET requests in order to handle the Facebook Login flow.
-
-This interceptor will read in the access token from the query parameters, create
-or update the account in Stormpath, create a session for the user, and finally
-redirect the user to the `REDIRECT_URL` url.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="GITHUB_CALLBACK_URL"></a> GITHUB_CALLBACK_URL
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to GET requests in order to handle the Github Login flow.
-
-This interceptor will read in the access token from the query parameters, create
-or update the account in Stormpath, create a session for the user, and finally
-redirect the user to the `REDIRECT_URL` url.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="LINKEDIN_CALLBACK_URL"></a> LINKEDIN_CALLBACK_URL
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to GET requests in order to handle the LinkedIn Login flow.
-
-This interceptor will read in the access token from the query parameters, create
-or update the account in Stormpath, create a session for the user, and finally
-redirect the user to the `REDIRECT_URL` url.
-
-<a href="#top">Back to Top</a>
-
-
 ## <a name="POST_Body_Format"></a> POST Body Format
 
-The content type of the POST must be `application/x-www-form-urlencoded`.
+This endpoint accepts password based login, and social login.  For page-rendered
+flows the form will be submitted as `application/x-www-form-urlencoded`.  For
+front-end applications the form will be submitted as `application/json`.
 
-This endpoint only accepts logins with either a username or password specified,
-as social login operates differently.
+**Password-based login**
 
-Here is an example request.
+In this situation, we render a form when the login page is requested.  The form
+must submit the following fields:
+
+```x-www-form-urlencoded
+login=robert@stormpath.com
+password=mypassword
+```
+
+* The `login` field can be either a username or email.
+
+* If either field is omitted, an error will be raised and the page will be
+re-rendered.
+
+**Social login**
+
+In this situation, the front-end client has obtained an access code or authorization
+code from the provider.  The front-end client is now submitting this information,
+along with our providerId for the provider.
+
+Page-based social login flows are described in [social.md][] and
+handled by different endpoints
 
 ```json
 {
-    "login": "robert@stormpath.com",
-    "password": "d"
+    "providerId": "google",
+    "accessToken": "xxx",
+    "code": "xxx"
 }
 ```
 
-The `login` field can be either a username or email.
-
-If either field is omitted, an error will be raised and the page will be
-re-rendered.
+* Only one of `accessToken` or `code` will be provided, both are listed
+  for example purposes only.
 
 <a href="#top">Back to Top</a>
 
 
 ##  <a name="POST_Error_Handling"></a> POST Error Handling
 
+**For HTML responses:**
+
 For any errors, the response should be a 200 OK and the form should be
 re-rendered with a UX that indicates which field is in error and what can be
 done to fix the problem.
 
+**For JSON responses:**
+
+Send a 400 JSON response where the body is of the format
+`{ error: 'user friendly error message' }`
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 
 This describes how we handle the response, after an account has been
 successfully authenticated.
+
+**For HTML responses:**
 
 If the newly authenticated account's status is ENABLED then we'll issue a 302
 redirect to the REDIRECT_URL and create a new user session.
@@ -209,6 +173,11 @@ If the newly authenticate account's status is DISABLED, then we'll render a view
 which tells the user their account has been disabled, and they need to contact
 the site administrator for help.
 
+**For JSON responses:**
+
+If the account is retrieved, send a 200 JSON body response, where the body is
+the account object.
+
 
 <a href="#top">Back to Top</a>
 
@@ -217,8 +186,11 @@ the site administrator for help.
 
 This describes how we render the login page after receiving a GET request.
 
-We should render a login page with a form that accepts either a username or
-email address and a password.
+If the request type is HTML, we should render a login page with a form that
+accepts either a username or email address and a password.  It should render
+the login buttons for social providders, if configured (see [social.md][]).
+
+If the request type is JSON, send 405.
 
 If a `status` parameter is specified in the query string, and the status value
 is set to `verified`, then we should display a success message above the login
@@ -226,3 +198,5 @@ form which says that this account was successfully verified, and that the user
 can log into their account below.
 
 <a href="#top">Back to Top</a>
+
+[social.md]: social.md

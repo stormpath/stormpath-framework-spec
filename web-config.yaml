@@ -12,6 +12,11 @@ web:
     password:
       enabled: true
       validationStrategies: ['local','stormpath']
+  expand:
+    apiKeys: false
+    customData: true
+    directory: false
+    groups: false
   accessTokenCookie:
     name: "access_token"
     httpOnly: true
@@ -30,20 +35,10 @@ web:
     nextUri: "/"
     autoLogin: false
     fields:
-      username:
-        name: "username"
-        placeholder: "Username"
-        required: false
-        type: "text"
       givenName:
         name: "givenName"
         placeholder: "First Name"
         required: true
-        type: "text"
-      middleName:
-        name: "middleName"
-        placeholder: "Middle Name"
-        required: false
         type: "text"
       surname:
         name: "surname"
@@ -60,19 +55,11 @@ web:
         placeholder: "Password"
         required: true
         type: "password"
-      passwordConfirm:
-        name: "passwordConfirm"
-        placeholder: "Confirm Password"
-        required: false
-        type: "password"
     fieldOrder:
-      - "username"
       - "givenName"
-      - "middleName"
       - "surname"
       - "email"
       - "password"
-      - "passwordConfirm"
     view: "register"
   verifyEmail:
     enabled: false

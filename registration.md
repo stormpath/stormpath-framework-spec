@@ -28,6 +28,8 @@ case the user should be presented with a registration form.
 
 The form MUST:
 
+* Require a first name
+* Require a last name
 * Require an email address
 * Require a password
 
@@ -35,9 +37,7 @@ The form MAY:
 
 * Have other fields:
  * Username
- * Given Name
  * Middle Name
- * Surname
  * Password confirmation field
 
 If the following account properties are not specified by the user in the form
@@ -58,14 +58,14 @@ framework language (e.g. to camel case, or not)? Is not specified here.
 | ENABLE_GIVEN_NAME                | False         |
 | ENABLE_MIDDLE_NAME               | False         |
 | ENABLE_PASSWORD_CONFIRMATION     | False         |
-| ENABLED              | False         |
+| ENABLED                          | False         |
 | ENABLE_SURNAME                   | False         |
 | ENABLE_USERNAME                  | False         |
 | REDIRECT_URL                     | /             |
 | REGISTRATION_URL                 | /register     |
-| REQUIRE_GIVEN_NAME               | False         |
+| REQUIRE_GIVEN_NAME               | True          |
 | REQUIRE_MIDDLE_NAME              | False         |
-| REQUIRE_SURNAME                  | False         |
+| REQUIRE_SURNAME                  | True          |
 | REQUIRE_USERNAME                 | False         |
 
 #### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
