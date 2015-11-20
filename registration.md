@@ -6,10 +6,6 @@
 ## Table of Contents
 
 * [Options](#Options)
-  * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLED](#ENABLED)
-  * [REDIRECT_URL](#REDIRECT_URL)
-  * [REGISTRATION_URL](#REGISTRATION_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
@@ -20,7 +16,7 @@ This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
 If enabled via the ENABLED option, our library MUST intercept
-incoming requests for the REGISTRATION_URL and either render a registration
+incoming requests for the `uri` and either render a registration
 form (GET) or handle a POST request from the registration form.
 
 GET requests should serve an HTML Page OR Single Page Application, in either
@@ -48,30 +44,69 @@ POST, our library MUST set the value to 'UNKNOWN' when we create the account:
 
 ## <a name="Options"></a> Options
 
-This table is a list of all the options that are required by this feature.
-Detailed descriptions follow.  How the option names are translated into the
-framework language (e.g. to camel case, or not)? Is not specified here.
+This is the set of default configuration for the registration feature, it
+defines the default fields we support and which ones we want to show by
+default.  If a field is `enabled`, it shoud be shown on the registration form.
+If it is `required`, the form must show an erorr if the value is not supplied.
 
-| Option                           | Default Value |
-| -------------------------------- |---------------|
-| AUTO_LOGIN                       | True          |
-| ENABLE_GIVEN_NAME                | False         |
-| ENABLE_MIDDLE_NAME               | False         |
-| ENABLE_PASSWORD_CONFIRMATION     | False         |
-| ENABLED                          | False         |
-| ENABLE_SURNAME                   | False         |
-| ENABLE_USERNAME                  | False         |
-| REDIRECT_URL                     | /             |
-| REGISTRATION_URL                 | /register     |
-| REQUIRE_GIVEN_NAME               | True          |
-| REQUIRE_MIDDLE_NAME              | False         |
-| REQUIRE_SURNAME                  | True          |
-| REQUIRE_USERNAME                 | False         |
-
-#### <a name="AUTO_LOGIN"></a> AUTO_LOGIN
+```yaml
+stormpath:
+  web:
+  register:
+    enabled: false
+    uri: "/register"
+    nextUri: "/"
+    autoLogin: false
+    fields:
+      givenName:
+        enabled: true
+        name: "givenName"
+        placeholder: "First Name"
+        required: true
+        type: "text"
+      middleName:
+        enabled: false
+        name: "middleName"
+        placeholder: "Middle Name"
+        required: true
+        type: "text"
+      surname:
+        enabled: true
+        name: "surname"
+        placeholder: "Last Name"
+        required: true
+        type: "text"
+      username:
+        enabled: false
+        name: "username"
+        placeholder: "Username"
+        required: true
+        type: "text"
+      email:
+        enabled: true
+        name: "email"
+        placeholder: "Email"
+        required: true
+        type: "email"
+      password:
+        enabled: true
+        name: "password"
+        placeholder: "Password"
+        required: true
+        type: "password"
+    fieldOrder:
+      - "username"
+      - "givenName"
+      - "middleName"
+      - "surname"
+      - "email"
+      - "password"
+    view: "register"
+```
+#### <a name="autoLogin"></a> autoLogin
 
 If enabled, will create the `access_token` cookie and redirect the user to the
-REDIRECT_URL if they have successfully registered.  See the
+nextUri if they have successfully registered.  See the
 [POST Response Handling](#POST_Response_Handling) section for more details.
 Works in conjunction with our Email Verification feature.
 
@@ -79,115 +114,20 @@ Works in conjunction with our Email Verification feature.
 
 
 
-
-#### <a name="ENABLE_GIVEN_NAME"></a> ENABLE_GIVEN_NAME
-
-If enabled, expose a field on the form for entering the user's first name.
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="ENABLE_MIDDLE_NAME"></a> ENABLE_MIDDLE_NAME
-
-If enabled, expose a field on the form for entering the user's middle name.
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="ENABLED"></a> ENABLED
-
-If `True` this feature will be enabled and our library will intercept requests
-at the [REGISTRATION_URL](#REGISTRATION_URL)
-
-If `False` this feature is disabled and the base framework will be responsible
-for the [REGISTRATION_URL](#REGISTRATION_URL), likely resulting in a 404
-Not Found error.
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="ENABLE_SURNAME"></a> ENABLE_SURNAME
-
-If enabled, expose a field on the form for entering the user's last name.
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="ENABLE_USERNAME"></a> ENABLE_USERNAME
-
-If enabled, expose a field on the form for entering a username that is separate
-from the email address.
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="REDIRECT_URL"></a> REDIRECT_URL
+#### <a name="nextUri"></a> nextUri
 
 Where to send the user after successful registration, if
-[AUTO_LOGIN](#AUTO_LOGIN) is `True`
+[autoLogin](#autoLogin) is `True`
 
 <a href="#top">Back to Top</a>
 
 
-
-
-#### <a name="REGISTRATION_URL"></a> REGISTRATION_URL
+#### <a name="`uri`"></a> `uri`
 
 This is the URI portion of an entire URL that our library will attach an
 interceptor to for GET and POST requests.
 
 <a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="REQUIRE_GIVEN_NAME"></a> REQUIRE_GIVEN_NAME
-
-If enabled, the user must specify their first name.  Even if ENABLE_MIDDLE_NAME
-is False, the field should still be shown if this property is True
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="REQUIRE_MIDDLE_NAME"></a> REQUIRE_MIDDLE_NAME
-
-If enabled, the user must specify their middle name.  Even if ENABLE_MIDDLE_NAME
-is False, the field should still be shown if this property is True
-
-<a href="#top">Back to Top</a>
-
-
-
-
-#### <a name="REQUIRE_SURNAME"></a> REQUIRE_SURNAME
-
-If enabled, the user must specify their last name.  Even if ENABLE_SURNAME
-is False, the field should still be shown if this property is True
-
-<a href="#top">Back to Top</a>
-
-
-
-#### <a name="REQUIRE_USERNAME"></a> REQUIRE_USERNAME
-
-If enabled, the user must specify a username that is separate from the email
-address.  Even if ENABLE_USERNAME is False, the field should still be shown if
-this property is True
-
-<a href="#top">Back to Top</a>
-
 
 
 
@@ -208,17 +148,8 @@ Every POST body MUST contain, at a minimum, these fields:
 }
 ```
 
-If those fields are omitted, it is an error.
-
-If any of the options are enabled:
-
- * ENABLE_PASSWORD_CONFIRMATION
- * REQUIRE_GIVEN_NAME
- * REQUIRE_MIDDLE_NAME
- * REQUIRE_SURNAME
- * REQUIRE_USERNAME
-
-It should be considered an error if the relevant fields are missing.
+If those fields are omitted, it is an error.  If any of the required fields are
+omitted, that is also an error.
 
 The POST body may contain custom data, which should be passed along to the
 Stormpath API when creating the account.
@@ -227,8 +158,9 @@ Stormpath API when creating the account.
 {
     "email": "robert@stormpath.com",
     "password": "d",
+    "customValue": "custom value on object root needs to go in custom data, too",
     "customData": {
-        "hello": "world"
+      "hello": "world"
     }
 }
 ```
@@ -258,9 +190,9 @@ successfully created.
 ```
 
 * If the request is `Accept: text/html`, and..
-  * The newly created account's status is ENABLED and [AUTO_LOGIN](#AUTO_LOGIN)
+  * The newly created account's status is ENABLED and [autoLogin](#autoLogin)
     is:
-    * `True`: issue a 302 Redirect to the REDIRECT_URL and create set
+    * `True`: issue a 302 Redirect to the nextUri and create set
       `access_token` cookie on the client
     * `False`: inform the user that their account has been created and they may
       now login
