@@ -6,10 +6,6 @@
 ## Table of Contents
 
 * [Options](#Options)
-  * [AUTO_LOGIN](#AUTO_LOGIN)
-  * [ENABLED](#ENABLED)
-  * [REDIRECT_URL](#REDIRECT_URL)
-  * [LOGIN_URL](#LOGIN_URL)
 * [POST Body Format](#POST_Body_Format)
 * [POST Error Handling](#POST_Error_Handling)
 * [POST Response Handling](#POST_Response_Handling)
@@ -20,8 +16,8 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service login of user accounts.
 
-If enabled via the `ENABLED` option, our library MUST intercept
-incoming requests for the `URI` and either render a login form (GET) or
+If enabled via the `enabled` option, our library MUST intercept
+incoming requests for the `uri` and either render a login form (GET) or
 handle a POST request from the login form.
 
 GET requests should serve an HTML Page OR Single Page Application, in either
@@ -30,67 +26,66 @@ case the user should be presented with a login form.
 The form MUST:
 
 * Require an email address / username AND password OR
-* At least one form of social login
 * Render social login buttons, if social provider account stores exist (see [social.md][])
 
 
 ## <a name="Options"></a> Options
 
-This table is a list of all the options that are required by this feature.
-Detailed descriptions follow.  How the option names are translated into the
-framework language (e.g. to camel case, or not)? Is not specified here.
+The default options for this feature are:
 
-| Option                           | Default Value       |
-| -------------------------------- |---------------------|
-| AUTO_REDIRECT                    | True                |
-| ENABLED                          | True                |
-| REDIRECT_URL                     | /                   |
-| LOGIN_URL                        | /login              |
+```yaml
+stormpath:
+  web:
+    login:
+      enabled: true
+      autoRedirect: true
+      uri: "/login"
+      nextUri: "/"
+      view: "login"
+```
 
-
-#### <a name="AUTO_REDIRECT"></a> AUTO_REDIRECT
+#### <a name="autoRedirect"></a> autoRedirect
 
 If enabled, and a user already has a valid session, instead of re-rendering the
-login page we will redirect this user to the URL specified by `REDIRECT_URL`.
+login page we will redirect this user to the URL specified by `nextUri`.
 
 If disabled, we won't redirect the user anywhere and will simply re-render the
 login page.  However -- in this case we will *also* destroy any existing user
-sessions.  This ensures that odd edge cases won't come up wherein a user is
+token cookies.  This ensures that odd edge cases won't come up wherein a user is
 viewing a login page but can see their account information in some place (like a
 menu bar).
 
 <a href="#top">Back to Top</a>
 
 
-#### <a name="ENABLED"></a> ENABLED
+#### <a name="enabled"></a> enabled
 
-If `True` this feature will be enabled and our library will intercept requests
-at the [URI](#URI).  When the application server starts, we will
-query the user's Stormpath Application to discover what Account Store Mappings
-are available.  We will then pre-load these so that the login page displays all
-available forms of login (*this might include username / email and password
-login, Facebook Login, Google Login, etc.*).
+If `true` this feature will be enabled and our library will intercept requests
+at for `uri`.  When the application server starts, we will query the user's
+Stormpath Application to discover what Account Store Mappings are available.  We
+will then pre-load these so that the login page displays all available forms of
+login (*this might include username / email and password login, Facebook Login,
+Google Login, etc.*).
 
-If `False` this feature is disabled and the base framework will be responsible
-for the [URI](#URI), likely resulting in a 404 Not Found error.
+If `false` this feature is disabled and the base framework will be responsible
+for the `uri`, likely resulting in a 404 Not Found error.
 
 **NOTE**: If this feature is enabled, and no Account Stores are mapped to this
-Application -- we will throw an error during initialization since there are no
+Application -- then throw an error during initialization since there are no
 possible ways for a user to authenticate.
 
 
 <a href="#top">Back to Top</a>
 
 
-#### <a name="REDIRECT_URL"></a> REDIRECT_URL
+#### <a name="nextUri"></a> nextUri
 
-Where to send the user after successful login, if
-[ENABLED](#ENABLED) is `True`
+Where to send the user after successful login.
 
 <a href="#top">Back to Top</a>
 
 
-#### <a name="URI"></a> URI
+#### <a name="uri"></a> uri
 
 This is the URI portion of an entire URL that our library will attach an
 interceptor to for GET and POST requests.
@@ -162,7 +157,7 @@ successfully authenticated.
 **For HTML responses:**
 
 If the newly authenticated account's status is ENABLED then we'll issue a 302
-redirect to the REDIRECT_URL and create a new user session.
+redirect to the `nextUri` and create a new user session.
 
 If the newly authenticated account's status is UNVERIFIED, then we'll render a
 view which tells the user to check their email for a verification link.  This

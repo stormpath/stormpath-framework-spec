@@ -67,7 +67,7 @@ web:
     view: "verify"
   login:
     enabled: true
-    autoLogin: true
+    autoRedirect: true
     uri: "/login"
     nextUri: "/"
     view: "login"
