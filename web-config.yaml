@@ -1,6 +1,5 @@
 ---
 web:
-  domain: null
   basePath: null
   oauth2:
     enabled: true
