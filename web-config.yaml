@@ -1,5 +1,6 @@
 ---
 web:
+  basePath: null
   oauth2:
     enabled: true
     uri: "/oauth/token"
@@ -9,6 +10,7 @@ web:
         ttl: 3600
     password:
       enabled: true
+      validationStrategy: stormpath
   expand:
     apiKeys: false
     customData: true
@@ -18,13 +20,13 @@ web:
     name: "access_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
   refreshTokenCookie:
     name: "refresh_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
   register:
     enabled: true
