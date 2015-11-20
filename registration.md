@@ -94,6 +94,12 @@ stormpath:
         placeholder: "Password"
         required: true
         type: "password"
+      confirmPassword:
+        enabled: false
+        name: "confirmPassword"
+        placeholder: "Conrim Password"
+        required: true
+        type: "password"
     fieldOrder:
       - "username"
       - "givenName"
@@ -101,6 +107,7 @@ stormpath:
       - "surname"
       - "email"
       - "password"
+      - "confirmPassword"
     view: "register"
 ```
 #### <a name="autoLogin"></a> autoLogin
