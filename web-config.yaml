@@ -1,99 +1,99 @@
----
-web:
-  basePath: null
-  oauth2:
-    enabled: true
-    uri: "/oauth/token"
-    client_credentials:
+stormpath:
+  web:
+    basePath: null
+    oauth2:
       enabled: true
-      accessToken:
-        ttl: 3600
-    password:
-      enabled: true
-      validationStrategy: stormpath
-  expand:
-    apiKeys: false
-    customData: true
-    directory: false
-    groups: false
-  accessTokenCookie:
-    name: "access_token"
-    httpOnly: true
-    secure: null
-    path: null
-    domain: null
-  refreshTokenCookie:
-    name: "refresh_token"
-    httpOnly: true
-    secure: null
-    path: null
-    domain: null
-  register:
-    enabled: true
-    uri: "/register"
-    nextUri: "/"
-    autoLogin: false
-    fields:
-      givenName:
-        name: "givenName"
-        placeholder: "First Name"
-        required: true
-        type: "text"
-      surname:
-        name: "surname"
-        placeholder: "Last Name"
-        required: true
-        type: "text"
-      email:
-        name: "email"
-        placeholder: "Email"
-        required: true
-        type: "email"
+      uri: "/oauth/token"
+      client_credentials:
+        enabled: true
+        accessToken:
+          ttl: 3600
       password:
-        name: "password"
-        placeholder: "Password"
-        required: true
-        type: "password"
-    fieldOrder:
-      - "givenName"
-      - "surname"
-      - "email"
-      - "password"
-    view: "register"
-  verifyEmail:
-    enabled: false
-    uri: "/verify"
-    nextUri: "/"
-    view: "verify"
-  login:
-    enabled: true
-    autoRedirect: true
-    uri: "/login"
-    nextUri: "/"
-    view: "login"
-  logout:
-    enabled: true
-    uri: "/logout"
-    nextUri: "/"
-  forgotPassword:
-    enabled: false
-    uri: "/forgot"
-    view: "forgot-password"
-    nextUri: "/login?status=forgot"
-  changePassword:
-    enabled: false
-    autoLogin: false
-    uri: "/change"
-    nextUri: "/login?status=reset"
-    view: "change-password"
-    errorUri: "/forgot?status=invalid_sptoken"
-  idSite:
-    enabled: false
-    uri: "/idSiteResult"
-    nextUri: "/"
-    loginUri: ""
-    forgotUri: "/#/forgot"
-    registerUri: "/#/register"
-  me:
-    enabled: false
-    uri: "/me"
+        enabled: true
+        validationStrategy: stormpath
+    expand:
+      apiKeys: false
+      customData: true
+      directory: false
+      groups: false
+    accessTokenCookie:
+      name: "access_token"
+      httpOnly: true
+      secure: null
+      path: null
+      domain: null
+    refreshTokenCookie:
+      name: "refresh_token"
+      httpOnly: true
+      secure: null
+      path: null
+      domain: null
+    register:
+      enabled: true
+      uri: "/register"
+      nextUri: "/"
+      autoLogin: false
+      fields:
+        givenName:
+          name: "givenName"
+          placeholder: "First Name"
+          required: true
+          type: "text"
+        surname:
+          name: "surname"
+          placeholder: "Last Name"
+          required: true
+          type: "text"
+        email:
+          name: "email"
+          placeholder: "Email"
+          required: true
+          type: "email"
+        password:
+          name: "password"
+          placeholder: "Password"
+          required: true
+          type: "password"
+      fieldOrder:
+        - "givenName"
+        - "surname"
+        - "email"
+        - "password"
+      view: "register"
+    verifyEmail:
+      enabled: false
+      uri: "/verify"
+      nextUri: "/"
+      view: "verify"
+    login:
+      enabled: true
+      autoRedirect: true
+      uri: "/login"
+      nextUri: "/"
+      view: "login"
+    logout:
+      enabled: true
+      uri: "/logout"
+      nextUri: "/"
+    forgotPassword:
+      enabled: false
+      uri: "/forgot"
+      view: "forgot-password"
+      nextUri: "/login?status=forgot"
+    changePassword:
+      enabled: false
+      autoLogin: false
+      uri: "/change"
+      nextUri: "/login?status=reset"
+      view: "change-password"
+      errorUri: "/forgot?status=invalid_sptoken"
+    idSite:
+      enabled: false
+      uri: "/idSiteResult"
+      nextUri: "/"
+      loginUri: ""
+      forgotUri: "/#/forgot"
+      registerUri: "/#/register"
+    me:
+      enabled: false
+      uri: "/me"
