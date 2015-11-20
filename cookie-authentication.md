@@ -55,24 +55,26 @@ token, as defined by the Oauth Policy of the Stormpath Application.
 
 * The `HttpOnly` flag should be set as follows:
 
-  * If `web.<accessTokenCookie|refreshTokenCookie>.httpOnly` is false, do not set this flag
+  * If `stormpath.web.[accessTokenCookie|refreshTokenCookie].httpOnly` is false, do not set this flag
   * Othwerwise, set this flag to true
 
 * The `path` flag should be set as follows:
 
-  * If `web.<accessTokenCookie|refreshTokenCookie>.path` is defined, use that value
-  * Othwerwise, use `web.basePath` if defined
-  * Finally, fallback to "/" as the value
+  If `stormpath.web.[accessTokenCookie|refreshTokenCookie].path` has a non-null
+  value, use that value as the cookie path. If the value is undefined or null,
+  default to the web application framework default value. If the framework does
+  not provide a default value, fall back to `stormpath.web.basePath` if defined.
+  If `stormpath.web.basePath` is undefined or null, fallback to `/`.
 
 * The `domain` flag should be set as follows:
 
-  * If `web.<accessTokenCookie|refreshTokenCookie>.domain` is defined, use that value
-  * Othwerwise, use `web.domain` if defined
-  * Finally, fallback to "" as the value
+  * If `stormpath.web.[accessTokenCookie|refreshTokenCookie].domain` has a
+  non-null value, use that value.  Otherwise, fallback to the web framework
+  domain value (if it defines one).  Finally, fallback to "" as the value.
 
 * The `secure` flag should be set as follows:
 
-  * If `web.<accessTokenCookie|refreshTokenCookie>.secure` is defined, use that value
+  * If `stormpath.web.[accessTokenCookie|refreshTokenCookie].secure` is defined, use that value
   * Othwerwise, the framework should make a best effort to determine if the
     incoming request is HTTPS and set the `secure` flag if so.
 
@@ -90,13 +92,13 @@ web:
     name: "access_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
   refreshTokenCookie:
     name: "refresh_token"
     httpOnly: true
     secure: null
-    path: "/"
+    path: null
     domain: null
 ```
 
