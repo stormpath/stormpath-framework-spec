@@ -1,6 +1,8 @@
 stormpath:
   web:
+
     basePath: null
+
     oauth2:
       enabled: true
       uri: "/oauth/token"
@@ -11,27 +13,34 @@ stormpath:
       password:
         enabled: true
         validationStrategy: stormpath
+
     expand:
       apiKeys: false
       customData: true
       directory: false
       groups: false
+
     accessTokenCookie:
       name: "access_token"
       httpOnly: true
       secure: null
       path: null
       domain: null
+
     refreshTokenCookie:
       name: "refresh_token"
       httpOnly: true
       secure: null
       path: null
       domain: null
+
     register:
-      enabled: false
+      enabled: true
       uri: "/register"
       nextUri: "/"
+      # autoLogin is possible only if the email verification feature is disabled
+      # on the default default account store of the defined Stormpath
+      # application.
       autoLogin: false
       fields:
         givenName:
@@ -85,33 +94,50 @@ stormpath:
         - "password"
         - "confirmPassword"
       view: "register"
+
+    # Unless verifyEmail.enabled is specifically set to false, the email
+    # verification feature must be automatically enabled if the default account
+    # store for the defined Stormpath application has the email verification
+    # workflow enabled.
     verifyEmail:
-      enabled: false
+      enabled: null
       uri: "/verify"
       nextUri: "/"
       view: "verify"
+
     login:
       enabled: true
-      autoRedirect: true
       uri: "/login"
       nextUri: "/"
       view: "login"
+
     logout:
       enabled: true
       uri: "/logout"
       nextUri: "/"
+
+    # Unless forgotPassword.enabled is explicitly set to false, this feature
+    # will be automatically enabled if the default account store for the defined
+    # Stormpath application has the password reset workflow enabled.
     forgotPassword:
-      enabled: false
+      enabled: null
       uri: "/forgot"
       view: "forgot-password"
       nextUri: "/login?status=forgot"
+
+    # Unless changePassword.enabled is explicitly set to false, this feature
+    # will be automatically enabled if the default account store for the defined
+    # Stormpath application has the password reset workflow enabled.
     changePassword:
-      enabled: false
+      enabled: null
       autoLogin: false
       uri: "/change"
       nextUri: "/login?status=reset"
       view: "change-password"
       errorUri: "/forgot?status=invalid_sptoken"
+
+    # If idSite.enabled is true, the user should be redirected to ID site for
+    # login, registration, and password reset.
     idSite:
       enabled: false
       uri: "/idSiteResult"
@@ -119,6 +145,26 @@ stormpath:
       loginUri: ""
       forgotUri: "/#/forgot"
       registerUri: "/#/register"
+
+    socialProviders:
+      callbackRoot: "/callbacks"
+
+    # The /me route if for Single Page Applications.  Unless me.enabled is
+    # explicitly set to false, this feature should be automatically enabled if
+    # the stormpath.web.spaRoot option is defined.
     me:
-      enabled: false
+      enabled: null
       uri: "/me"
+
+    # This should be the absolute file path to the entry point for a Single
+    # Page Application
+    spaRoot: null
+
+    # The /spaConfig route if for Single Page Applications.  It informs the
+    # client about social providers that are configured, and what the client ID
+    # is for those providers.  Unless spaConfig.enabled is set to false, this
+    # feature should be automatically enabled if the stormpath.web.spaRoot
+    # option is defined.
+    spaConfig:
+      enabled: null
+      uri: "/spaConfig"
