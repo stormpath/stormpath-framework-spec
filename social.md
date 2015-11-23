@@ -66,7 +66,7 @@ provider, the following must be done:
 
 * Render a login button on the login page (see [Login][]).
 
-* Create a callback handler for the provider's page-pased redirect flow (see
+* Create a callback handler for the provider's page-based redirect flow (see
   next section)
 
 

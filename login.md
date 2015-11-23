@@ -174,7 +174,18 @@ instead of the defined `nextUri`.
 
 **For JSON responses:**
 
-Send a 200 JSON body response, where the body is the account object.
+Send a 200 JSON body response, where the body contains the account object:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  account: {
+    // the account that was authenticated
+  }
+}
+```
 
 <a href="#top">Back to Top</a>
 

@@ -267,8 +267,18 @@ This describes how we handle the response, if an account has been successfully
 created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with a JSON body.  The body should be the account object that was returned
-  from the account creation call.
+  200 with a JSON body, where the body contains the account object:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+
+{
+  account: {
+    // the account that was created
+  }
+}
+```
 
 * If the request is `Accept: text/html`, and..
   * The newly created account's status is ENABLED and [autoLogin](#autoLogin)
