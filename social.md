@@ -51,11 +51,11 @@ following:
   * Parse the provider configuration of the specified Stormpath application (see
     next section).
 
-  * Provide the "SPA Config" getter for rich front-end clients, please see "SPA
-    Config" section of this document
-
   * Accept the access token or code via the login endpoint that this framework
-    providers, see [login][] for implementation spec.
+    provides, see [login][] for implementation spec.
+
+  * Render buttons for social login, on the registration and login views (or
+    view model), see [login][] and [registration][].
 
 
 ## Parsing Provider Configuration
@@ -64,7 +64,7 @@ During framework bootstrap, the specified Stormpath application should be parsed
 for it's account store mappings.  If any of these account stores are a social
 provider, the following must be done:
 
-* Render a login button on the login page (see [Login][]).
+* Render a login button on the login page (see [login][]).
 
 * Create a callback handler for the provider's page-based redirect flow (see
   next section)
@@ -94,27 +94,16 @@ callback handler must complete the following tasks:
 If any of these tasks fail, an error should be immediately rendered to the user
 and the next task should not be attempted.
 
-## <a name="SPA_Config"></a> SPA Config
+## Implementing Popup-Based Workflows
 
-If the developer has defined `stormpath.web.spaRoot`, and has not explicitly
-set `stormpath.web.spaConfig.enabled` to `false`, then we should render the
-"SPA Config" response at `stormpath.web.spaConfig.uri`
-
-This GET response handler will render an object that is built during framework
-bootstrap by parsing the account stores that are mapped to the configured
-Stormpath application.
-
-An example SPA Config response is below.  In this example there is only one
-account store that is a social account store and it is a Google account store.
-
-```json
-{
-  "google": {
-    "clientId": "xxxx"
-  }
-}
-```
+Single-page applications will need to query the server to determine which social
+providers are configured, and which fields to render for the login or
+registration views.  In either context, the front-end application should make
+a GET request to the login or registration endpoint, to fetch the view model
+as JSON.  The view model will contain the necessary information.  See [login][]
+and [registration][] pages for the view model definitions.
 
 <a href="#top">Back to Top</a>
 
 [login]: login.md
+[registration]: registration.md

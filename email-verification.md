@@ -25,8 +25,8 @@ enabled, our library MUST intercept incoming GET requests for the
 `uri` and either render an account activation view or an
 error view.
 
-GET requests should serve an HTML Page OR Single Page Application, in either
-case the user should be presented with the appropriate view.
+GET requests should serve an HTML Page which shows the user a success
+or error message, see "GET Response Handling" below.
 
 
 ## <a name="Options"></a> Options

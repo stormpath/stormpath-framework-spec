@@ -2,36 +2,25 @@
 
 # Account Login
 
-
-## Table of Contents
-
-* [Options](#Options)
-* [POST Body Format](#POST_Body_Format)
-* [POST Error Handling](#POST_Error_Handling)
-* [POST Response Handling](#POST_Response_Handling)
-
-
 ## Feature Description
 
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service login of user accounts.
 
 If enabled by `stormpath.web.login.enabled`, our library MUST intercept incoming
-requests for `stormpath.web.login.uri` and either render a login form (GET) or
-handle a POST request from the login form or JSON client.
+requests for `stormpath.web.login.uri`.
 
-GET requests should serve a default HTML page with a registration form, or the
-single-page-application entry file defined by `stormpath.web.spaRoot`.
+GET requests must:
 
-The form MUST:
+* Serve a default HTML page with a login form, if the request is type is
+  `Accept: text/html` (read down for default form description).
 
-* Require an email address / username AND password.
+* Serve a view model, which describes the login form, if the request is type is
+  `Accept: application/json` (read down for view model).
 
-* Render social login buttons, if social provider account stores exist
-  (see [social.md][]).
+POST requests must:
 
-* Render context specific messages, depending on the status query parameter
-  (see ["Status Messages"](#status-messages) section).
+* Handle a POST request from the default HTML login form or from a JSON client.
 
 ## <a name="Options"></a> Options
 
@@ -100,6 +89,65 @@ is to allow the developer to override our default view with their own.
 
 <a href="#top">Back to Top</a>
 
+
+
+## Default HTML Login Form
+
+The form MUST:
+
+* Require an email address / username AND password.
+
+* Render social login buttons, if social provider account stores exist.
+
+* Render context specific messages, depending on the status query parameter
+  (see ["Status Messages"](#status-messages) section).
+
+
+
+## Login View Model
+
+The login view model should be returned to the client if the GET request is
+`Accept: application/json`.  This is for front-end clients that need to
+dynamically know how to render the login form.
+
+The model should have:
+
+* A list of fields, as defined by `stormpath.web.login.fields`, and ordered by
+  `stormpath.web.login.fieldOrder`.  Fields should only be in the list if their
+  `enabled` property is `true`.  As such the enabled property can be omitted
+  from each list element.
+
+* A list of providers, such as social providers, and the required information
+  to render a UI component for that provider.  At the moment we only have social
+  providers, which simply have a button, so all that is needed is the `clientId`
+  from the given directory configuration.  This is needed by the front-end
+  client to provide the popup-based login flows (see [social.md][]).
+
+Example view model definition:
+
+```javascript
+{
+  "fields": [
+    {
+      "name": "username",
+      "placeholder": "Username or Email",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "name": "password",
+      "placeholder": "Password",
+      "required": true,
+      "type": "password"
+    }
+  ],
+  "providers": {
+    "google": {
+      "clientId": "xxxx"
+    }
+  }
+}
+```
 
 
 ## <a name="POST_Body_Format"></a> POST Body Format

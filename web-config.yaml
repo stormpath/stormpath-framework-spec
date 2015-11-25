@@ -110,6 +110,22 @@ stormpath:
       uri: "/login"
       nextUri: "/"
       view: "login"
+      fields:
+        username:
+          enabled: true
+          name: "username"
+          placeholder: "Username or Email"
+          required: true
+          type: "text"
+        password:
+          enabled: true
+          name: "password"
+          placeholder: "Password"
+          required: true
+          type: "password"
+      fieldOrder:
+        - "username"
+        - "password"
 
     logout:
       enabled: true
@@ -149,22 +165,8 @@ stormpath:
     socialProviders:
       callbackRoot: "/callbacks"
 
-    # The /me route if for Single Page Applications.  Unless me.enabled is
-    # explicitly set to false, this feature should be automatically enabled if
-    # the stormpath.web.spaRoot option is defined.
+    # The /me route is for front-end applications, it returns a JSON object with
+    # the current user object
     me:
-      enabled: null
+      enabled: true
       uri: "/me"
-
-    # This should be the absolute file path to the entry point for a Single
-    # Page Application
-    spaRoot: null
-
-    # The /spaConfig route if for Single Page Applications.  It informs the
-    # client about social providers that are configured, and what the client ID
-    # is for those providers.  Unless spaConfig.enabled is set to false, this
-    # feature should be automatically enabled if the stormpath.web.spaRoot
-    # option is defined.
-    spaConfig:
-      enabled: null
-      uri: "/spaConfig"

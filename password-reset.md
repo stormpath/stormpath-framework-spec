@@ -32,7 +32,7 @@ facilitate self-service password reset of existing user accounts.
 If an application's default account store has the password reset workflow
 enabled, our library MUST intercept incoming GET requests for the
 `uri` values presented in this document, and render the appropriate views as
-either an HTML page or Single Page Application.
+an HTML page.
 
 
 ## <a name="options"></a> Options
@@ -169,8 +169,8 @@ will complete the Password Reset workflow.
 This describes how we handle the response for GET requests to the `uri` option
 for the Forgot Password workflow.
 
-The response should be an HTML page or SPA that provides a form with an email
-address field, allowing the user to give the email address of the account that
+The response should be an HTML page that provides a form with an email address
+field, allowing the user to give the email address of the account that
 they want to trigger a password reset email for.
 
 The view must have a conditional block for showing an error message, if the user

@@ -3,25 +3,23 @@
 
 # Account Registration
 
-
-## Table of Contents
-
-* [Options](#Options)
-* [POST Body Format](#POST_Body_Format)
-* [POST Error Handling](#POST_Error_Handling)
-* [POST Response Handling](#POST_Response_Handling)
-
 ## Feature Description
 
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
 If enabled by `stormpath.web.register.enabled`, our library MUST intercept
-incoming requests for the `uri` and either render a registration form (GET) or
-handle a POST request for a registration attempt.
+incoming requests for `stormpath.web.register.uri`.
 
-GET requests should serve a default HTML page with a registration form, or the
-single-page-application entry file defined by `stormpath.web.spaRoot`.
+GET requests must:
+
+* Serve a default HTML page with a registration form, if the request is type is
+  `Accept: text/html` (read down for default form description).
+
+POST requests must:
+
+* Handle a POST request from the default HTML registration form or from a JSON
+  client.
 
 ### Default Registration Form Description
 
@@ -189,6 +187,68 @@ is to allow the developer to override our default view with their own.
 
 
 
+### Registration View Model
+
+The registration view model should be returned to the client if the GET request
+is `Accept: application/json`.  This is for front-end clients that need to
+dynamically know how to render the registration form.
+
+The model should have:
+
+* A list of fields, as defined by `stormpath.web.register.fields`, and ordered
+  by `stormpath.web.register.fieldOrder`.  Fields should only be in the list if
+  their `enabled` property is `true`.  As such the enabled property can be
+  omitted from each list element.
+
+* A list of providers, such as social providers, and the required information
+  to render a UI component for that provider.  At the moment we only have social
+  providers, which simply have a button, so all that is needed is the `clientId`
+  from the given directory configuration.  This is needed by the front-end
+  client to provide the popup-based authentication flows (see [social][]).
+
+Example view model definition:
+
+```javascript
+{
+  "fields": [
+    {
+      "name": "givenName",
+      "placeholder": "First Name",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "name": "surname",
+      "placeholder": "Last Name",
+      "required": true,
+      "type": "text"
+    },
+    {
+      "name": "email",
+      "placeholder": "Email",
+      "required": true,
+      "type": "email"
+    },
+    {
+      "name": "password",
+      "placeholder": "Password",
+      "required": true,
+      "type": "password"
+    },
+    {
+      // .. other fields, as configured
+    }
+  ],
+  "providers": {
+    "google": {
+      "clientId": "xxxx"
+    }
+  }
+}
+```
+
+
+
 ## <a name="POST_Body_Format"></a> POST Body Format
 
 The content type of the POST may be `application/x-www-form-urlencoded` or
@@ -295,3 +355,4 @@ Content-Type: application/json; charset=utf-8
 <a href="#top">Back to Top</a>
 
 [login page status messages]: login.md#status-messages
+[social]: social.md
