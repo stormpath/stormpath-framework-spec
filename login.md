@@ -31,7 +31,6 @@ stormpath:
   web:
     login:
       enabled: true
-      autoRedirect: true
       uri: "/login"
       nextUri: "/"
       view: "login"
@@ -64,20 +63,6 @@ Default: `/`
 
 Where to send the user after successful login.  This value can be overridden on
 a per-request basis, if the parameter `?next=uri` is provide on the POST.
-
-#### <a name="autoRedirect"></a> autoRedirect
-
-Default: `true`
-
-If enabled, and a user already has a valid session (Oauth2 token cookies),
-instead of re-rendering the login page we will redirect the user to the URL
-specified by `nextUri`.
-
-If disabled, we won't redirect the user anywhere and will simply re-render the
-login page.  However -- in this case we will *also* destroy any existing OAuth2
-token cookies.  This ensures that odd edge cases won't occur wherein a user is
-viewing a login page but can see their account information in some place (like a
-menu bar).
 
 #### <a name="view"></a> view
 
