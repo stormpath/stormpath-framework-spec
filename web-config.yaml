@@ -118,7 +118,7 @@ stormpath:
     verifyEmail:
       enabled: null
       uri: "/verify"
-      nextUri: "/"
+      nextUri: "/login"
       view: "verify"
 
     login:
