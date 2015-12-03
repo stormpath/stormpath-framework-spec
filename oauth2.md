@@ -8,7 +8,7 @@ application.
 
 
 
-### OAuth2 Configuration Options
+## OAuth2 Configuration Options
 
 The OAuth2 endpoint can be configured, or disabled entirely:
 
