@@ -34,6 +34,14 @@ stormpath:
       path: null
       domain: null
 
+    # By default the Stormpath integration should respond to JSON and HTML
+    # requests.  If either is removed from configuration, the integration should
+    # not try to handle the response for the given content type.
+
+    produces:
+      - text/html
+      - application/json
+
     register:
       enabled: true
       uri: "/register"
@@ -42,57 +50,65 @@ stormpath:
       # on the default default account store of the defined Stormpath
       # application.
       autoLogin: false
-      fields:
-        givenName:
-          enabled: true
-          name: "givenName"
-          placeholder: "First Name"
-          required: true
-          type: "text"
-        middleName:
-          enabled: false
-          name: "middleName"
-          placeholder: "Middle Name"
-          required: true
-          type: "text"
-        surname:
-          enabled: true
-          name: "surname"
-          placeholder: "Last Name"
-          required: true
-          type: "text"
-        username:
-          enabled: false
-          name: "username"
-          placeholder: "Username"
-          required: true
-          type: "text"
-        email:
-          enabled: true
-          name: "email"
-          placeholder: "Email"
-          required: true
-          type: "email"
-        password:
-          enabled: true
-          name: "password"
-          placeholder: "Password"
-          required: true
-          type: "password"
-        confirmPassword:
-          enabled: false
-          name: "confirmPassword"
-          placeholder: "Conrim Password"
-          required: true
-          type: "password"
-      fieldOrder:
-        - "username"
-        - "givenName"
-        - "middleName"
-        - "surname"
-        - "email"
-        - "password"
-        - "confirmPassword"
+      form:
+        fields:
+          givenName:
+            enabled: true
+            label: "First Name"
+            name: "givenName"
+            placeholder: "First Name"
+            required: true
+            type: "text"
+          middleName:
+            enabled: false
+            label: "Middle Name"
+            name: "middleName"
+            placeholder: "Middle Name"
+            required: true
+            type: "text"
+          surname:
+            enabled: true
+            label: "Last Name"
+            name: "surname"
+            placeholder: "Last Name"
+            required: true
+            type: "text"
+          username:
+            enabled: false
+            label: "Username"
+            name: "username"
+            placeholder: "Username"
+            required: true
+            type: "text"
+          email:
+            enabled: true
+            label: "Email"
+            name: "email"
+            placeholder: "Email"
+            required: true
+            type: "email"
+          password:
+            enabled: true
+            label: "Password"
+            name: "password"
+            placeholder: "Password"
+            required: true
+            type: "password"
+          confirmPassword:
+            enabled: false
+            label: "Conrim Password"
+            name: "confirmPassword"
+            placeholder: "Conrim Password"
+            required: true
+            type: "password"
+        fieldOrder:
+          - "username"
+          - "givenName"
+          - "middleName"
+          - "surname"
+          - "email"
+          - "password"
+          - "confirmPassword"
       view: "register"
 
     # Unless verifyEmail.enabled is specifically set to false, the email
@@ -110,22 +126,25 @@ stormpath:
       uri: "/login"
       nextUri: "/"
       view: "login"
-      fields:
-        username:
-          enabled: true
-          name: "username"
-          placeholder: "Username or Email"
-          required: true
-          type: "text"
-        password:
-          enabled: true
-          name: "password"
-          placeholder: "Password"
-          required: true
-          type: "password"
-      fieldOrder:
-        - "username"
-        - "password"
+      form:
+        fields:
+          username:
+            enabled: true
+            label: "Username or Email"
+            name: "username"
+            placeholder: "Username or Email"
+            required: true
+            type: "text"
+          password:
+            enabled: true
+            label: "Password"
+            name: "password"
+            placeholder: "Password"
+            required: true
+            type: "password"
+        fieldOrder:
+          - "username"
+          - "password"
 
     logout:
       enabled: true
@@ -170,3 +189,18 @@ stormpath:
     me:
       enabled: true
       uri: "/me"
+
+    # If the developer wants our integration to serve their Single Page
+    # Application (SPA) in response to HTML requests for our default routes,
+    # such as /login, then they will need to enable this feature and tell us
+    # where the root of their SPA is.  This is likely a file path on the
+    # filesystem.
+    #
+    # If the developer does not want our integration to handle their SPA, they
+    # will need to configure the framework themeslves and remove 'text/html'
+    # from `stormpath.web.produces`, so that we don not serve our default
+    # HTML views.
+    spa:
+      enabled: false
+      view: index
+

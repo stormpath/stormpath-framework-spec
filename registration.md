@@ -11,17 +11,24 @@ facilitate self-service registration of user accounts.
 If enabled by `stormpath.web.register.enabled`, our library MUST intercept
 incoming requests for `stormpath.web.register.uri`.
 
-GET requests must:
+GET requests must respond in one of the following ways:
 
 * Serve a default HTML page with a registration form, if the request is type is
-  `Accept: text/html` (read down for default form description).
+  `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
+
+* Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
+  is `true` and `text/html` is defined in `stormpath.web.produces`.
+
+* Serve the registration view model if the request is type is
+  `Accept: application/json` and `application/json` is defined in
+  `stormpath.web.produces`.
 
 POST requests must:
 
 * Handle a POST request from the default HTML registration form or from a JSON
   client.
 
-### Default Registration Form Description
+## Default Registration Form
 
 The default registration form MUST:
 
@@ -61,57 +68,65 @@ stormpath:
       # autoLogin is possible only if the email verification feature is disabled
       # on the default default account store of the defined Stormpath
       # application.
-      fields:
-        givenName:
-          enabled: true
-          name: "givenName"
-          placeholder: "First Name"
-          required: true
-          type: "text"
-        middleName:
-          enabled: false
-          name: "middleName"
-          placeholder: "Middle Name"
-          required: true
-          type: "text"
-        surname:
-          enabled: true
-          name: "surname"
-          placeholder: "Last Name"
-          required: true
-          type: "text"
-        username:
-          enabled: false
-          name: "username"
-          placeholder: "Username"
-          required: true
-          type: "text"
-        email:
-          enabled: true
-          name: "email"
-          placeholder: "Email"
-          required: true
-          type: "email"
-        password:
-          enabled: true
-          name: "password"
-          placeholder: "Password"
-          required: true
-          type: "password"
-        confirmPassword:
-          enabled: false
-          name: "confirmPassword"
-          placeholder: "Conrim Password"
-          required: true
-          type: "password"
-      fieldOrder:
-        - "username"
-        - "givenName"
-        - "middleName"
-        - "surname"
-        - "email"
-        - "password"
-        - "confirmPassword"
+      form:
+        fields:
+          givenName:
+            enabled: true
+            label: "First Name"
+            name: "givenName"
+            placeholder: "First Name"
+            required: true
+            type: "text"
+          middleName:
+            enabled: false
+            label: "Middle Name"
+            name: "middleName"
+            placeholder: "Middle Name"
+            required: true
+            type: "text"
+          surname:
+            enabled: true
+            label: "Last Name"
+            name: "surname"
+            placeholder: "Last Name"
+            required: true
+            type: "text"
+          username:
+            enabled: false
+            label: "Username"
+            name: "username"
+            placeholder: "Username"
+            required: true
+            type: "text"
+          email:
+            enabled: true
+            label: "Email"
+            name: "email"
+            placeholder: "Email"
+            required: true
+            type: "email"
+          password:
+            enabled: true
+            label: "Password"
+            name: "password"
+            placeholder: "Password"
+            required: true
+            type: "password"
+          confirmPassword:
+            enabled: false
+            label: "Conrim Password"
+            name: "confirmPassword"
+            placeholder: "Conrim Password"
+            required: true
+            type: "password"
+        fieldOrder:
+          - "username"
+          - "givenName"
+          - "middleName"
+          - "surname"
+          - "email"
+          - "password"
+          - "confirmPassword"
       view: "register"
 ```
 
@@ -151,25 +166,26 @@ disabled.
 is enabled, how should this error be surfaced?
 
 
-#### <a name="fields"></a> fields
+#### <a name="fields"></a> form.fields
 
-A map of field definitions.  Each field definition has the following properties:
+A map of field definitions.  Each field definition must have the following
+properties:
 
 * `enabled` - Determines if this field should be shown in the registration form.
 
+* `label` - The value that is shown as a descriptive label for the field.
+
+* `name` - The value to apply to the `name` attribute of the HTML input element.
+
+* `placeholder` - The placeholder attribute value for the HTML input element.
+
 * `required` - Determines if this field should be required by the user.
 
-* `name` - The name to apply to the HTML input element.
-
-* `placeholder` - The placeholder value for the HTML input element.
-
-* `type` - the type of HTML input element (e.g. text, password).
-
-If the developer provides any properties that are not defined in the above list,
-the properties should be applied as HTML attributes to the input element.
+* `type` - the value to apply to the `type` attribute of HTML input element
+  (e.g. text, password).
 
 
-#### <a name="fieldOrder"></a> fieldOrder
+#### <a name="fieldOrder"></a> form.fieldOrder
 
 A configurable array that allows the developer to change the order in which the
 fields are rendered.
@@ -177,7 +193,7 @@ fields are rendered.
 
 #### <a name="view"></a> view
 
-Default: 'register'
+Default: `register`
 
 A string key which identifies the view template that should be used.  The
 default value may look different for your framework.  The point of this value
@@ -187,63 +203,84 @@ is to allow the developer to override our default view with their own.
 
 
 
-### Registration View Model
+## Registration View Model
 
 The registration view model should be returned to the client if the GET request
-is `Accept: application/json`.  This is for front-end clients that need to
-dynamically know how to render the registration form.
+is `Accept: application/json` and `stormpath.web.produces` contains
+`application/json`.  This is for front-end clients that need to dynamically know
+how to render the registration form.
 
 The model should have:
 
-* A list of fields, as defined by `stormpath.web.register.fields`, and ordered
-  by `stormpath.web.register.fieldOrder`.  Fields should only be in the list if
-  their `enabled` property is `true`.  As such the enabled property can be
-  omitted from each list element.
+* A list of fields, as defined by `stormpath.web.register.form.fields`, and
+  ordered by `stormpath.web.register.form.fieldOrder`.  Fields should only be in
+  the list if their `enabled` property is `true`.  As such the enabled property
+  can be omitted from each list element.
 
-* A list of providers, such as social providers, and the required information
-  to render a UI component for that provider.  At the moment we only have social
-  providers, which simply have a button, so all that is needed is the `clientId`
-  from the given directory configuration.  This is needed by the front-end
-  client to provide the popup-based authentication flows (see [social][]).
+* A list of providers, such as social providers or SAML providers.  Providers
+  are found by looking at the account store mappings of the specified
+  application.
+  * Social providers will need to expose the `clientId`, as front-end
+    applications will need this.
+  * SAML providers need to provide the name of the directory, so that we know
+    what text to use for the button, and the href, so that we can place this
+    value into the SAML request (as a query parameter in the link that the
+    button points to).
+  * The ordering of this list should follow the ordering of the account store
+    mappings.  **NOTE**: this may change in the future.
 
 Example view model definition:
 
 ```javascript
 {
-  "fields": [
+  "form": {
+    "fields": [
+      {
+        "label": "First Name",
+        "name": "givenName",
+        "placeholder": "First Name",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "label": "Last Name",
+        "name": "surname",
+        "placeholder": "Last Name",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "label": "Email",
+        "name": "email",
+        "placeholder": "Email",
+        "required": true,
+        "type": "email"
+      },
+      {
+        "label": "Password",
+        "name": "password",
+        "placeholder": "Password",
+        "required": true,
+        "type": "password"
+      },
+      {
+        // .. other fields, as configured
+      }
+    ],
+  },
+  "providers": [
     {
-      "name": "givenName",
-      "placeholder": "First Name",
-      "required": true,
-      "type": "text"
-    },
-    {
-      "name": "surname",
-      "placeholder": "Last Name",
-      "required": true,
-      "type": "text"
-    },
-    {
-      "name": "email",
-      "placeholder": "Email",
-      "required": true,
-      "type": "email"
-    },
-    {
-      "name": "password",
-      "placeholder": "Password",
-      "required": true,
-      "type": "password"
-    },
-    {
-      // .. other fields, as configured
-    }
-  ],
-  "providers": {
-    "google": {
+      "providerId": "google",
       "clientId": "xxxx"
+    },
+    {
+      "providerId": "saml",
+      "accountStore": {
+        "name": "Name of Saml Provider Directory",
+        "href": "href of the directory"
+      }
     }
-  }
+  ]
 }
 ```
 
@@ -260,7 +297,7 @@ This section uses JSON for example purposes.
 
 Every POST body MUST contain, at a minimum, these fields:
 
-```json
+```javascript
 {
     "email": "robert@stormpath.com",
     "password": "changeme"
@@ -278,10 +315,10 @@ user in the POST, and the developer has configured these fields to be optional
 library MUST set the value to 'UNKNOWN' when we create the account via the
 Stormpath REST API (as the API requires these fields to be populated).
 
-### Configurable Fields
+### Custom Fields
 
 The developer should be able to define their own fields in the
-`stormpath.web.register` configuration block.  If the configured field has
+`stormpath.web.register.form.fields` block.  If the configured field has
 `required: true`, the form parser should error if the user does not submit
 the value.
 
@@ -295,7 +332,7 @@ to be posted to an account's custom data object.
 
 A post with custom fields may look like this:
 
-```json
+```javascript
 {
     "email": "robert@stormpath.com",
     "password": "d",
@@ -316,10 +353,18 @@ For any errors indicated in this document, the following should happen:
 HTML form should be re-rendered with a UX that indicates which field is in error
 and what can be done to fix the problem.
 
-* If the request is `Accept: application/json`, the response should be a JSON
-object of the format `{ error: String }`, where String is a user-friendly message
-and the status of the response should be 400.  If the error is from the
-Stormpath REST API, then send the `userMessage` property of that error.
+* If the request is `Accept: application/json`, the response should be HTTP 400
+and a JSON object of the format:
+
+```javascript
+{
+  "errors": [
+    {
+      "message": "User-friendly error message"
+    }
+  ]
+}
+```
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 

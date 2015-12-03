@@ -13,10 +13,16 @@ requests for `stormpath.web.login.uri`.
 GET requests must:
 
 * Serve a default HTML page with a login form, if the request is type is
-  `Accept: text/html` (read down for default form description).
+  `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
 
-* Serve a view model, which describes the login form, if the request is type is
-  `Accept: application/json` (read down for view model).
+* Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
+  is `true` and `text/html` is defined in `stormpath.web.produces`.
+
+* Serve the login view model if the request is type is
+  `Accept: application/json` and `application/json` is defined in
+  `stormpath.web.produces`.
+
+
 
 POST requests must:
 
@@ -66,7 +72,7 @@ a per-request basis, if the parameter `?next=uri` is provide on the POST.
 
 #### <a name="view"></a> view
 
-Default: 'register'
+Default: `login`
 
 A string key which identifies the view template that should be used.  The
 default value may look different for your framework.  The point of this value
@@ -82,7 +88,8 @@ The form MUST:
 
 * Require an email address / username AND password.
 
-* Render social login buttons, if social provider account stores exist.
+* Render provider login buttons, if provider account stores are mapped to the
+  specified Stormpath application.
 
 * Render context specific messages, depending on the status query parameter
   (see ["Status Messages"](#status-messages) section).
@@ -91,9 +98,10 @@ The form MUST:
 
 ## Login View Model
 
-The login view model should be returned to the client if the GET request is
-`Accept: application/json`.  This is for front-end clients that need to
-dynamically know how to render the login form.
+The login view model should be returned to the client if the GET request
+is `Accept: application/json` and `stormpath.web.produces` contains
+`application/json`.  This is for front-end clients that need to dynamically know
+how to render the login form.
 
 The model should have:
 
@@ -102,35 +110,54 @@ The model should have:
   `enabled` property is `true`.  As such the enabled property can be omitted
   from each list element.
 
-* A list of providers, such as social providers, and the required information
-  to render a UI component for that provider.  At the moment we only have social
-  providers, which simply have a button, so all that is needed is the `clientId`
-  from the given directory configuration.  This is needed by the front-end
-  client to provide the popup-based login flows (see [social.md][]).
+* A list of providers, such as social providers or SAML providers.  Providers
+  are found by looking at the account store mappings of the specified
+  application.
+  * Social providers will need to expose the `clientId`, as front-end
+    applications will need this.
+  * SAML providers need to provide the name of the directory, so that we know
+    what text to use for the button, and the href, so that we can place this
+    value into the SAML request (as a query parameter in the link that the
+    button points to).
+  * The ordering of this list should follow the ordering of the account store
+    mappings.  **NOTE**: this may change in the future.
+
 
 Example view model definition:
 
 ```javascript
 {
-  "fields": [
+  "form": {
+    "fields": [
+      {
+        "label": "Username or Email",
+        "name": "username",
+        "placeholder": "Username or Email",
+        "required": true,
+        "type": "text"
+      },
+      {
+        "label": "Password"
+        "name": "password",
+        "placeholder": "Password",
+        "required": true,
+        "type": "password"
+      }
+    ],
+  },
+  "providers": [
     {
-      "name": "username",
-      "placeholder": "Username or Email",
-      "required": true,
-      "type": "text"
+      "providerId": "google",
+      "clientId": "xxxx"
     },
     {
-      "name": "password",
-      "placeholder": "Password",
-      "required": true,
-      "type": "password"
+      "providerId": "saml",
+      "accountStore": {
+        "name": "Name of Saml Provider Directory",
+        "href": "href of the directory"
+      }
     }
-  ],
-  "providers": {
-    "google": {
-      "clientId": "xxxx"
-    }
-  }
+  ]
 }
 ```
 
@@ -151,7 +178,7 @@ username=robert@stormpath.com&
 password=mypassword
 ```
 
-* The `username` field can be either a username or email.
+* The `username` field value can be either a username or email.
 
 * If either field is omitted, an error will be raised and the page will be
 re-rendered.
@@ -180,9 +207,6 @@ this information, along with our providerId for the provider.
 
 ##  <a name="POST_Error_Handling"></a> POST Error Handling
 
-For both of these cases, if the error is from the Stormpath REST API, then send
-the `userMessage` property of that error.
-
 **For HTML responses:**
 
 For any errors, the response should be a 200 OK and the form should be
@@ -191,8 +215,18 @@ done to fix the problem.
 
 **For JSON responses:**
 
-Send a 400 JSON response where the body is of the format `{ error: 'user
-friendly error message' }`.
+* If the request is `Accept: application/json`, the response should be HTTP 400
+and a JSON object of the format:
+
+```javascript
+{
+  "errors": [
+    {
+      "message": "User-friendly error message"
+    }
+  ]
+}
+```
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 
@@ -219,20 +253,6 @@ Content-Type: application/json; charset=utf-8
   }
 }
 ```
-
-<a href="#top">Back to Top</a>
-
-
-
-## <a name="GET_Request_Handling"></a> GET Request Handling
-
-This describes how we render the login page after receiving a GET request.
-
-If the request type is HTML, we should render a login page with a form that
-accepts either a username or email address and a password.  It should render
-the login buttons for social providers, if configured (see [social.md][]).
-
-If the request type is JSON, send 405.
 
 <a href="#top">Back to Top</a>
 
