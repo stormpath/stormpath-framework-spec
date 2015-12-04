@@ -7,7 +7,7 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service verification of newly registered user accounts.
 
-If an application's default account store has the email verification workflow
+If the application's default account store has the email verification workflow
 enabled, and `stormpath.web.verify.enabled` is not set to `false`, our library
 MUST intercept incoming requests at `stormpath.web.verify.uri` and follow the
 request handling procedure that is defined below.

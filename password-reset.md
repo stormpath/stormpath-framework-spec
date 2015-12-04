@@ -2,274 +2,294 @@
 
 # Password Reset
 
-
-## Table of Contents
-
-* [Options](#options)
-  * [Forgot Password](#forgot-password)
-    * [enabled](#forgot-enabled)
-    * [uri](#forgot-uri)
-    * [nextUri](#forgot-next-uri)
-    * [view](#forgot-view)
-  * [Change Password](#change-password)
-    * [autoLogin](#change-auto-login)
-    * [enabled](#change-enabled)
-    * [uri](#change-uri)
-    * [errorUri](#change-error-uri)
-    * [nextUri](#change-next-uri)
-    * [view](#change-view)
-* [GET Handling, Forgot Password](#get-forgot-password)
-* [POST Handling, Forgot Password](#post-forgot-password)
-* [GET Handling, Change Password](#get-change-password)
-* [POST Handling, Change Password](#post-change-password)
-
-
 ## Feature Description
 
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service password reset of existing user accounts.
 
-If an application's default account store has the password reset workflow
-enabled, our library MUST intercept incoming GET requests for the
-`uri` values presented in this document, and render the appropriate views as
-an HTML page.
+This feature has two endpoints:
 
+  * The "forgot" endpoint, which is used for requesting a password reset email.
 
-## <a name="options"></a> Options
+  * The "change" endpoint, which is used for setting a new password and is
+    linked to from the password reset email.  This is where the user arrives
+    with the `sptoken` that was sent in the email.
 
-These tables list all the options that are required by this feature.  Detailed
-descriptions follow.  How the option names are translated into the framework
-language (*e.g. to camel case, or not?*) is not specified here.
 
+## Forgot Password Endpoint
 
-### <a name="forgot-password"></a> Forgot Password
+This is the endpoint that a user will use if they want to request a password
+reset email.
 
-The table below lists all options for the Forgot Password workflow.  These
-options determine how we initialize a password reset for a user.
+If the default account store of the stormapth application has the password reset
+workflow enabled, and `stormpath.web.forgotPassword.enabled` is not set to
+`false`, our library MUST intercept incoming requests at
+`stormpath.web.forgotPassword.uri` and follow the request handling procedure
+that is defined below.
 
-| Option                           | Default Value                     |
-| -------------------------------- |-----------------------------------|
-| enabled                          | auto-detected by directory config |
-| uri                              | /forgot                           |
-| nextUri                          | /login?status=forgot              |
-| view                             | forgot                            |
+### Request Handling
 
+#### GET requests with `Accept: text/html`:
 
-#### <a name="forgot-enabled"></a> enabled
+* If `stormpath.web.spa.enabled` is `false`, render a form which allows the
+  user to request a password reset by entering their email address.  If the
+  request contains the query `?status=invalid_sptoken`, a message should be
+  shown above the form:
 
-If this feature is turned on, then we will allow users to initialize a password
-reset workflow.
+  > The password reset link you tried to use is no longer valid. Please request
+    a new link from the form below.
 
-**NOTE**: This option will be set to whatever value is specified in the
-Directory's configuration.  If the Password Reset workflow is enabled in the
-Stormpath Directory -- this option will be automatically enabled.
+* If `stormpath.web.spa.enabled` is `true`, return the SPA view.
 
-<a href="#top">Back to Top</a>
+#### POST Requests
 
+This endpoint accepts a post from the password reset request form, and the only
+field in this form is the `email` field.  The endpoint should accept the content
+as `application/json` or `application/x-www-form-urlencoded`.
 
-#### <a name="forgot-uri"></a> uri
+The format of the request is (JSON example):
 
-This is the URI portion of an entire URL that our library will attach an
-interceptor to for GET and POST requests.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="forgot-next-uri"></a> nextUri
-
-This is the URI we'll redirect the user to after a user has successfully
-initialized the Password Reset workflow.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="forgot-view"></a> view
-
-This is the name of the view that will be used to render the Password Reset
-initialization page.  This page allows a user to enter their account email
-address to initialize the Password Reset workflow.
-
-<a href="#top">Back to Top</a>
-
-
-### <a name="change-password"></a> Change Password
-
-The table below lists all options for the Change Password workflow.  These
-options determine how we let a user actually reset their password after they've
-clicked the link in their email prompting them to complete the reset process.
-
-| Option                           | Default Value                     |
-| -------------------------------- |-----------------------------------|
-| autoLogin                        | false                             |
-| enabled                          | auto-detected by directory config |
-| uri                              | /reset                            |
-| errorUri                         | /forgot?status=invalid_sp_token   |
-| nextUri                          | /login?status=reset               |
-| view                             | reset                             |
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-auto-login"></a> autoLogin
-
-If this feature is turned on, then once a user has successfully reset his
-password, he will be automatically logged into his account and redirected to the
-`nextUri` field for the `login` feature.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-enabled"></a> enabled
-
-If this feature is turned on, then we will allow users to complete a password
-reset workflow.
-
-**NOTE**: This option will be set to whatever value is specified in the
-Directory's configuration.  If the Password Reset workflow is enabled in the
-Stormpath Directory -- this option will be automatically enabled.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-uri"></a> uri
-
-This is the URI portion of an entire URL that our library will attach an
-interceptor to for GET and POST requests.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-error-uri"></a> errorUri
-
-This is the URI we'll redirect a user to if an incoming request is invalid (*eg:
-the Stormpath token is invalid.*).
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-next-uri"></a> nextUri
-
-This is the URI we'll redirect the user to after a user has successfully
-reset their account password.
-
-<a href="#top">Back to Top</a>
-
-
-#### <a name="change-view"></a> view
-
-This is the name of the view that will be used to render the Password Reset
-change page.  This page allows a user to enter their new password twice, and
-will complete the Password Reset workflow.
-
-<a href="#top">Back to Top</a>
-
-
-## <a name="get-forgot-password"></a> Get Handling, Forgot Password
-
-This describes how we handle the response for GET requests to the `uri` option
-for the Forgot Password workflow.
-
-The response should be an HTML page that provides a form with an email address
-field, allowing the user to give the email address of the account that
-they want to trigger a password reset email for.
-
-The view must have a conditional block for showing an error message, if the user
-arrives here with the parameter `?status=invalid_sp_token`.
-
-<a href="#top">Back to Top</a>
-
-
-## <a name="post-forgot-password"></a> Post Handling, Forgot Password
-
-This describes how we handle the response for POST requests to the
-`uri` option for the Forgot Password workflow.
-
-This handler should accept both `www-form-urlencoded` as well as
-`application/json` content.
-
-The POST request must be of this format for form encoded data:
-
-```
-login=emailorusername
-```
-
-The POST request must be of this format for JSON:
-
-```json
+```javascript
 {
-  "login": "email or username"
+  "email": "foo@bar.com"
 }
 ```
 
-If the Accept header of the request is `www-form-urlencoded`, then regardless
-of whether or not the login corresponds to an account, the user will be
-redirected to the `nextUri`.  By default, this will be our login page, which
-displays a message that says: *"If the email is associated with an account,
-you will receive an email from us shortly."*
+Regardless of whether or not the email address is associated with a user
+account, we must do the following:
 
-If the Accept header of the request is `application/json`, then the status of the
-response should be an HTTP 200, and there should be no body.
+* If the request is `Accept: application/html`, redirect the user to
+  `stormpath.web.forgot.nextUri`
+
+* If the request is `Accept: application/json`, respond with `200 OK` and no
+  body.
+
+### <a name="options"></a> Options
+
+```yaml
+stormpath:
+  web:
+    forgotPassword:
+      enabled: null
+      uri: "/forgot"
+      view: "forgot-password"
+      nextUri: "/login?status=forgot"
+```
+
+#### enabled
+
+Default: `null`
+
+Unless explicitly set to `false`, this endpoint must be automatically enabled if
+the default account store for the defined Stormpath application has the password
+reset workflow enabled.
 
 <a href="#top">Back to Top</a>
 
 
-## <a name="get-change-password"></a> Get Handling, Change Password
+#### uri
 
-This describes how we handle the response for GET requests to the
-`uri` option for the Change Password workflow.
+Default: `/forgot`
 
-When we receive an incoming request, we should:
-
-- Check to ensure an `spToken` query parameter exists.
-- Make an API request to Stormpath to validate the `spToken`.  This should
-  **not** consume the token.
-- If the `spToken` is invalid, we should redirect the user to the `errorUri`
-  option.
-- If the `spToken` is valid, we should render a page that contains a form which
-  collects the user's new password (*twice*).
+The URI that we'll attach an interceptor to for requests, if `enabled` is
+`true`.
 
 <a href="#top">Back to Top</a>
 
 
-## <a name="post-change-password"></a> Post Handling, Change Password
+#### nextUri
 
-This describes how we handle the response for POST requests to the
-`uri` option for the Change Password workflow.
+Default: `/login?status=forgot`
 
-When we receive an incoming request, we will first ensure that the body of the
-request is in the right format.
+This is the URI we'll redirect the user to after a user has successfully
+initialized the Password Reset workflow by submitting an email address.
 
-If the Content Type header is `www-form-urlencoded`, the request should look
-like:
+<a href="#top">Back to Top</a>
 
-```
-sptoken=token&password=password
-```
 
-If the Content Type header is `application/json`, the request should look like:
+#### view
 
-```json
+Default: `forgot-password`
+
+A string key which identifies the view template that should be used.
+
+<a href="#top">Back to Top</a>
+
+
+## Change Password Endpoint
+
+This is the endpoint that a user will use if they have received a password
+reset email and have clicked on the link in the email.  The link will point to
+this endpoint, and contain the `sptoken` query parameter.
+
+### Request Handling
+
+#### GET requests with `Accept: text/html`:
+
+* If there is a `?sptoken` query parameter in the URL:
+
+  * Make an API request to Stormpath to validate the `sptoken`, but **do not**
+    consume the token yet.
+
+  * If the `sptoken` is invalid, redirect the user to
+    `stormpath.web.changePassword.errorUri`.
+
+  * If the `sptoken` is valid:
+
+    * If `stormpath.web.spa.enabled` is `false`, render a page that contains a
+     form which collects the user's new password (must include a password
+     confirmation field).
+
+    * If `stormpath.web.spa.enabled` is `true`, return the SPA view.
+
+* If there isn't a `?sptoken` query parameter in the URL:
+
+  * Redirect the user to `stormpath.web.forgotPassword.uri`
+
+#### POST Handling
+
+This endpoint accepts a post from the password change form.  The endpoint should
+accept the request as `application/json` or `application/x-www-form-urlencoded`.
+
+The format of the request is (JSON example):
+
+```javascript
 {
   "sptoken": "the sent token",
   "password": "new password"
 }
 ```
 
-Once we receive the `sptoken` and `password` values, we should consume the token
-using the Stormpath API, to ensure it can no longer be used for future requests.
+The Stormpath API should be invoked to consume the token and reset the password.
 
-If the operation is successful and the Accept header is set to `text/html`, we
-should then redirect the user to the `nextUri` option for the Change Password
-workflow.
+**Success Responses**
 
-If the operation is successful and the Accept header is set to
-`application/json`, we should return an HTTP 200 with no body.
+If the operation is successful (the password has been changed), respond with the
+appropriate case:
 
-If the operation fails and the Accept header is set to `text/html`, we should
-redirect the user to the `errorUri` option for the Change Password workflow.
+* If the request is `Accept: text/html`:
 
-If the operation fails and the Accept header is set to `application/json`, we
-should return an HTTP 400 with a JSON body that contains
-`{ "error": "message" }`.
+  * If `autoLogin` is `false`, redirect the user to
+    `stormpath.web.changePassword.nextUri`
+
+  * If `autoLogin` is `true`, log the user in (create the Oauth2 cookies) and
+    redirect the user to `stormpath.web.login.nextUri`
+
+* If the request is `Accept: application/json`:
+
+  * If `autoLogin` is `false`, respond with `200 OK` and an empty body.
+
+  * If `autoLogin` is `true`, log the user in (create the Oauth2 cookies) and
+    respond with the authentication response:
+
+    ```
+    HTTP/1.1 200 OK
+    Content-Type: application/json; charset=utf-8
+
+    {
+      account: {
+        // the account that was created
+      }
+    }
+    ```
+
+**Error Responses**
+
+If an error is encountered, respond with the appropriate case:
+
+* If the request is `Accept: text/html`:
+
+  * If the error is a password policy validation error, re-render the change
+    password form and display the error to the user
+
+  * If the error is an invalid or expired token error, redirect the user to
+    `stormpath.web.changePassword.errorUri`
+
+* If the request is `Accept: application/json`:
+
+  * Respond with `400 Bad Request` and an error response:
+
+    ```javascript
+    {
+      errors: [
+        {
+          message: 'user friendly error'
+        }
+      ]
+    }
+    ```
+
+### Options
+
+```yaml
+stormpath:
+  web:
+    changePassword:
+      enabled: null
+      autoLogin: false
+      uri: "/change"
+      errorUri: "/forgot?status=invalid_sptoken"
+      nextUri: "/login?status=reset"
+      view: "change-password"
+
+```
+
+
+
+#### enabled
+
+Default: `null`
+
+Unless explicitly set to `false`, this endpoint must be automatically enabled if
+the default account store for the defined Stormpath application has the password
+reset workflow enabled.
+
+<a href="#top">Back to Top</a>
+
+
+#### autoLogin
+
+Default: `false`
+
+If `true`, then once a user has successfully reset their password, they will be
+automatically logged in and redirected to `stormpath.web.login.nextUri`.
+
+
+<a href="#top">Back to Top</a>
+
+
+#### uri
+
+Default: `/change`
+
+The URI that we'll attach an interceptor to for requests, if `enabled` is
+`true`.
+
+<a href="#top">Back to Top</a>
+
+
+#### <a name="change-error-uri"></a> errorUri
+
+Default: `/forgot?status=invalid_sptoken`
+
+This is the URI we'll redirect a user to if they have arrived with an invalid
+`sptoken`.
+
+<a href="#top">Back to Top</a>
+
+
+#### nextUri
+
+Default: `/login?status=reset`
+
+This is the URI we'll redirect the user to after they have successfully reset
+their account password.
+
+<a href="#top">Back to Top</a>
+
+
+#### view
+
+A string key which identifies the view template that should be used.
 
 <a href="#top">Back to Top</a>
