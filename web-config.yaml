@@ -121,7 +121,7 @@ stormpath:
       view: "login"
       form:
         fields:
-          username:
+          login:
             enabled: true
             label: "Username or Email"
             placeholder: "Username or Email"
@@ -134,7 +134,7 @@ stormpath:
             required: true
             type: "password"
         fieldOrder:
-          - "username"
+          - "login"
           - "password"
 
     logout:

@@ -13,7 +13,7 @@ cookies as the secure storage location on the client.
 
 ### Authentication Flow
 
-1. The user visits the login page and submits their username and password.
+1. The user visits the login page and submits their login and password.
 
 2. The integration uses the SDK to perform the password grant exchange, using
     the Stormpath Application's `/oauth/token` endpoint.

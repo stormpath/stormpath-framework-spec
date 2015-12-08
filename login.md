@@ -86,7 +86,7 @@ is to allow the developer to override our default view with their own.
 
 The form MUST:
 
-* Require an email address / username AND password.
+* Require a login (email address or username) AND password.
 
 * Render provider login buttons, if provider account stores are mapped to the
   specified Stormpath application.
@@ -131,7 +131,7 @@ Example view model definition:
     "fields": [
       {
         "label": "Username or Email",
-        "name": "username",
+        "name": "login",
         "placeholder": "Username or Email",
         "required": true,
         "type": "text"
@@ -174,11 +174,11 @@ as `application/json`.
 For example, a form-based post would look like this:
 
 ```x-www-form-urlencoded
-username=robert@stormpath.com&
+login=robert@stormpath.com&
 password=mypassword
 ```
 
-* The `username` field value can be either a username or email.
+* The `login` field value can be either a username or email.
 
 * If either field is omitted, an error will be raised and the page will be
 re-rendered.
