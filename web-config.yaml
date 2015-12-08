@@ -55,49 +55,42 @@ stormpath:
           givenName:
             enabled: true
             label: "First Name"
-            name: "givenName"
             placeholder: "First Name"
             required: true
             type: "text"
           middleName:
             enabled: false
             label: "Middle Name"
-            name: "middleName"
             placeholder: "Middle Name"
             required: true
             type: "text"
           surname:
             enabled: true
             label: "Last Name"
-            name: "surname"
             placeholder: "Last Name"
             required: true
             type: "text"
           username:
             enabled: false
             label: "Username"
-            name: "username"
             placeholder: "Username"
             required: true
             type: "text"
           email:
             enabled: true
             label: "Email"
-            name: "email"
             placeholder: "Email"
             required: true
             type: "email"
           password:
             enabled: true
             label: "Password"
-            name: "password"
             placeholder: "Password"
             required: true
             type: "password"
           confirmPassword:
             enabled: false
             label: "Conrim Password"
-            name: "confirmPassword"
             placeholder: "Conrim Password"
             required: true
             type: "password"
@@ -131,14 +124,12 @@ stormpath:
           username:
             enabled: true
             label: "Username or Email"
-            name: "username"
             placeholder: "Username or Email"
             required: true
             type: "text"
           password:
             enabled: true
             label: "Password"
-            name: "password"
             placeholder: "Password"
             required: true
             type: "password"

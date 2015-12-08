@@ -73,49 +73,42 @@ stormpath:
           givenName:
             enabled: true
             label: "First Name"
-            name: "givenName"
             placeholder: "First Name"
             required: true
             type: "text"
           middleName:
             enabled: false
             label: "Middle Name"
-            name: "middleName"
             placeholder: "Middle Name"
             required: true
             type: "text"
           surname:
             enabled: true
             label: "Last Name"
-            name: "surname"
             placeholder: "Last Name"
             required: true
             type: "text"
           username:
             enabled: false
             label: "Username"
-            name: "username"
             placeholder: "Username"
             required: true
             type: "text"
           email:
             enabled: true
             label: "Email"
-            name: "email"
             placeholder: "Email"
             required: true
             type: "email"
           password:
             enabled: true
             label: "Password"
-            name: "password"
             placeholder: "Password"
             required: true
             type: "password"
           confirmPassword:
             enabled: false
             label: "Conrim Password"
-            name: "confirmPassword"
             placeholder: "Conrim Password"
             required: true
             type: "password"
@@ -168,14 +161,13 @@ is enabled, how should this error be surfaced?
 
 #### <a name="fields"></a> form.fields
 
-A map of field definitions.  Each field definition must have the following
-properties:
+A map of field definitions.  The name of the property, e.g. `givenName`, should
+be applied to the HTML input element as the `name` attribute.  Each field
+definition must have the following properties:
 
 * `enabled` - Determines if this field should be shown in the registration form.
 
 * `label` - The value that is shown as a descriptive label for the field.
-
-* `name` - The value to apply to the `name` attribute of the HTML input element.
 
 * `placeholder` - The placeholder attribute value for the HTML input element.
 
