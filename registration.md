@@ -260,16 +260,24 @@ Example view model definition:
       }
     ],
   },
-  "providers": [
+  "accountStores": [
     {
-      "providerId": "google",
-      "clientId": "xxxx"
+      "href": "https://api.stormpath.com/v1/directories/whatev"
+      "name": "Name of account store"
+      "provider": {
+        "href": "...",
+        "providerId": "saml"
+        //DO NOT EXPOSE ANY OTHER SAML DATA
+      }
     },
     {
-      "providerId": "saml",
-      "accountStore": {
-        "name": "Name of Saml Provider Directory",
-        "href": "href of the directory"
+      "href": "https://api.stormpath.com/v1/directories/whatev2"
+      "name": "Google"
+      "provider": {
+        "href": "href of the directory",
+        "providerId": "google",
+        "clientId": "WHATEVS",
+        //DO NOT EXPOSE ANY SECRET HERE.  NO CLIENT SECRETS!
       }
     }
   ]
