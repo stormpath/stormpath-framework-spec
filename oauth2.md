@@ -8,7 +8,7 @@ application.
 
 
 
-### OAuth2 Configuration Options
+## OAuth2 Configuration Options
 
 The OAuth2 endpoint can be configured, or disabled entirely:
 
@@ -100,8 +100,8 @@ The product guide for this feature can be found here:
 
 http://docs.stormpath.com/guides/token-management/
 
-In this workflow, an account can post their username and password to the
-`/oauth/token` endpoint, with the following body data:
+In this workflow, an account can post their login (username or email) and
+password to the `/oauth/token` endpoint, with the following body data:
 
 ````
 POST /oauth/token
@@ -110,6 +110,9 @@ grant_type=password
 &username=<username>
 &password=<password>
 ````
+
+Although the Oauth2 spec requires the parameter to be named `username`, this
+value can also be the email address of a Stormpath account.
 
 The framework should use the underlying SDK to exchange these credentials
 for an access token response, using the `/oauth/token` endpoint of the

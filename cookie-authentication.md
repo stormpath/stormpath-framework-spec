@@ -13,7 +13,7 @@ cookies as the secure storage location on the client.
 
 ### Authentication Flow
 
-1. The user visits the login page and submits their username and password
+1. The user visits the login page and submits their login and password.
 
 2. The integration uses the SDK to perform the password grant exchange, using
     the Stormpath Application's `/oauth/token` endpoint.
@@ -27,12 +27,15 @@ cookies as the secure storage location on the client.
     logic, using the SDK's relevant JWT and OAuth authenticators:
 
   * If the access token is valid, authenticate the request
+
   * If the access token is invalid, attempt to use the refresh token to get a
-  new access token
+  new access token.
+
   * If a new access token is obtained, authenticate the request and store this
-  new token value in the access token cookie
+  new token value in the access token cookie.
+
   * If a new access token cannot be obtained, reject the request and delete the
-    refresh token cookie
+    refresh token cookie and the access token cookie.
 
 ### Rejecting Requests
 
@@ -83,8 +86,7 @@ token, as defined by the Oauth Policy of the Stormpath Application.
 The developer has control over the name of the cookie and the flags that
 control the cookie behavior in the browser.  The lifetime of the cookies is
 controlled by the application's OAuth Policy, and as such is not represented
-in these option blocks.  But you will need to know what those policy settings
-are, and you will find them at `web.oauth2.password`.
+in these option blocks.
 
 ```yaml
 web:
