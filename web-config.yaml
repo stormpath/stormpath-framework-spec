@@ -12,7 +12,7 @@ stormpath:
           ttl: 3600
       password:
         enabled: true
-        validationStrategy: stormpath
+        validationStrategy: "local"
 
     expand:
       apiKeys: false
