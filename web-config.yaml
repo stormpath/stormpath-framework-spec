@@ -90,8 +90,8 @@ stormpath:
             type: "password"
           confirmPassword:
             enabled: false
-            label: "Conrim Password"
-            placeholder: "Conrim Password"
+            label: "Confirm Password"
+            placeholder: "Confirm Password"
             required: true
             type: "password"
         fieldOrder:
