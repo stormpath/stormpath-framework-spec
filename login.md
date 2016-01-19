@@ -94,6 +94,7 @@ The form MUST:
 * Render context specific messages, depending on the status query parameter
   (see ["Status Messages"](#status-messages) section).
 
+* Sets [authenication cookies](https://github.com/stormpath/stormpath-framework-spec/blob/master/cookie-authentication.md) (OAuth 2.0 Access / Refresh Tokens) on succesfull authentication (username/password)
 
 
 ## Login View Model
