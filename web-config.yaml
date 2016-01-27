@@ -195,3 +195,6 @@ stormpath:
       enabled: false
       view: index
 
+    unauthorized:
+      view: "unauthorized"
+
