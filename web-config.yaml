@@ -23,6 +23,9 @@ stormpath:
     accessTokenCookie:
       name: "access_token"
       httpOnly: true
+      
+      # See cookie-authentication.md for explanation of
+      # how `null` values behave for these properties.
       secure: null
       path: null
       domain: null
@@ -30,6 +33,9 @@ stormpath:
     refreshTokenCookie:
       name: "refresh_token"
       httpOnly: true
+      
+      # See cookie-authentication.md for explanation of
+      # how `null` values behave for these properties.
       secure: null
       path: null
       domain: null
