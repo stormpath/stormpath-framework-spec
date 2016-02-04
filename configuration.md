@@ -83,8 +83,3 @@ this exception should be thrown:
 
   > No default account store is mapped to the specified application. A default
     account store is required for registration.
-
-UNABLE_TO_AUTO_RESOLVE_APP: 'Could not automatically resolve a Stormpath Application.  \n\nPlease specify your Stormpath Application in your configuration.\n',
-
-UNABLE_TO_RESOLVE_APP: 'Unable to resolve a Stormpath application.'
-
