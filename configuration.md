@@ -39,15 +39,52 @@ applications exist beyond the default 'My Application', then an error should be
 given to the developer - it should let them know that they need to define an
 application.
 
+The following execption messages should be used.
+
+* Application could not be found when defined by HREF:
+
+  > The provided application could not be found. The provided application
+    href was: %href%
+
+* Application could not be found when defined by name:
+
+  > The provided application could not be found. The provided application
+    name was: %name%
+
+* Application was not defined, and could not be automatically resolved to the
+  only application in the tenant:
+
+  > Could not automatically resolve a Stormpath Application. Please specify
+    your Stormpath Application in your configuration.
+
 ## Account Store Resolution
 
 Account stores are required for login and registration.  As such, we need to
 look at the account stores that are mapped to the application that is specified
-by the developer.
+by the developer.  The following cases need to be validated.
 
-If the specified application does not have any account stores mapped to it,
+* If the specified application does not have any account stores mapped to it,
 this exception should be thrown:
 
-> No account stores are mapped to the specified application.
-  Account stores are required for login and registration.
+  > No account stores are mapped to the specified application.
+    Account stores are required for login and registration.
+
+* If `stormpath.web.register.autoLogin` is true, and email verification is
+  enabled on the default account store, the following error should be given:
+
+  > Invalid configuration: stormpath.web.register.autoLogin is true, but the
+    default account store of the specified application has the email
+    verification workflow enabled. Auto login is only possible if email
+    verification is disabled. Please disable this workflow on this
+    application's default account store.
+
+* If `stormpath.web.register.enabled` is true, and there is no default account
+  store mapped to the application:
+
+  > No default account store is mapped to the specified application. A default
+    account store is required for registration.
+
+UNABLE_TO_AUTO_RESOLVE_APP: 'Could not automatically resolve a Stormpath Application.  \n\nPlease specify your Stormpath Application in your configuration.\n',
+
+UNABLE_TO_RESOLVE_APP: 'Unable to resolve a Stormpath application.'
 
