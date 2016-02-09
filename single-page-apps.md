@@ -1,10 +1,10 @@
 # Single Page Applications
 
 Our integration needs to play nice with Single Page Applications (SPAs), such
-as Angular.js and React.
+as AngularJS and React.
 
 Typical SPAs have an "entry", which is an HTML file (usually index.html) that
-loads serveral javascript files and css files.  Once loaded, the application
+loads several JavaScript files and CSS files.  Once loaded, the application
 will bootstrap.
 
 ## Background: Routing
@@ -46,7 +46,7 @@ In this situation, the server needs to render the entry for the SPA - so that
 the SPA can bootstrap and then render the appropriate view.
 
 This impacts our integration because we need to know how we should respond
-when a `Accept: text/html` GET request comes in for `/login` and other URLs that
+when an `Accept: text/html` GET request comes in for `/login` and other URLs that
 we bind to. Do we serve our default HTML pages, or do we serve the SPA entry?
 Or do we ignore HTML entirely, and leave the SPA configuration up to the
 developer?
@@ -105,7 +105,7 @@ default HTML pages.
 
 ## View Models
 
-The login an registration views are dynamic.  The registration form has
+The login and registration views are dynamic.  The registration form has
 configurable fields, and both login and registration need to dynamically render
 buttons for any providers (Google, Facebook, SAML) that are mapped to the
 specified Stormpath application.

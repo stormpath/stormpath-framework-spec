@@ -12,13 +12,13 @@ requests for `stormpath.web.login.uri`.
 
 GET requests must:
 
-* Serve a default HTML page with a login form, if the request is type is
+* Serve a default HTML page with a login form, if the request type is
   `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
 
 * Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
   is `true` and `text/html` is defined in `stormpath.web.produces`.
 
-* Serve the login view model if the request is type is
+* Serve the login view model if the request type is
   `Accept: application/json` and `application/json` is defined in
   `stormpath.web.produces`.
 
@@ -46,10 +46,10 @@ stormpath:
 
 Default: `true`
 
-If `true` this feature will be enabled and our library will intercept requests
-at for `uri`.
+If `true`, this feature will be enabled and our library will intercept requests
+for `uri`.
 
-If `false` this feature is disabled and the base framework will be responsible
+If `false`, this feature is disabled and the base framework will be responsible
 for the `uri`, likely resulting in a 404 Not Found error.
 
 **NOTE**: If this feature is enabled, and no Account Stores are mapped to this
@@ -60,7 +60,7 @@ no possible ways for a user to authenticate.
 
 Default: `/login`
 
-This URI that our integration should bind to for handling GET and POST requests
+The URI that our integration should bind to for handling GET and POST requests
 for the `uri`.
 
 #### <a name="nextUri"></a> nextUri
@@ -68,7 +68,7 @@ for the `uri`.
 Default: `/`
 
 Where to send the user after successful login.  This value can be overridden on
-a per-request basis, if the parameter `?next=uri` is provide on the POST.
+a per-request basis, if the parameter `?next=uri` is provided on the POST.
 
 #### <a name="view"></a> view
 
@@ -94,7 +94,7 @@ The form MUST:
 * Render context specific messages, depending on the status query parameter
   (see ["Status Messages"](#status-messages) section).
 
-* Sets [authenication cookies](https://github.com/stormpath/stormpath-framework-spec/blob/master/cookie-authentication.md) (OAuth 2.0 Access / Refresh Tokens) on succesfull authentication (username/password)
+* Sets [authenication cookies](https://github.com/stormpath/stormpath-framework-spec/blob/master/cookie-authentication.md) (OAuth 2.0 Access / Refresh Tokens) on successful authentication (username/password).
 
 
 ## Login View Model
@@ -174,7 +174,7 @@ Example view model definition:
 ## <a name="POST_Body_Format"></a> POST Body Format
 
 This endpoint accepts password based login, and social login.  If the POST is
-coming from a HTML based login form, the data will be submitted as
+coming from an HTML based login form, the data will be submitted as
 `application/x-www-form-urlencoded`.  Front-end applications will post the data
 as `application/json`.
 

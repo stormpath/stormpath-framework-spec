@@ -15,7 +15,7 @@ feature has it's own markdown file in this repository.
 
 ## Application resolution
 
-Our framework intergations will need to know which Stormpath Application should
+Our framework integrations will need to know which Stormpath Application should
 be used (as all authentication features of Stormpath are tied to Applications).
 
 The developer needs to specify the application, by name or href, using one of
@@ -39,7 +39,7 @@ applications exist beyond the default 'My Application', then an error should be
 given to the developer - it should let them know that they need to define an
 application.
 
-The following execption messages should be used.
+The following exception messages should be used.
 
 * Application could not be found when defined by HREF:
 

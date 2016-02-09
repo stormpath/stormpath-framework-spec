@@ -13,13 +13,13 @@ incoming requests for `stormpath.web.register.uri`.
 
 GET requests must respond in one of the following ways:
 
-* Serve a default HTML page with a registration form, if the request is type is
+* Serve a default HTML page with a registration form, if the request type is
   `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
 
 * Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
   is `true` and `text/html` is defined in `stormpath.web.produces`.
 
-* Serve the registration view model if the request is type is
+* Serve the registration view model if the request type is
   `Accept: application/json` and `application/json` is defined in
   `stormpath.web.produces`.
 
@@ -136,7 +136,7 @@ by `stormpath.web.registration.uri`
 
 Default: `/register`
 
-This URI that our integration should bind to for handling GET and POST requests
+The URI that our integration should bind to for handling GET and POST requests
 for the `uri`.
 
 
@@ -145,7 +145,7 @@ for the `uri`.
 Default: `/`
 
 Where to send the user after successful registration, if [autoLogin](#autoLogin)
-is `True`.
+is `true`.
 
 
 #### <a name="autoLogin"></a> autoLogin
@@ -256,7 +256,7 @@ Example view model definition:
         "type": "password"
       },
       {
-        // .. other fields, as configured
+        // ... other fields, as configured
       }
     ],
   },
@@ -385,7 +385,7 @@ Content-Type: application/json; charset=utf-8
 }
 ```
 
-* If the request is `Accept: text/html`, and..
+* If the request is `Accept: text/html`, and...
   * The newly created account's status is ENABLED and [autoLogin](#autoLogin)
     is:
     * `True`: issue a 302 Redirect to the `nextUri` and log the user in (create

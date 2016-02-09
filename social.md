@@ -7,7 +7,7 @@ Login providers that the Stormpath API supports.  At the time of writing we
 support:
 
 * Facebook
-* Github
+* GitHub
 * Google
 * LinkedIn
 
@@ -21,7 +21,7 @@ describe in detail:
 In this situation, the user leaves your login page by redirect and is taken to
 the provider for authentication.  Once authentication is complete, the user is
 redirected back to a "callback" URI on your website.  This callback will provide
-an access token or access code as a query parameter.  You server uses a
+an access token or access code as a query parameter.  Your server uses a
 confidential keypair of the provider to validate the token/code, then retrieves
 the account data of the authenticated user.
 
