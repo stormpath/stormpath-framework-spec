@@ -94,6 +94,9 @@ callback handler must complete the following tasks:
 If any of these tasks fail, an error should be immediately rendered to the user
 and the next task should not be attempted.
 
+The error should be displayed on the login form in the same way other login
+errors are shown.
+
 ## Implementing Popup-Based Workflows
 
 Single-page applications will need to query the server to determine which social
