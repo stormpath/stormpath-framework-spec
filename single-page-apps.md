@@ -117,7 +117,6 @@ form appropriately.
 Please see [login][] and [registration][] for specific information on each
 model.
 
-
 ## React Flux
 
 React Flux is a different approach which does not follow the separation of
