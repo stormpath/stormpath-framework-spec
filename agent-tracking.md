@@ -10,7 +10,7 @@ implemented:
 
   > X-Stormpath-Agent: stormpath-sdk-angularjs/0.9.0
 
-* If the `X-Stormpath-Agent` header is seen on an incoming request, the x
+* If the `X-Stormpath-Agent` header is seen on an incoming request, the
   framework integration should pass this value down to the SDK when making any
   REST API requests that are needed to fulfill the framework response.  The SDK
   should prepend this value to the `User-Agent` header that is sent to the
