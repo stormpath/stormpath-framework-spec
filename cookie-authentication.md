@@ -16,7 +16,7 @@ cookies as the secure storage location on the client.
 1. The user visits the login page and submits their login and password.
 
 2. The integration uses the SDK to perform the password grant exchange, using
-    the Stormpath Application's `/oauth/token` endpoint.
+    the Stormpath Application's `/oauth/token` endpoint.  This means that the login route is going to be using the SDK of choice to interact with the /v1/applications/:appId/oauth/token endpoint.
 
 3. The integration collects the access token and refresh token from the SDK
     response in the previous step.  It then responds to the browser request by
