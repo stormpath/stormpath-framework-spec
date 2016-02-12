@@ -224,18 +224,8 @@ done to fix the problem.
 
 **For JSON responses:**
 
-* If the request is `Accept: application/json`, the response should be HTTP 400
-and a JSON object of the format:
-
-```javascript
-{
-  "errors": [
-    {
-      "message": "User-friendly error message"
-    }
-  ]
-}
-```
+Respond with the JSON error from the API, according to the [Error Handling][]
+specification.
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 
@@ -307,5 +297,5 @@ is unverified.  Message to show:
 <a href="#top">Back to Top</a>
 
 
-
+[Error Handling]: error-handling.md
 [social.md]: social.md
