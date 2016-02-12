@@ -119,8 +119,9 @@ for an access token response, using the `/oauth/token` endpoint of the
 Stormpath Application that is specified in the configuration.
 
 If the login is successful, we respond with an access token and refresh token.
-The format of the response should be an OAuth2 access token response, which
-looks like this:
+This means that you need to remove the `stormpath_access_token_href` from the
+API response.  Thus, the format of the response should be an OAuth2 access token
+response, which looks like this:
 
 ```
 HTTP/1.1 200 OK
@@ -133,6 +134,21 @@ Pragma: no-cache
   "expires_in":3600,
   "refresh_token":"tGzv3JOkF0XG5Qx2TlKWIA",
   "token_type":"Bearer"
+}
+```
+
+#### Errors
+
+Error responses from the application's `/oauth/token` endpoint should be
+transformed to only include the message and error properties (see
+[Error Handling][]).  This is an OAuth nuance that is only available on error
+responses from this endpoint.  As such, an error response for this flow would
+look like this:
+
+```
+{
+  "message": "grant_type passwordx is an unsupported value.",
+  "error": "invalid_request"
 }
 ```
 
@@ -166,3 +182,5 @@ The underlying SDK must have authenticators which can do either type of
 validation.  The purpose of this configuration option is to inform the framework
 intergration as to which type of authenticator it should build and use for
 authentication attempts.
+
+[Error Handling]: error-handling.md

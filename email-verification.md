@@ -45,33 +45,20 @@ request handling procedure that is defined below.
 
 * If there is a `?sptoken` query parameter in the URL:
 
- * Attempt to verify the `sptoken`:
+ * Attempt to verify the `sptoken`, using the SDK, then:
 
   * If the token is valid, respond with `200 OK` and an empty body
 
-  * If the token is invalid, respond with `400 Bad Request` and an error
-    response:
-
-    ```javascript
-    {
-      errors: [
-        {
-          message: 'user friendly error'
-        }
-      ]
-    }
-    ```
+  * If validation fails, respond with the JSON error from the API, according to
+    the [Error Handling][] specification.
 
 * If there is't an `?sptoken` query parameter in the URL, respond with this
   error:
 
   ```javascript
   {
-    errors: [
-      {
-        message: 'sptoken not provided'
-      }
-    ]
+    status: 400,
+    message: 'sptoken parameter not provided.'
   }
   ```
 
@@ -152,3 +139,4 @@ A string key which identifies the view template that should be used.  The
 default value may look different for your framework.  The point of this value
 is to allow the developer to override our default view with their own.
 
+[Error Handling]: error-handling.md

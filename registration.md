@@ -356,15 +356,11 @@ and what can be done to fix the problem.
 * If the request is `Accept: application/json`, the response should be HTTP 400
 and a JSON object of the format:
 
-```javascript
-{
-  "errors": [
-    {
-      "message": "User-friendly error message"
-    }
-  ]
-}
-```
+  * Respond with the JSON error from the API, according to the [Error Handling][]
+    specification.
+  * If the error is not from the API (i.e. it's a form validation error) then
+    create a custom error message, also following the [Error Handling][]
+    specification.
 
 ## <a name="POST_Response_Handling"></a> POST Response Handling
 
@@ -401,3 +397,4 @@ Content-Type: application/json; charset=utf-8
 
 [login page status messages]: login.md#status-messages
 [social]: social.md
+[Error Handling]: error-handling.md

@@ -207,17 +207,8 @@ If an error is encountered, respond with the appropriate case:
 
 * If the request is `Accept: application/json`:
 
-  * Respond with `400 Bad Request` and an error response:
-
-    ```javascript
-    {
-      errors: [
-        {
-          message: 'user friendly error'
-        }
-      ]
-    }
-    ```
+  * Respond with the JSON error from the API, according to the [Error Handling][]
+    specification.
 
 ### Options
 
@@ -293,3 +284,5 @@ their account password.
 A string key which identifies the view template that should be used.
 
 <a href="#top">Back to Top</a>
+
+[Error Handling]: error-handling.md
