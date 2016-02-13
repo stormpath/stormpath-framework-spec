@@ -184,8 +184,24 @@ stormpath:
       forgotUri: "/#/forgot"
       registerUri: "/#/register"
 
+
+    # Social provider configuration.  This defines the callback URIs for OAuth
+    # flows, and the scope that is requested of each provider.  These settings
+    # have no affect if the application does not have an account store for the
+    # given provider.
+
     socialProviders:
-      callbackRoot: "/callbacks"
+      facebook:
+        callbackUri: "/callbacks/facebook"
+        scope: "email"
+      github:
+        callbackUri: "/callbacks/github"
+        scope: "user:email"
+      google:
+        callbackUri: "/callbacks/google"
+        scope: "email profile"
+      linkedin:
+        callbackUri: "/callbacks/linkedin"
 
     # The /me route is for front-end applications, it returns a JSON object with
     # the current user object.  The developer can opt-in to expanding account
