@@ -23,7 +23,9 @@ web:
 ### Endpoint Response
 
 This endpoint should always respond with `Content-Type: application/json`, and
-the body should be the JSON representation of the currently authenticated user:
+the body should be the JSON representation of the currently authenticated user.
+By default it should not expand any of the account's linked resources.  However
+the developer can opt-in to expansion through configuration (see next section).
 
 ```json
 {
@@ -65,8 +67,16 @@ the body should be the JSON representation of the currently authenticated user:
 }
 ```
 
-### Account Expansion
+### Expansion Options
 
-If a request is made to `/me?expand=X`, the query strings should be passed to
-our underlying SDK.  This allows the developer to expand the necessary resoures
-on the account object
+The developer can opt-in to expanding the account's linked resources.  At the
+moment this is used by our AngularJS clients, so that the front-end can know
+what groups a user is a member of.  For example:
+
+```yaml
+stormpath:
+  web:
+    me:
+      expand:
+        groups: true
+```

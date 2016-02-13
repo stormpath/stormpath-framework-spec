@@ -368,18 +368,31 @@ This describes how we handle the response, if an account has been successfully
 created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with a JSON body, where the body contains the account object:
+  200 with a JSON body, where the body contains the account object, but ONLY the
+  root properties of the account should be presented.  All linked resources must
+  be omitted, to prevent leakage of sensitive user data.  For example:
 
-```
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
+  ```
+  HTTP/1.1 200 OK
+  Content-Type: application/json; charset=utf-8
 
-{
-  account: {
-    // the account that was created
+  {
+    "account": {
+      {
+        "href": "https://api.stormpath.com/v1/accounts/xxx",
+        "username": "foo",
+        "modifiedAt": "2016-01-26T20:50:03.931Z",
+        "status": "ENABLED",
+        "createdAt": "2015-10-13T20:54:22.215Z",
+        "email": "bar@stormpath.com",
+        "middleName": null,
+        "surname": "foo",
+        "givenName": "bar"
+        "fullName": "bar foo"
+      }
+    }
   }
-}
-```
+  ```
 
 * If the request is `Accept: text/html`, and...
   * The newly created account's status is ENABLED and [autoLogin](#autoLogin)

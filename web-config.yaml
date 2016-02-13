@@ -14,16 +14,22 @@ stormpath:
         enabled: true
         validationStrategy: "local"
 
+    # These options are use to "automatically" expand an account's linked
+    # resources (customData, groups) before providing the account context to the
+    # deverloper.  This is a conveneince for the developer, so that these
+    # resources are pre-warmed in the local cache.  This setting must not affect
+    # any respones from the framework, this is internal conveneince only.
+
     expand:
       apiKeys: false
-      customData: true
+      customData: false
       directory: false
       groups: false
 
     accessTokenCookie:
       name: "access_token"
       httpOnly: true
-      
+
       # See cookie-authentication.md for explanation of
       # how `null` values behave for these properties.
       secure: null
@@ -33,7 +39,7 @@ stormpath:
     refreshTokenCookie:
       name: "refresh_token"
       httpOnly: true
-      
+
       # See cookie-authentication.md for explanation of
       # how `null` values behave for these properties.
       secure: null
@@ -182,10 +188,16 @@ stormpath:
       callbackRoot: "/callbacks"
 
     # The /me route is for front-end applications, it returns a JSON object with
-    # the current user object
+    # the current user object.  The developer can opt-in to expanding account
+    # resources on this enpdoint.
     me:
       enabled: true
       uri: "/me"
+      expand:
+        apiKeys: false
+        customData: false
+        directory: false
+        groups: false
 
     # If the developer wants our integration to serve their Single Page
     # Application (SPA) in response to HTML requests for our default routes,
