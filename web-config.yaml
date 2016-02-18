@@ -185,12 +185,15 @@ stormpath:
       registerUri: "/#/register"
 
 
-    # Social provider configuration.  This defines the callback URIs for OAuth
-    # flows, and the scope that is requested of each provider.  These settings
-    # have no affect if the application does not have an account store for the
-    # given provider.
+    # Social login configuration.  This defines the callback URIs for OAuth
+    # flows, and the scope that is requested of each provider.  Some providers
+    # want space-separated scopes, some want comma-separated.  As such, these
+    # string values should be passed directly, as defined.
+    #
+    # These settings have no affect if the application does not have an account
+    # store for the given provider.
 
-    socialProviders:
+    social:
       facebook:
         callbackUri: "/callbacks/facebook"
         scope: "email"
