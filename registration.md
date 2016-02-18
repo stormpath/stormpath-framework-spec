@@ -1,6 +1,3 @@
-
-<a name="#top">Back to Top</a>
-
 # Account Registration
 
 ## Feature Description
@@ -173,8 +170,7 @@ definition must have the following properties:
 
 * `required` - Determines if this field should be required by the user.
 
-* `type` - the value to apply to the `type` attribute of HTML input element
-  (e.g. text, password).
+* `type` - the value to apply to the `type` attribute of HTML input element. This may only be `text` or `password`. `checkbox`, `radio`, and other HTML5 types have an undefined behavior. 
 
 
 #### <a name="fieldOrder"></a> form.fieldOrder
