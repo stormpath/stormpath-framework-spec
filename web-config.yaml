@@ -59,7 +59,7 @@ stormpath:
       uri: "/register"
       nextUri: "/"
       # autoLogin is possible only if the email verification feature is disabled
-      # on the default default account store of the defined Stormpath
+      # on the default account store of the defined Stormpath
       # application.
       autoLogin: false
       form:
