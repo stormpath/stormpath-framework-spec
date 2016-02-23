@@ -8,7 +8,10 @@ implemented:
   domain (won't cause a cross-domain error), the library should add the
   following header:
 
-  > X-Stormpath-Agent: stormpath-sdk-angularjs/0.9.0
+  > X-Stormpath-Agent: stormpath-sdk-angularjs/0.9.0 angular/1.4.7
+  
+  This value indicates the version of our library, and the version of the 
+  framework that is being used.
 
 * If the `X-Stormpath-Agent` header is seen on an incoming request, the
   framework integration should pass this value down to the SDK when making any
