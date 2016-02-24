@@ -27,6 +27,16 @@ the body should be the JSON representation of the currently authenticated user.
 By default it should not expand any of the account's linked resources.  However
 the developer can opt-in to expansion through configuration (see next section).
 
+This endpoint must always send the following headers, so that the browser does
+not cache this response:
+
+```
+Cache-Control: no-cache, no-store
+Pragma: no-cache
+```
+
+Example response body:
+
 ```json
 {
   "href": "https://api.stormpath.com/v1/accounts/xxx",
