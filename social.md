@@ -76,7 +76,7 @@ The library must implement provider callbacks for all social provider
 directories that are mapped to the specified Stormpath application.  The
 callback URLs for each provider should take the form of:
 
-> `/<stormpath.web.socialProviders.callbackRoot>/<providerId>`
+> `<stormpath.web.social.[providerId].uri>/<providerId>`
 
 Where `providerId` is the property that is found in the `provider` object of
 the Stormpath directory, e.g. `google` or `facebook`.
