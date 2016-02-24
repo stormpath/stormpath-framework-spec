@@ -22,6 +22,9 @@ GET requests must:
   `Accept: application/json` and `application/json` is defined in
   `stormpath.web.produces`.
 
+* Redirect the user to ID Site if `stormpath.web.idSite.enabled` is `true`. This
+  should be done with the ID Site URL Builder in the SDK.
+
 
 
 POST requests must:
