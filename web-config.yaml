@@ -195,16 +195,16 @@ stormpath:
 
     social:
       facebook:
-        callbackUri: "/callbacks/facebook"
+        uri: "/callbacks/facebook"
         scope: "email"
       github:
-        callbackUri: "/callbacks/github"
+        uri: "/callbacks/github"
         scope: "user:email"
       google:
-        callbackUri: "/callbacks/google"
+        uri: "/callbacks/google"
         scope: "email profile"
       linkedin:
-        callbackUri: "/callbacks/linkedin"
+        uri: "/callbacks/linkedin"
 
     # The /me route is for front-end applications, it returns a JSON object with
     # the current user object.  The developer can opt-in to expanding account
