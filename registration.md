@@ -168,10 +168,16 @@ definition must have the following properties:
 
 * `placeholder` - The placeholder attribute value for the HTML input element.
 
-* `required` - Determines if this field should be required by the user.
+* `required` - Determines if this field should be required by the user.  This
+  attribute should be applied to the input element, and validated when parsing
+  a form post.
 
-* `type` - the value to apply to the `type` attribute of HTML input element. This may only be `text` or `password`. `checkbox`, `radio`, and other HTML5 types have an undefined behavior. 
+* `type` - the value to apply to the `type` attribute of HTML input element.
 
+The intention of this configuration is to give the developer some simple control
+over the basic things: labels, placeholders, and text input types.  Mileage will
+vary with other HTML input types, as some of those types require additional
+attributes that we do not define in our configuration at this time.
 
 #### <a name="fieldOrder"></a> form.fieldOrder
 
