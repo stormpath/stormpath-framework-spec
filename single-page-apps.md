@@ -60,8 +60,8 @@ routing and SPA use-cases:
 stormpath:
   web:
     produces:
-      - text/html
       - application/json
+      - text/html
     spa:
       enabled: false
       view: index

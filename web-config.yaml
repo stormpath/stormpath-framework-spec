@@ -46,13 +46,15 @@ stormpath:
       path: null
       domain: null
 
-    # By default the Stormpath integration should respond to JSON and HTML
-    # requests.  If either is removed from configuration, the integration should
-    # not try to handle the response for the given content type.
+    # By default the Stormpath integration must respond to JSON and HTML
+    # requests.  If a requested type is not in this list, the response is 406.
+    # If the request does not specify an Accept header, or the preferred accept
+    # type is */*, the integration must respond with the first type in this
+    # list.
 
     produces:
-      - text/html
       - application/json
+      - text/html
 
     register:
       enabled: true
