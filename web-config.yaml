@@ -14,18 +14,6 @@ stormpath:
         enabled: true
         validationStrategy: "local"
 
-    # These options are use to "automatically" expand an account's linked
-    # resources (customData, groups) before providing the account context to the
-    # deverloper.  This is a conveneince for the developer, so that these
-    # resources are pre-warmed in the local cache.  This setting must not affect
-    # any respones from the framework, this is internal conveneince only.
-
-    expand:
-      apiKeys: false
-      customData: false
-      directory: false
-      groups: false
-
     accessTokenCookie:
       name: "access_token"
       httpOnly: true
@@ -218,9 +206,13 @@ stormpath:
       uri: "/me"
       expand:
         apiKeys: false
+        applications: false
         customData: false
         directory: false
+        groupMemberships: false
         groups: false
+        providerData: false
+        tenant: false
 
     # If the developer wants our integration to serve their Single Page
     # Application (SPA) in response to HTML requests for our default routes,
