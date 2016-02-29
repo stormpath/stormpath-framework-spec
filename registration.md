@@ -279,6 +279,7 @@ Example view model definition:
         "href": "href of the directory",
         "providerId": "google",
         "clientId": "WHATEVS",
+        "scope": "email profile" // <-- from stormpath.web.social.google.scope
         //DO NOT EXPOSE ANY SECRET HERE.  NO CLIENT SECRETS!
       }
     }
