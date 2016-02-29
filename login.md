@@ -204,9 +204,11 @@ this information, along with our providerId for the provider.
 
 ```json
 {
-    "providerId": "google",
-    "accessToken": "xxx",
-    "code": "xxx"
+    "providerData": {
+      "providerId": "google",
+      "accessToken": "xxx",
+      "code": "xxx"
+    }
 }
 ```
 
