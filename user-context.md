@@ -42,17 +42,19 @@ Example default response body:
 
 ```json
 {
-  "href": "https://api.stormpath.com/v1/accounts/xxx",
-  "username": "robert@stormpath.com",
-  "email": "robert@stormpath.com",
-  "givenName": "Robert",
-  "middleName": null,
-  "surname": "Damphousse",
-  "fullName": "Robert Damphousse",
-  "status": "ENABLED",
-  "createdAt": "2014-04-07T16:38:44.000Z",
-  "modifiedAt": "2014-08-28T22:35:10.000Z",
-  "emailVerificationToken": null
+  "account": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx",
+    "username": "robert@stormpath.com",
+    "email": "robert@stormpath.com",
+    "givenName": "Robert",
+    "middleName": null,
+    "surname": "Damphousse",
+    "fullName": "Robert Damphousse",
+    "status": "ENABLED",
+    "createdAt": "2014-04-07T16:38:44.000Z",
+    "modifiedAt": "2014-08-28T22:35:10.000Z",
+    "emailVerificationToken": null
+  }
 }
 ```
 
