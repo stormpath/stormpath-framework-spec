@@ -25,6 +25,8 @@ By default we accept POSTS to this token uri and respond according to the
 grant type.  If the developer sets this value to false we should not attach any
 handler to this uri, allowing the framework to return it's default 404 response.
 
+## Errors
+
 If enabled and the grant type is not `client_credentials` or `password`, then we
 should return the OAuth-compliant error code:
 
@@ -37,7 +39,24 @@ should return the OAuth-compliant error code:
       "error": "unsupported_grant_type"
     }
 
-If no grant type is specified, the error should be `invalid_request`
+If no grant type is specified, the error should be `invalid_request`.
+
+A GET to the endpoint URL should always return `405 Method Not Allowed`.
+
+#### Error Transformations
+
+Error responses from the application's `/oauth/token` endpoint should be
+transformed to only include the message and error properties (see
+[Error Handling][]).  This is an OAuth nuance that is only available on error
+responses from this endpoint.  As such, an error response for this flow would
+look like this:
+
+```
+{
+  "message": "grant_type passwordx is an unsupported value.",
+  "error": "invalid_request"
+}
+```
 
 ## Client Credentials Grant Flow
 
@@ -137,22 +156,7 @@ Pragma: no-cache
 }
 ```
 
-#### Errors
-
-Error responses from the application's `/oauth/token` endpoint should be
-transformed to only include the message and error properties (see
-[Error Handling][]).  This is an OAuth nuance that is only available on error
-responses from this endpoint.  As such, an error response for this flow would
-look like this:
-
-```
-{
-  "message": "grant_type passwordx is an unsupported value.",
-  "error": "invalid_request"
-}
-```
-
-## Password Grant Options
+### Password Grant Options
 
 ```yaml
 web:
