@@ -39,7 +39,6 @@ stormpath:
     # If the request does not specify an Accept header, or the preferred accept
     # type is */*, the integration must respond with the first type in this
     # list.
-
     produces:
       - application/json
       - text/html
@@ -175,7 +174,6 @@ stormpath:
       forgotUri: "/#/forgot"
       registerUri: "/#/register"
 
-
     # Social login configuration.  This defines the callback URIs for OAuth
     # flows, and the scope that is requested of each provider.  Some providers
     # want space-separated scopes, some want comma-separated.  As such, these
@@ -183,7 +181,6 @@ stormpath:
     #
     # These settings have no affect if the application does not have an account
     # store for the given provider.
-
     social:
       facebook:
         uri: "/callbacks/facebook"
