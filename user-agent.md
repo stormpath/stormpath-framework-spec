@@ -46,14 +46,14 @@ The underlying SDK will [provide a mechanism](https://github.com/stormpath/storm
 
 #### Client SDK Tokens *(if any)*
 
-The integration will look for an `X-Stormpath-Agent from the frontend client, as described in Client SDK Tracking above.
+The integration will look for an `X-Stormpath-Agent` from the frontend client, as described in Client SDK Tracking above.
 
 This group is optional. If not null or empty, the agent tokens should be **prepended** to the rest of the framework user agent string.
 
-## Framework Token
+#### Framework Token
 
 The framework integration name and version separated by a slash '/'. For example, `express-stormpath/3.0.0`.
 
-## Web Library Token
+#### Web Library Token
 
 Any web libraries in use, and their versions. For example, `express/4.13.4`.
