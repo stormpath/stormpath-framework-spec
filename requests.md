@@ -18,8 +18,8 @@ The following logic applies to all incoming requests:
 
 * If the request contains no Accept header, treat it as `Accept: */*`.
 
-* If the request specifies `Accept: */*`, the first value in `stormpath:web:produces` will be used as the returned Content-Type.
+* If the request specifies `Accept: */*`, the first Content-Type in `stormpath:web:produces` will be returned.
 
 * If the request specifies an Accept type that is in `stormpath:web:produces`, that Content-Type will be returned.
 
-* If the request specifies an Accept type that is **not* in `stormpath:web:produces`, the integration should return `406 Not Acceptable`.
+* If the request specifies an Accept type that is *not* in `stormpath:web:produces`, the integration should return `406 Not Acceptable`.
