@@ -22,6 +22,9 @@ GET requests must:
   `Accept: application/json` and `application/json` is defined in
   `stormpath.web.produces`.
 
+* Redirect the user to ID Site if `stormpath.web.idSite.enabled` is `true`. This
+  should be done with the ID Site URL Builder in the SDK.
+
 
 
 POST requests must:
@@ -163,6 +166,7 @@ Example view model definition:
         "href": "href of the directory",
         "providerId": "google",
         "clientId": "WHATEVS",
+        "scope": "email profile" // <-- from stormpath.web.social.google.scope
         //DO NOT EXPOSE ANY SECRET HERE.  NO CLIENT SECRETS!
       }
     }
@@ -200,9 +204,11 @@ this information, along with our providerId for the provider.
 
 ```json
 {
-    "providerId": "google",
-    "accessToken": "xxx",
-    "code": "xxx"
+    "providerData": {
+      "providerId": "google",
+      "accessToken": "xxx",
+      "code": "xxx"
+    }
 }
 ```
 

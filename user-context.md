@@ -4,9 +4,9 @@ This support is for front-end clients such as AngularJs.  This endpoint allows
 the front-end application to fetch the account object of the currently
 authenticated user.
 
-We must provide this endpoint because, for security reasons, we store our
-access tokens in `HttpOnly` cookies which cannot be read by the JavaScript
-environment.
+We must provide this endpoint because, for security reasons, we don't allow the
+client to store any information about the user.  It must be fetched from the
+server at runtime.
 
 ### Configuration Options
 
@@ -24,54 +24,44 @@ web:
 
 This endpoint should always respond with `Content-Type: application/json`, and
 the body should be the JSON representation of the currently authenticated user.
-By default it should not expand any of the account's linked resources.  However
-the developer can opt-in to expansion through configuration (see next section).
+
+
+By default, all linked resources should be removed from the object.  However the
+developer can opt-in to expansion through configuration (see next section). In
+this situation the linked resource can be returned.
+
+This endpoint must always send the following headers, so that the browser does
+not cache this response:
+
+```
+Cache-Control: no-cache, no-store
+Pragma: no-cache
+```
+
+Example default response body:
 
 ```json
 {
-  "href": "https://api.stormpath.com/v1/accounts/xxx",
-  "username": "robert@stormpath.com",
-  "email": "robert@stormpath.com",
-  "givenName": "Robert",
-  "middleName": null,
-  "surname": "Damphousse",
-  "fullName": "Robert Damphousse",
-  "status": "ENABLED",
-  "createdAt": "2014-04-07T16:38:44.000Z",
-  "modifiedAt": "2014-08-28T22:35:10.000Z",
-  "emailVerificationToken": null,
-  "customData": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/customData"
-  },
-  "providerData": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/providerData"
-  },
-  "directory": {
-    "href": "https://api.stormpath.com/v1/directories/xxx"
-  },
-  "tenant": {
-    "href": "https://api.stormpath.com/v1/tenants/xxx"
-  },
-  "groups": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/groups"
-  },
-  "applications": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/applications"
-  },
-  "groupMemberships": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/groupMemberships"
-  },
-  "apiKeys": {
-    "href": "https://api.stormpath.com/v1/accounts/xxx/apiKeys"
+  "account": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx",
+    "username": "robert@stormpath.com",
+    "email": "robert@stormpath.com",
+    "givenName": "Robert",
+    "middleName": null,
+    "surname": "Damphousse",
+    "fullName": "Robert Damphousse",
+    "status": "ENABLED",
+    "createdAt": "2014-04-07T16:38:44.000Z",
+    "modifiedAt": "2014-08-28T22:35:10.000Z",
+    "emailVerificationToken": null
   }
 }
 ```
 
 ### Expansion Options
 
-The developer can opt-in to expanding the account's linked resources.  At the
-moment this is used by our AngularJS clients, so that the front-end can know
-what groups a user is a member of.  For example:
+The developer can opt-in to expanding the account's linked resources, for
+example:
 
 ```yaml
 stormpath:

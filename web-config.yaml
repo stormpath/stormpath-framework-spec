@@ -14,18 +14,6 @@ stormpath:
         enabled: true
         validationStrategy: "local"
 
-    # These options are use to "automatically" expand an account's linked
-    # resources (customData, groups) before providing the account context to the
-    # deverloper.  This is a conveneince for the developer, so that these
-    # resources are pre-warmed in the local cache.  This setting must not affect
-    # any respones from the framework, this is internal conveneince only.
-
-    expand:
-      apiKeys: false
-      customData: false
-      directory: false
-      groups: false
-
     accessTokenCookie:
       name: "access_token"
       httpOnly: true
@@ -46,20 +34,21 @@ stormpath:
       path: null
       domain: null
 
-    # By default the Stormpath integration should respond to JSON and HTML
-    # requests.  If either is removed from configuration, the integration should
-    # not try to handle the response for the given content type.
-
+    # By default the Stormpath integration must respond to JSON and HTML
+    # requests.  If a requested type is not in this list, the response is 406.
+    # If the request does not specify an Accept header, or the preferred accept
+    # type is */*, the integration must respond with the first type in this
+    # list.
     produces:
-      - text/html
       - application/json
+      - text/html
 
     register:
       enabled: true
       uri: "/register"
       nextUri: "/"
       # autoLogin is possible only if the email verification feature is disabled
-      # on the default default account store of the defined Stormpath
+      # on the default account store of the defined Stormpath
       # application.
       autoLogin: false
       form:
@@ -175,7 +164,8 @@ stormpath:
       errorUri: "/forgot?status=invalid_sptoken"
 
     # If idSite.enabled is true, the user should be redirected to ID site for
-    # login, registration, and password reset.
+    # login, registration, and password reset.  They should also be redirected
+    # through ID Site on logout.
     idSite:
       enabled: false
       uri: "/idSiteResult"
@@ -184,8 +174,26 @@ stormpath:
       forgotUri: "/#/forgot"
       registerUri: "/#/register"
 
-    socialProviders:
-      callbackRoot: "/callbacks"
+    # Social login configuration.  This defines the callback URIs for OAuth
+    # flows, and the scope that is requested of each provider.  Some providers
+    # want space-separated scopes, some want comma-separated.  As such, these
+    # string values should be passed directly, as defined.
+    #
+    # These settings have no affect if the application does not have an account
+    # store for the given provider.
+    social:
+      facebook:
+        uri: "/callbacks/facebook"
+        scope: "email"
+      github:
+        uri: "/callbacks/github"
+        scope: "user:email"
+      google:
+        uri: "/callbacks/google"
+        scope: "email profile"
+      linkedin:
+        uri: "/callbacks/linkedin"
+        scope: "r_basicprofile r_emailaddress"
 
     # The /me route is for front-end applications, it returns a JSON object with
     # the current user object.  The developer can opt-in to expanding account
@@ -195,9 +203,13 @@ stormpath:
       uri: "/me"
       expand:
         apiKeys: false
+        applications: false
         customData: false
         directory: false
+        groupMemberships: false
         groups: false
+        providerData: false
+        tenant: false
 
     # If the developer wants our integration to serve their Single Page
     # Application (SPA) in response to HTML requests for our default routes,
