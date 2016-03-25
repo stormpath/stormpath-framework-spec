@@ -7,27 +7,22 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service login of user accounts.
 
-If enabled by `stormpath.web.login.enabled`, our library MUST intercept incoming
-requests for `stormpath.web.login.uri`.
+If enabled by `stormpath.web.login.enabled`, our library MUST inspect
+incoming requests for `stormpath.web.login.uri`. and determine if a response
+is needed, based on our [Content Negotiation Strategy][].
 
-GET requests must:
+GET requests may:
 
-* Serve a default HTML page with a login form, if the request type is
-  `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
+* Serve a default HTML page with a dynamic login form.
 
-* Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
-  is `true` and `text/html` is defined in `stormpath.web.produces`.
-
-* Serve the login view model if the request type is
-  `Accept: application/json` and `application/json` is defined in
-  `stormpath.web.produces`.
+* Serve the dynamic login JSON view model.
 
 * Redirect the user to ID Site if `stormpath.web.idSite.enabled` is `true`. This
   should be done with the ID Site URL Builder in the SDK.
 
+* Pass on the request.
 
-
-POST requests must:
+POST requests may:
 
 * Handle a POST request from the default HTML login form or from a JSON client.
 
@@ -103,9 +98,9 @@ The form MUST:
 ## Login View Model
 
 The login view model should be returned to the client if the GET request
-is `Accept: application/json` and `stormpath.web.produces` contains
-`application/json`.  This is for front-end clients that need to dynamically know
-how to render the login form.
+prefers `application/json` and `stormpath.web.produces` contains
+`application/json`.  This is for front-end or movile clients that need to
+dynamically know how to render the login form.
 
 The model should have:
 
@@ -246,7 +241,7 @@ instead of the defined `nextUri`.
 
 **For JSON responses:**
 
-If the request is `Accept: application/json`, the response should be status 200
+If the request prefers `application/json`, the response should be status 200
 with a JSON body, where the body contains the account object, but ONLY the root
 properties of the account should be presented.  All linked resources must be
 omitted, to prevent leakage of sensitive user data.  For example:
@@ -315,5 +310,6 @@ is unverified.  Message to show:
 <a href="#top">Back to Top</a>
 
 
+[Content Negotiation Strategy]: requests.md#content-type-negotiation
 [Error Handling]: error-handling.md
 [social.md]: social.md

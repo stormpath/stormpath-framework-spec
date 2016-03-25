@@ -5,22 +5,19 @@
 This document describes the endpoints and logic that must exist in order to
 facilitate self-service registration of user accounts.
 
-If enabled by `stormpath.web.register.enabled`, our library MUST intercept
-incoming requests for `stormpath.web.register.uri`.
+If enabled by `stormpath.web.register.enabled`, our library MUST inspect
+incoming requests for `stormpath.web.register.uri`. and determine if a response
+is needed, based on our [Content Negotiation Strategy][].
 
-GET requests must respond in one of the following ways:
+GET requests may:
 
-* Serve a default HTML page with a registration form, if the request type is
-  `Accept: text/html` and `text/html` is defined in `stormpath.web.produces`.
+* Serve a default HTML page with a dynamic registration form.
 
-* Serve the developer's Single Page Application, if `stormpath.web.spa.enabled`
-  is `true` and `text/html` is defined in `stormpath.web.produces`.
+* Serve the dynamic registration JSON view model.
 
-* Serve the registration view model if the request type is
-  `Accept: application/json` and `application/json` is defined in
-  `stormpath.web.produces`.
+* Pass on the request.
 
-POST requests must:
+POST requests may:
 
 * Handle a POST request from the default HTML registration form or from a JSON
   client.
@@ -199,10 +196,10 @@ is to allow the developer to override our default view with their own.
 
 ## Registration View Model
 
-The registration view model should be returned to the client if the GET request
-is `Accept: application/json` and `stormpath.web.produces` contains
-`application/json`.  This is for front-end clients that need to dynamically know
-how to render the registration form.
+The registration view model should be returned when the request prefers
+`application/json` and `stormpath.web.produces` contains `application/json`.
+This is for front-end or mobile clients that need to dynamically know how to
+render the registration form.
 
 The model should have:
 
@@ -291,8 +288,8 @@ Example view model definition:
 
 ## <a name="POST_Body_Format"></a> POST Body Format
 
-The content type of the POST may be `application/x-www-form-urlencoded` or
-`application/json`, the framework should be configured to accept both.
+The content type of the POST body may be `application/x-www-form-urlencoded` or
+`application/json`, the framework integration should parse both.
 
 This section uses JSON for example purposes.
 
@@ -352,12 +349,12 @@ A post with custom fields may look like this:
 
 For any errors indicated in this document, the following should happen:
 
-* If the request is `Accept: text/html`, the response should be 200 OK and the
-HTML form should be re-rendered with a UX that indicates which field is in error
-and what can be done to fix the problem.
+* If the request prefers `text/html`, the response should be 200 OK and the HTML
+form should be re-rendered with a UX that indicates which field is in error and
+what can be done to fix the problem.
 
-* If the request is `Accept: application/json`, the response should be HTTP 400
-and a JSON object of the format:
+* If the request prefers `application/json`, the response should be HTTP 400 and
+a JSON object of the format:
 
   * Respond with the JSON error from the API, according to the [Error Handling][]
     specification.
@@ -370,8 +367,8 @@ and a JSON object of the format:
 This describes how we handle the response, if an account has been successfully
 created.
 
-* If the request is `Accept: application/json`, the response should be status
-  200 with a JSON body, where the body contains the account object, but ONLY the
+* If the request prefers `application/json`, the response should be status 200
+  with a JSON body, where the body contains the account object, but ONLY the
   root properties of the account should be presented.  All linked resources must
   be omitted, to prevent leakage of sensitive user data.  For example:
 
@@ -397,7 +394,7 @@ created.
   }
   ```
 
-* If the request is `Accept: text/html`, and...
+* If the request prefers `text/html`, and...
   * The newly created account's status is ENABLED and [autoLogin](#autoLogin)
     is:
     * `True`: issue a 302 Redirect to the `nextUri` and log the user in (create
@@ -411,6 +408,7 @@ created.
 
 <a href="#top">Back to Top</a>
 
+[Content Negotiation Strategy]: requests.md#content-type-negotiation
+[Error Handling]: error-handling.md
 [login page status messages]: login.md#status-messages
 [social]: social.md
-[Error Handling]: error-handling.md

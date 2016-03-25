@@ -9,43 +9,38 @@ facilitate self-service password reset of existing user accounts.
 
 This feature has two endpoints:
 
-  * The "forgot" endpoint, which is used for requesting a password reset email.
+  * The `/forgot` endpoint, which is used for requesting a password reset email.
 
-  * The "change" endpoint, which is used for setting a new password and is
+  * The `/change` endpoint, which is used for setting a new password and is
     linked to from the password reset email.  This is where the user arrives
     with the `sptoken` that was sent in the email.
 
 
-## Forgot Password Endpoint
+## Forgot Password Endpoint (`/forgot`)
 
 This is the endpoint that a user will use if they want to request a password
 reset email.
 
 If the default account store of the stormapth application has the password reset
 workflow enabled, and `stormpath.web.forgotPassword.enabled` is not set to
-`false`, our library MUST intercept incoming requests at
+`false`, our library MUST inspect incoming requests at
 `stormpath.web.forgotPassword.uri` and follow the request handling procedure
-that is defined below.
+that is defined below, to determine if a response is required.
 
 ### Request Handling
 
-#### GET requests with `Accept: text/html`:
+#### GET Requests
 
-* If `stormpath.web.spa.enabled` is `false`, render a form which allows the
-  user to request a password reset by entering their email address.  If the
-  request contains the query `?status=invalid_sptoken`, a message should be
-  shown above the form:
+If the request prefers `text/html`, render the forgot-password form that is
+defined by `stormpath.web.forgotPassword.view`.
 
-  > The password reset link you tried to use is no longer valid. Please request
-    a new link from the form below.
-
-* If `stormpath.web.spa.enabled` is `true`, return the SPA view.
+There is no JSON response for the GET verb of this endpoint.
 
 #### POST Requests
 
 This endpoint accepts a post from the password reset request form, and the only
-field in this form is the `email` field.  The endpoint should accept the content
-as `application/json` or `application/x-www-form-urlencoded`.
+field in this form is the `email` field.  The endpoint should pase the POST body
+content as `application/json` or `application/x-www-form-urlencoded`.
 
 The format of the request is (JSON example):
 
@@ -58,11 +53,10 @@ The format of the request is (JSON example):
 Regardless of whether or not the email address is associated with a user
 account, we must do the following:
 
-* If the request is `Accept: application/html`, redirect the user to
-  `stormpath.web.forgot.nextUri`
+* If the request prefers `application/html`, redirect the user to
+  `stormpath.web.forgotPassword.nextUri`
 
-* If the request is `Accept: application/json`, respond with `200 OK` and no
-  body.
+* If the request prefers `application/json`, respond with `200 OK` and no body.
 
 ### <a name="options"></a> Options
 
@@ -116,40 +110,57 @@ A string key which identifies the view template that should be used.
 <a href="#top">Back to Top</a>
 
 
-## Change Password Endpoint
+## Change Password Endpoint (`/change`)
 
 This is the endpoint that a user will use if they have received a password
 reset email and have clicked on the link in the email.  The link will point to
-this endpoint, and contain the `sptoken` query parameter.
+this endpoint, and contain the `sptoken` query parameter.  For HTML requests, we
+verify the `sptoken` and then render a form that the user will use to submit a
+new password.
+
+
 
 ### Request Handling
 
-#### GET requests with `Accept: text/html`:
+#### GET Requests
 
 * If there is a `?sptoken` query parameter in the URL:
 
   * Make an API request to Stormpath to validate the `sptoken`, but **do not**
     consume the token yet.
 
-  * If the `sptoken` is invalid, redirect the user to
-    `stormpath.web.changePassword.errorUri`.
+  * If the `sptoken` is invalid, and the request prefers:
 
-  * If the `sptoken` is valid:
+    * `text/html`, redirect the user to `stormpath.web.changePassword.errorUri`.
 
-    * If `stormpath.web.spa.enabled` is `false`, render a page that contains a
-     form which collects the user's new password (must include a password
-     confirmation field).
+    * `application/json`, respond with the JSON error from the API, according to
+      the [Error Handling][] specification.
 
-    * If `stormpath.web.spa.enabled` is `true`, return the SPA view.
+  * If the `sptoken` is valid, and the request prefers:
 
-* If there isn't a `?sptoken` query parameter in the URL:
+    * `text/html`, render the change password view that is defined by
+      `stormpath.web.changePassword.view`.
 
-  * Redirect the user to `stormpath.web.forgotPassword.uri`
+    * `application/json`, reply with 200 OK.
+
+* If there isn't a `?sptoken` query parameter in the URL, and the request
+  prefers:
+
+  * `text/html`, redirect the user to `stormpath.web.forgotPassword.uri`.
+
+  * `application/json`, send this error:
+
+    ```javascript
+    {
+      status: 400,
+      message: 'sptoken parameter not provided.'
+    }
+    ```
 
 #### POST Handling
 
 This endpoint accepts a post from the password change form.  The endpoint should
-accept the request as `application/json` or `application/x-www-form-urlencoded`.
+parse the post body as `application/json` or `application/x-www-form-urlencoded`.
 
 The format of the request is (JSON example):
 
@@ -167,7 +178,7 @@ The Stormpath API should be invoked to consume the token and reset the password.
 If the operation is successful (the password has been changed), respond with the
 appropriate case:
 
-* If the request is `Accept: text/html`:
+* If the request prefers `text/html`:
 
   * If `autoLogin` is `false`, redirect the user to
     `stormpath.web.changePassword.nextUri`
@@ -175,7 +186,7 @@ appropriate case:
   * If `autoLogin` is `true`, log the user in (create the Oauth2 cookies) and
     redirect the user to `stormpath.web.login.nextUri`
 
-* If the request is `Accept: application/json`:
+* If the request prefers `application/json`:
 
   * If `autoLogin` is `false`, respond with `200 OK` and an empty body.
 
@@ -188,7 +199,7 @@ appropriate case:
 
     {
       account: {
-        // the account that was created
+        // the account that was created, stripped of all non-root properties
       }
     }
     ```
