@@ -2,11 +2,9 @@
 
 # Oauth2 Features
 
-Stormpath provides two Oauth2 workflows, client credential and password.  In
+Stormpath provides three Oauth2 grant types, `client_credentials`, `password`, and `refresh_token`.  In
 this document we discuss how these should be exposed in the developer's web
 application.
-
-
 
 ## OAuth2 Configuration Options
 
@@ -27,7 +25,7 @@ handler to this uri, allowing the framework to return it's default 404 response.
 
 ## Errors
 
-If enabled and the grant type is not `client_credentials` or `password`, then we
+If the grant type requested is not enabled, then we
 should return the OAuth-compliant error code:
 
     HTTP/1.1 400 Bad Request
@@ -186,5 +184,21 @@ The underlying SDK must have authenticators which can do either type of
 validation.  The purpose of this configuration option is to inform the framework
 intergration as to which type of authenticator it should build and use for
 authentication attempts.
+
+## Refresh Grant Flow
+
+The product guide for this feature is found at: http://docs.stormpath.com/guides/token-management/#refreshing-access-tokens
+
+The refresh grant type is required for clients using the password grant type to refresh their access_token. Thus, it's automatically enabled alongside the password grant type.
+
+An account can post their refresh_token with the following body data:
+
+```
+POST /oauth/token
+grant_type=refresh_token&
+refresh_token=<refresh token>
+```
+
+The response is the same format as the password grant type. 
 
 [Error Handling]: error-handling.md
