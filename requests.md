@@ -24,11 +24,11 @@ The following logic applies to all incoming requests:
 
 * If the request contains no Accept header, treat it as `Accept: */*`.
 
-* If the request specifies `Accept: */*`, the first Content-Type in
+* If the request prefers `Accept: */*`, the first Content-Type in
   `stormpath:web:produces` will be returned.
 
-* If the request specifies an Accept type that is in `stormpath:web:produces`,
-  that Content-Type will be returned.
+* If the request prefers an Accept type that is in `stormpath:web:produces`,
+  that Content-Type will be returned, after following the order of contet types in `stormpath.web.produces`
 
 * If the request specifies an Accept type that is *not* in
   `stormpath:web:produces`, the integration should pass on the request
