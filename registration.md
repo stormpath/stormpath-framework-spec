@@ -371,12 +371,12 @@ This describes how we handle the response, if an account has been successfully
 created.
 
 * If the request is `Accept: application/json`, the response should be status
-  200 with a JSON body, where the body contains the account object, but ONLY the
+  201 with a JSON body, where the body contains the account object, but ONLY the
   root properties of the account should be presented.  All linked resources must
   be omitted, to prevent leakage of sensitive user data.  For example:
 
   ```
-  HTTP/1.1 200 OK
+  HTTP/1.1 201 CREATED
   Content-Type: application/json; charset=utf-8
 
   {
