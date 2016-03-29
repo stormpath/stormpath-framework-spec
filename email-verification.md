@@ -14,34 +14,27 @@ request handling procedure that is defined below.
 
 ## Request Handling
 
-#### GET requests with `Accept: text/html`:
+#### GET Requests That Prefer `text/html`
 
 * If there is a `?sptoken` query parameter in the URL:
 
- * Attempt to verify the `sptoken`:
+ * Attempt to verify the `sptoken`.
 
-   * If the token is valid, redirect to `stormpath.web.verify.nextUri` and
-     append `?status=verified`
+ * If the token is valid, redirect to `stormpath.web.verify.nextUri` and append
+   `?status=verified`.
 
-   * If the token is invalid:
+ * If the token is invalid, render a form that allows them to request a new link
+   by submitting their email address.  The form should show the error:
 
-    * If `stormpath.web.spa.enabled` is `false`, render a form that allows them
-      to request a new link by submitting their email address.  The form should
-      show the error:
-
-     > This verification link is no longer valid. Please request a new link from
-       the form below.
-
-    * If `stormpath.web.spa.enabled` is `true`, return the SPA view.
+    > This verification link is no longer valid. Please request a new link from
+      the form below.
 
 * If there isn't a `?sptoken` query parameter in the URL:
 
-  * If `stormpath.web.spa.enabled` is `false`, render a form that allows them
-    to request a new link by submitting their email address.
+ * Render a form that allows them to request a new link by submitting their
+   email address.
 
-  * If `stormpath.web.spa.enabled` is `true`, return the SPA view.
-
-#### GET requests with `Accept: application/json`:
+#### GET Requests That Prefer `application/json`
 
 * If there is a `?sptoken` query parameter in the URL:
 
@@ -65,8 +58,8 @@ request handling procedure that is defined below.
 #### POST Requests
 
 This endpoint accepts post requests from the form which allows you to request
-a new link by entering your email address.  The endpoint should accept the
-request as `application/json` and `application/x-www-form-urlencoded`.
+a new link by entering your email address.  The endpoint should parse the POST
+body as `application/json` and `application/x-www-form-urlencoded`.
 
 The format of the request is (JSON example):
 
@@ -77,13 +70,13 @@ The format of the request is (JSON example):
 ```
 
 Regardless of whether or not the email address is associated with a user
-account, we should render a success message that says:
+account, we should respond according to the request preference:
 
-> If the email address you entered was associated with an account, you will
-  receive an email from us shortly.
+  * `text/html`, redirect to `stormpath.web.verify.nextUri` and
+    append `?status=unverified`
 
-If the request is `Accept: application/json`, the status of the response should
-be `200 OK` with no body.
+  * `application/json`, the status of the response should be `200 OK` with no
+     body.
 
 ## <a name="Options"></a> Options
 

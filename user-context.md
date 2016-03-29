@@ -1,12 +1,12 @@
 # Current User Context
 
-This support is for front-end clients such as AngularJs.  This endpoint allows
-the front-end application to fetch the account object of the currently
-authenticated user.
+This endpoint supports rich browser clients such as AngularJs, and mobile
+clients.  This endpoint allows the client application to fetch the account
+object of the currently authenticated user.
 
 We must provide this endpoint because, for security reasons, we don't allow the
 client to store any information about the user.  It must be fetched from the
-server at runtime.
+server at runtime, and the request must be authenticated.
 
 ### Configuration Options
 
@@ -24,7 +24,6 @@ web:
 
 This endpoint should always respond with `Content-Type: application/json`, and
 the body should be the JSON representation of the currently authenticated user.
-
 
 By default, all linked resources should be removed from the object.  However the
 developer can opt-in to expansion through configuration (see next section). In
