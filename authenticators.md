@@ -1,4 +1,4 @@
-# Authenticators
+# Authentication
 
 The underlying SDKs provide Authenticators, which are used for authenticating
 a user in various contexts.  A full list can be found here:
@@ -17,17 +17,29 @@ in the public API of the framework.
 
 The default set of functions that we want to provide are:
 
-* BasicRequestAuthenticator
-* OAuthBearerRequestAuthenticator
-* OAuthClientCredentialsRequestAuthenticator
-* OAuthPasswordRequestAuthenticator
-* OAuthRefreshTokenRequestAuthenticator
-* OAuthStormpathTokenRequestAuthenticator
+**User Resolvers**
 
-We are evaluating the possibility of "smart" request authenticators, that can
-take any request and delegate to the specific request authenticator.  For
-example, a "OAuthRequestAuthenticator", which will delegate to the proper
-OAuth request authenticator.
+User resolvers will check for the presense of authentication information, and return user details from Stormpath if available. 
+
+* `getUser` - look for all forms of authentication, and load an account if credentials are present. 
+
+**User Authentication Gatekeepers**
+
+The gatekeepers require that valid authentication information is present, and results in an error if not present. 
+
+If the authentication details are not present, these gatekeepers will ALWAYS render an error, rendered in the best content type as according to the Accept headers and produces configuration. 
+
+If `application/json` is preferred: Render a `401 Unauthorized` with a blank body.
+
+If `text/html` is preferred: Render the unauthorized view. 
+
+The gatekeepers are: 
+
+* `requireUser` - same as `getUser`
+* `requireApiAuthentication` - to look for either bearer or basic auth credentials
+* `requireBasicAuthentication` - to look for basic only
+* `requireBearerAuthentication` - to look for oauth2 bearer tokens only
+* `requireCookieAuthentication` - to look for cookie auth only
 
 ##Types of Authentication
 
