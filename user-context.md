@@ -20,6 +20,10 @@ web:
     uri: "/me"
 ```
 
+### Authentication
+
+This endpoint requires authentication, and accepts all forms of authentication. 
+
 ### Endpoint Response
 
 This endpoint should always respond with `Content-Type: application/json`, and

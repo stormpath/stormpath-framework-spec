@@ -28,3 +28,27 @@ We are evaluating the possibility of "smart" request authenticators, that can
 take any request and delegate to the specific request authenticator.  For
 example, a "OAuthRequestAuthenticator", which will delegate to the proper
 OAuth request authenticator.
+
+##Types of Authentication
+
+There are multiple ways that clients can present their authentication credentials to the web framework: 
+
+**Cookie Authentication**
+
+The framework integration should have the ability to accept an OAuth access or refresh token in the cookies as detailed in the [cookie authentication](cookie-authentication.md) document.
+
+**HTTP Authorization Header**
+
+The framework integration should be able to read an access token presented in a Bearer Authentication scheme. For clarity, this is a HTTP header that looks like this:
+
+```
+Authorization: Bearer [ACCESSTOKENHERE]
+```
+
+**Basic Authentication**
+
+The framework integration should be able to read API keys presented in Basic Authentication form. For clarity, this is a HTTP header that looks like this:
+
+```
+Authorization: Basic <Base64(apiKeyId:apiKeySecret)>
+```
