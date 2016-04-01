@@ -37,17 +37,17 @@ There are multiple ways that clients can present their authentication credential
 
 The framework integration should have the ability to accept an OAuth access or refresh token in the cookies as detailed in the [cookie authentication](cookie-authentication.md) document.
 
-**HTTP Authorization Header**
+**Bearer Authentication**
 
-The framework integration should be able to read an access token presented in a Bearer Authentication scheme. For clarity, this is a HTTP header that looks like this:
+The framework integration should be able to read an access token presented in a Bearer Authentication scheme. As an example, this is a HTTP header that looks like this:
 
 ```
-Authorization: Bearer [ACCESSTOKENHERE]
+Authorization: Bearer <OAuth2AccessToken>
 ```
 
 **Basic Authentication**
 
-The framework integration should be able to read API keys presented in Basic Authentication form. For clarity, this is a HTTP header that looks like this:
+The framework integration should be able to read API keys presented in Basic Authentication form. As an example, this is a HTTP header that looks like this:
 
 ```
 Authorization: Basic <Base64(apiKeyId:apiKeySecret)>
