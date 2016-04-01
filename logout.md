@@ -11,6 +11,12 @@ this endpoint, and Robert can troll you with superlogout-dot-com.  For more
 information please see
 [Logout: GET or POST?](http://stackoverflow.com/questions/3521290/logout-get-or-post)
 
+The response depends on the request preference:
+
+* `text/html` should redirect to `stormpath.web.logout.nextUri`.
+
+* `application/json` should respond with `200 OK` and an empty body.
+
 If ID Site is enabled with `stormpath.web.idSite.enabled`, the user should also
 be redirected through ID site after deleting the local cookies and deleting the
 tokens.  This should be done with the ID Site URL Builder in the SDK, by

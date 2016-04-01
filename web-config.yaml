@@ -34,11 +34,14 @@ stormpath:
       path: null
       domain: null
 
-    # By default the Stormpath integration must respond to JSON and HTML
-    # requests.  If a requested type is not in this list, the response is 406.
-    # If the request does not specify an Accept header, or the preferred accept
-    # type is */*, the integration must respond with the first type in this
-    # list.
+    # By default the Stormpath integration will respond to JSON and HTML
+    # requests.  If a requested type is not in this list, the Stormpath
+    # integration should pass on the request, and allow the developer or base
+    # framework to handle the response.
+    #
+    # If the request does not specify an Accept header, or the preferred content
+    # type is */*, the Stormpath integration will respond with the first type in
+    # this list.
     produces:
       - application/json
       - text/html
@@ -210,20 +213,6 @@ stormpath:
         groups: false
         providerData: false
         tenant: false
-
-    # If the developer wants our integration to serve their Single Page
-    # Application (SPA) in response to HTML requests for our default routes,
-    # such as /login, then they will need to enable this feature and tell us
-    # where the root of their SPA is.  This is likely a file path on the
-    # filesystem.
-    #
-    # If the developer does not want our integration to handle their SPA, they
-    # will need to configure the framework themeslves and remove 'text/html'
-    # from `stormpath.web.produces`, so that we don not serve our default
-    # HTML views.
-    spa:
-      enabled: false
-      view: index
 
     unauthorized:
       view: "unauthorized"

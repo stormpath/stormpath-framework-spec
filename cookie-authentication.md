@@ -40,13 +40,13 @@ cookies as the secure storage location on the client.
 ### Rejecting Requests
 
 If the request cannot be authenticated, how to respond will depend on the
-accept type of the request:
+content preference of the request:
 
-`Accept: text/html` - respond with a 302 redirect to the login view, with
-the requested url provided as the `?next=` parameter
+* `text/html` - respond with a 302 redirect to the login view, with the requested
+  **relative** URL path provided as the `?next=/path` parameter.  Do not allow
+  absolute URLs in this parameter, as this is an open redirect vulnerability.
 
-`Accept: application/json` - respond with `401 Unauthorized` and an empty
-body
+* `application/json` - respond with `401 Unauthorized` and an empty body.
 
 ### Cookie Flags
 
