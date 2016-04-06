@@ -14,10 +14,11 @@ This route is enabled by default at the `/me` uri, but this endpoint can be
 changed or disabled entirely with these options:
 
 ```yaml
-web:
-  me:
-    enabled: true
-    uri: "/me"
+stormpath:
+  web:
+    me:
+      enabled: true
+      uri: "/me"
 ```
 
 ### Endpoint Response
