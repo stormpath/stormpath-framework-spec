@@ -17,7 +17,7 @@ web:
     uri: "/oauth/token"
 ```
 
-#### web.oauth2.enabled
+#### stormpath.web.oauth2.enabled
 
 By default we accept POSTS to this token uri and respond according to the
 grant type.  If the developer sets this value to false we should not attach any
@@ -94,20 +94,21 @@ Pragma: no-cache
 ### Client Credentials Options
 
 ```yaml
-web:
-  oauth2:
-    client_credentials:
-      enabled: true
-      accessToken:
-        ttl: 3600
+stormpath:
+  web:
+    oauth2:
+      client_credentials:
+        enabled: true
+        accessToken:
+          ttl: 3600
 ```
 
-#### web.oauth2.client_credentials.enabled
+#### stormpath.web.oauth2.client_credentials.enabled
 
 If set to false, the endpoint should return the `unsupported_grant_type` error
 (see above).
 
-#### web.oauth2.client_credentials.accessToken.ttl
+#### stormpath.web.oauth2.client_credentials.accessToken.ttl
 
 Determines how long the issued token should be valid for, as seconds.
 
@@ -157,20 +158,21 @@ Pragma: no-cache
 ### Password Grant Options
 
 ```yaml
-web:
-  oauth2:
-    password:
-      enabled: true
-      validationStrategy: stormpath # or 'local' to do local JWT signature validation
+stormpath:
+  web:
+    oauth2:
+      password:
+        enabled: true
+        validationStrategy: stormpath # or 'local' to do local JWT signature validation
 ```
 
 
-#### web.oauth2.password.enabled
+#### stormpath.web.oauth2.password.enabled
 
 If set to false, the endpoint should return the `unsupported_grant_type` error
 (see above).
 
-#### web.oauth2.password.validationStrategies
+#### stormpath.web.oauth2.password.validationStrategies
 
 Determines how we validate an access token.  There are two strategies:
 
