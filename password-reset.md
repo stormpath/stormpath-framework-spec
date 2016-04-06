@@ -39,7 +39,7 @@ There is no JSON response for the GET verb of this endpoint.
 #### POST Requests
 
 This endpoint accepts a post from the password reset request form, and the only
-field in this form is the `email` field.  The endpoint should pase the POST body
+field in this form is the `email` field.  The endpoint should parse the POST body
 content as `application/json` or `application/x-www-form-urlencoded`.
 
 The format of the request is (JSON example):
