@@ -21,21 +21,21 @@ The default set of functions that we want to provide are:
 
 Account resolvers will check for the presense of authentication information, and return account details from Stormpath if available. This is useful, for instance, for a website that wants to render a menu bar differently for logged in users. 
 
-* `getAccount` - look for all forms of authentication, and load an account if credentials are present. 
+* `getAccount` - attempt to resolve the account, by any means of authentication (see list of authentication filters). If the account is resolved, provide it to the request content, e.g. by attaching the Stormpath account to the request object.
 
 **Authentication Filters**
 
 The authentication filters require that valid authentication information is present. 
 
-If the authentication details are not present, these gatekeepers will ALWAYS render an error, rendered in the best content type as according to the Accept headers and produces configuration. 
+If the authentication details are not present, these filters will ALWAYS render an error, rendered in the best content type as according to the Accept headers and produces configuration. 
 
 If `application/json` is preferred: Render `401 Unauthorized` with a blank body.
 
-If `text/html` is preferred: Redirect to `stormpath.web.login.uri`
+If `text/html` is preferred: Redirect to `stormpath.web.login.uri`, preserving the relative url via the next parameter. For instance, `/login?next=/relative-url`
 
 The filter are: 
 
-* `requireAuthentication` - same as `getAccount`
+* `requireAuthentication` - looks for any auth methods on this list
 * `requireApiAuthentication` - to look for either bearer or basic auth credentials
 * `requireBasicAuthentication` - to look for basic only
 * `requireBearerAuthentication` - to look for oauth2 bearer tokens only
