@@ -214,6 +214,3 @@ stormpath:
         providerData: false
         tenant: false
 
-    unauthorized:
-      view: "unauthorized"
-
