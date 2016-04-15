@@ -42,9 +42,7 @@ cookies as the secure storage location on the client.
 If the request cannot be authenticated, how to respond will depend on the
 content preference of the request:
 
-* `text/html` - respond with a 302 redirect to the login view, with the requested
-  **relative** URL path provided as the `?next=/path` parameter.  Do not allow
-  absolute URLs in this parameter, as this is an open redirect vulnerability.
+* `text/html` - respond with a 302 redirect to the login view, and preserve the current URL so the user can be redirected to their original destination after login. If possible, use built-in features of the host framework to do this securely; otherwise, use a secure method of passing the destination URL forward.
 
 * `application/json` - respond with `401 Unauthorized` and an empty body.
 
