@@ -167,7 +167,7 @@ parse the post body as `application/json` or `application/x-www-form-urlencoded`
 ```
 POST /change?sptoken=the_sent_token
 
-password=new%20password&passwordAgain=new%20password
+password=new%20password
 ```
 
 `application/json` requests look like:
@@ -178,15 +178,10 @@ POST /change
 {
   "sptoken": "the sent token",
   "password": "new password"
-  "passwordAgain": "new password"
 }
 ```
 
-Before making a network request to Stormpath, the `password` and `passwordAgain` parameters should be checked to make sure they match.
-
-* If the check fails, re-render the change password form (see **Error Responses** below).
-
-* If the check passes, the Stormpath API should be invoked to consume the token and reset the password.
+-The Stormpath API should be invoked to consume the token and reset the password.
 
 **Success Responses**
 
