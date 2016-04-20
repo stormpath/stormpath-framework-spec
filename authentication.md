@@ -8,38 +8,27 @@ https://github.com/stormpath/stormpath-sdk-spec/blob/master/specifications/authe
 Those authenticators have an interface which is *not* HTTP-specific, the
 interfaces work with the necessary parameters for achieving authentication.
 
-As such, our framework integrations will be responsible for taking an incoming
-HTTP request, gathering the needed authentication parameters (from the body,
-from HTTP headers, etc) and delegating to the necessary authenticator.
-
-This work should be encapsulated into re-usable functions that can be exposed
-in the public API of the framework.
-
-The default set of functions that we want to provide are:
+To provide extra convenience, we have defined Account Resolvers to help the application read the HTTP request and return authentication information to the application. In addition, the framework integrations MAY provide additional convenience methods to respond to the incoming request. 
 
 **Account Resolvers**
 
-Account resolvers will check for the presense of authentication information, and return account details from Stormpath if available. This is useful, for instance, for a website that wants to render a menu bar differently for logged in users. 
+The framework integration will provide the application with some means of resolving authentication information. This means:
 
-* `getAccount` - attempt to resolve the account, by any means of authentication (see list of authentication filters). If the account is resolved, provide it to the request content, e.g. by attaching the Stormpath account to the request object.
+* Reading the request headers for authentication information
+* Resolving the access token or API key presented to a Stormpath account
+* Return this information to the application, along with the method of authentication.
 
-**Authentication Filters**
+This information will allow the application to make authorization decisions for the request. 
 
-The authentication filters require that valid authentication information is present. 
+**Unauthenticated Requests**
 
-If the authentication details are not present, these filters will ALWAYS render an error, rendered in the best content type as according to the Accept headers and produces configuration. 
+In addition, the framework integration MAY provide the application with some means of rendering errors for unauthenticated requests. This may be combined with the Account Resolvers for extra convenience. 
+
+If used, these convenience functions will render an error in the best content type as according to the Accept headers and produces configuration. 
 
 If `application/json` is preferred: Render `401 Unauthorized` with a blank body.
 
-If `text/html` is preferred: Redirect to `stormpath.web.login.uri`, preserving the relative url via the next parameter. For instance, `/login?next=/relative-url`
-
-The filter are: 
-
-* `requireAuthentication` - looks for any auth methods on this list
-* `requireApiAuthentication` - to look for either bearer or basic auth credentials
-* `requireBasicAuthentication` - to look for basic only
-* `requireBearerAuthentication` - to look for oauth2 bearer tokens only
-* `requireCookieAuthentication` - to look for cookie auth only
+If `text/html` is preferred: Redirect to `stormpath.web.login.uri`. Make sure to pass information to redirect the user back to the current page. 
 
 ##Types of Authentication
 
