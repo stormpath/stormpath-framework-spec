@@ -20,8 +20,7 @@ request handling procedure that is defined below.
 
  * Attempt to verify the `sptoken`.
 
- * If the token is valid, redirect to `stormpath.web.verify.nextUri` and append
-   `?status=verified`.
+ * If the token is valid, redirect to `stormpath.web.verify.nextUri`.
 
  * If the token is invalid, render a form that allows them to request a new link
    by submitting their email address.  The form should show the error:
@@ -90,7 +89,7 @@ stormpath:
     verifyEmail:
       enabled: null
       uri: "/verify"
-      nextUri: "/login"
+      nextUri: "/login?status=verified"
       view: "verify"
 ```
 
