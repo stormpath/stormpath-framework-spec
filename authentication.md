@@ -16,21 +16,21 @@ The framework integration will provide the application with some means of resolv
 
 * Reading the request headers for authentication information
 * Resolving the access token or API key presented to a Stormpath account
-* Return this information to the application, along with the method of authentication.
+* Return this information to the application, along with information about how the request was authenticated.
 
 This information will allow the application to make authorization decisions for the request. 
 
 **Unauthenticated Requests**
 
-In addition, the framework integration MAY provide the application with some means of rendering errors for unauthenticated requests. This may be combined with the Account Resolvers for extra convenience. 
+As a convenience, the framework integration MAY provide the application with a means to, in one step, check for authentication information and render an error if the request is unauthenticated. 
 
-If used, these convenience functions will render an error in the best content type as according to the Accept headers and produces configuration. 
+If implemented, these convenience functions will render an error in the best content type as according to the Accept headers and produces configuration. 
 
 If `application/json` is preferred: Render `401 Unauthorized` with a blank body.
 
 If `text/html` is preferred: Redirect to `stormpath.web.login.uri`. Make sure to pass information to redirect the user back to the current page. 
 
-##Types of Authentication
+## How Requests are Authenticated
 
 There are multiple ways that clients can present their authentication credentials to the web framework: 
 
