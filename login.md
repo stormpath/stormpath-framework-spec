@@ -65,8 +65,7 @@ for the `uri`.
 
 Default: `/`
 
-Where to send the user after successful login.  This value can be overridden on
-a per-request basis, if the parameter `?next=uri` is provided on the POST.
+Where to send the user by default after successful login. This behavior can be overridden on a per-request basis (see [Cookie Authentication#Rejecting Requests](cookie-authentication.md#rejecting-requests)).
 
 #### <a name="view"></a> view
 
@@ -235,9 +234,7 @@ successfully authenticated.
 
 **For HTML responses:**
 
-Issue a 302 redirect to the `nextUri` and create a new user session.  If the
-form post had a query parameter of `?next=url`, then redirect to that location
-instead of the defined `nextUri`.
+Issue a 302 redirect to the `nextUri` and create a new user session. If the original destination was a different page, redirect to that location. (See [Cookie Authentication#Rejecting Requests](https://github.com/nbarbettini/stormpath-framework-spec/blob/patch-4/cookie-authentication.md#rejecting-requests))
 
 **For JSON responses:**
 
