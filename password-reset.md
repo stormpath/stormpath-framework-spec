@@ -36,6 +36,14 @@ defined by `stormpath.web.forgotPassword.view`.
 
 There is no JSON response for the GET verb of this endpoint.
 
+**Parameters**
+
+This endpoint also takes a `status` query parameter, which will render an warning banner in the view. Currently, there is only one `status` parameter:
+
+`invalid_sptoken` - used when a user hits the `/change` endpoint with an invalid change password token. Renders the following error message: 
+
+>"The password reset link you tried to use is no longer valid. Please request a new link from the form below."
+
 #### POST Requests
 
 This endpoint accepts a post from the password reset request form, and the only
