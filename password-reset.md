@@ -162,16 +162,26 @@ new password.
 This endpoint accepts a post from the password change form.  The endpoint should
 parse the post body as `application/json` or `application/x-www-form-urlencoded`.
 
-The format of the request is (JSON example):
+`application/x-www-form-urlencoded` requests look like:
+
+```
+POST /change?sptoken=the_sent_token
+
+password=new%20password
+```
+
+`application/json` requests look like:
 
 ```javascript
+POST /change
+
 {
   "sptoken": "the sent token",
   "password": "new password"
 }
 ```
 
-The Stormpath API should be invoked to consume the token and reset the password.
+-The Stormpath API should be invoked to consume the token and reset the password.
 
 **Success Responses**
 
