@@ -22,7 +22,7 @@ This information will allow the application to make authorization decisions for 
 
 **Unauthenticated Requests**
 
-As a convenience, the framework integration MAY provide the application with a means to, in one step, check for authentication information and render an error if the request is unauthenticated. 
+As a convenience, the framework integration MAY provide the application with a means to use the authentication information to return an appropriate response if the request is unauthenticated. 
 
 If implemented, these convenience functions will render an error in the best content type as according to the Accept headers and produces configuration. 
 
