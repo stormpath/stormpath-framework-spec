@@ -8,8 +8,8 @@ This document describes the endpoints and logic that must exist in order to
 facilitate self-service verification of newly registered user accounts.
 
 If the application's default account store has the email verification workflow
-enabled, and `stormpath.web.verify.enabled` is not set to `false`, our library
-MUST intercept incoming requests at `stormpath.web.verify.uri` and follow the
+enabled, and `stormpath.web.verifyEmail.enabled` is not set to `false`, our library
+MUST intercept incoming requests at `stormpath.web.verifyEmail.uri` and follow the
 request handling procedure that is defined below.
 
 ## Request Handling
@@ -20,7 +20,9 @@ request handling procedure that is defined below.
 
  * Attempt to verify the `sptoken`.
 
- * If the token is valid, redirect to `stormpath.web.verify.nextUri`.
+ * If the token is valid and `autoLogin` is enabled, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and redirecting the user)
+
+ * If the token is valid and `autoLogin` is disabled, redirect to `stormpath.web.verifyEmail.nextUri`
 
  * If the token is invalid, render a form that allows them to request a new link
    by submitting their email address.  The form should show the error:
@@ -39,7 +41,9 @@ request handling procedure that is defined below.
 
  * Attempt to verify the `sptoken`, using the SDK, then:
 
-  * If the token is valid, respond with `200 OK` and an empty body
+  * If the token is valid and `autoLogin` is enabled, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and responding with the account object)
+
+  * If the token is valid and `autoLogin` is disabled, respond with `200 OK` and an empty body
 
   * If validation fails, respond with the JSON error from the API, according to
     the [Error Handling][] specification.
@@ -71,7 +75,7 @@ The format of the request is (JSON example):
 Regardless of whether or not the email address is associated with a user
 account, we should respond according to the request preference:
 
-  * `text/html`, redirect to `stormpath.web.verify.nextUri` and
+  * `text/html`, redirect to `stormpath.web.verifyEmail.nextUri` and
     append `?status=unverified`
 
   * `application/json`, the status of the response should be `200 OK` with no
@@ -104,6 +108,13 @@ application has the email verification workflow enabled.
 
 <a href="#top">Back to Top</a>
 
+#### autoLogin
+
+Default: `false`
+
+Defined in: `stormpath.web.register.autoLogin`
+
+If `true`, then once a user has successfully verified their email, they application will run the standard [post login logic](login.md#-post-response-handling) (like setting cookies), and respond with the same data as the `login` endpoint. 
 
 #### uri
 

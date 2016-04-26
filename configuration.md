@@ -69,15 +69,6 @@ this exception should be thrown:
   > No account stores are mapped to the specified application.
     Account stores are required for login and registration.
 
-* If `stormpath.web.register.autoLogin` is true, and email verification is
-  enabled on the default account store, the following error should be given:
-
-  > Invalid configuration: stormpath.web.register.autoLogin is true, but the
-    default account store of the specified application has the email
-    verification workflow enabled. Auto login is only possible if email
-    verification is disabled. Please disable this workflow on this
-    application's default account store.
-
 * If `stormpath.web.register.enabled` is true, and there is no default account
   store mapped to the application:
 

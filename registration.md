@@ -62,9 +62,6 @@ stormpath:
       uri: "/register"
       nextUri: "/"
       autoLogin: false
-      # autoLogin is possible only if the email verification feature is disabled
-      # on the default default account store of the defined Stormpath
-      # application.
       form:
         fields:
           givenName:
@@ -148,12 +145,7 @@ is `true`.
 #### <a name="autoLogin"></a> autoLogin
 
 If enabled, the user should be automatically logged in and redirected to the
-`nextUri` after a successful registration.  This is only possible if the
-default account store for the application has the email verification workflow
-disabled.
-
-**Not yet determined**: if auto login is not possible because email verification
-is enabled, how should this error be surfaced?
+`nextUri` after a successful registration. If email verification is enabled, this will automatically log in the user after email verification. 
 
 
 #### <a name="fields"></a> form.fields
