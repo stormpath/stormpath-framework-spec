@@ -96,6 +96,8 @@ Default: `/forgot`
 The URI that we'll attach an interceptor to for requests, if `enabled` is
 `true`.
 
+If `stormpath.web.idSite.enabled` is `true`, redirect the user idSite using the ID Site URL Builder in the SDK.
+
 <a href="#top">Back to Top</a>
 
 

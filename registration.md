@@ -15,6 +15,9 @@ GET requests may:
 
 * Serve the dynamic registration JSON view model.
 
+* Redirect the user to ID Site if `stormpath.web.idSite.enabled` is `true`. This
+  should be done with the ID Site URL Builder in the SDK.
+
 * Pass on the request.
 
 POST requests may:

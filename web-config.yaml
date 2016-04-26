@@ -171,11 +171,16 @@ stormpath:
     # through ID Site on logout.
     idSite:
       enabled: false
-      uri: "/idSiteResult"
-      nextUri: "/"
       loginUri: ""
       forgotUri: "/#/forgot"
       registerUri: "/#/register"
+
+    # A callback so Stormpath can pass information to the web application. This is
+    # currently being used for ID Site, but may be used in the future for SAML,
+    # Stormpath handled social login, webhooks, and other messages from Stormpath. 
+    callback: 
+      enabled: true
+      uri: "/stormpathCallback"
 
     # Social login configuration.  This defines the callback URIs for OAuth
     # flows, and the scope that is requested of each provider.  Some providers
