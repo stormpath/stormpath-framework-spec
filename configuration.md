@@ -3,7 +3,7 @@
 ## Overview
 
 The framework integration has a set of configuration options that are specific
-to web applications, this configuration extends the [base configuration for the
+to web applications, this configuration extends the [base configuration loaded by the
 underlying SDK](https://github.com/stormpath/stormpath-sdk-spec/blob/master/specifications/config.md).
 
 The entire framework configuration reference can be found in the
@@ -19,11 +19,11 @@ Our framework integrations will need to know which Stormpath Application should
 be used (as all authentication features of Stormpath are tied to Applications).
 
 The developer needs to specify the application, by name or href, using one of
-these configuration properties:
+these configuration properties (in the SDK configuration):
 
 ```yaml
-config:
-  appliction:
+stormpath:
+  application:
     name: null
     href: null
 ```
