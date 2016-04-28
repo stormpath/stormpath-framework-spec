@@ -1,6 +1,9 @@
 stormpath:
+  application:
+    href: null
+    name: null
+    
   web:
-
     basePath: null
 
     oauth2:
