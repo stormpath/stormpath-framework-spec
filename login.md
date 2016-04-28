@@ -38,6 +38,25 @@ stormpath:
       uri: "/login"
       nextUri: "/"
       view: "login"
+      form:
+        fields:
+          login:
+            enabled: true
+            visible: true
+            label: "Username or Email"
+            placeholder: "Username or Email"
+            required: true
+            type: "text"
+          password:
+            enabled: true
+            visible: true
+            label: "Password"
+            placeholder: "Password"
+            required: true
+            type: "password"
+        fieldOrder:
+          - "login"
+          - "password"
 ```
 
 #### <a name="enabled"></a> enabled
@@ -75,6 +94,10 @@ A string key which identifies the view template that should be used.  The
 default value may look different for your framework.  The point of this value
 is to allow the developer to override our default view with their own.
 
+#### Form
+
+See [Registration Form](registration.md#-formfields)
+
 <a href="#top">Back to Top</a>
 
 
@@ -106,7 +129,7 @@ The model should have:
 * A list of fields, as defined by `stormpath.web.login.fields`, and ordered by
   `stormpath.web.login.fieldOrder`.  Fields should only be in the list if their
   `enabled` property is `true`.  As such the enabled property can be omitted
-  from each list element.
+  from each list element. Any enabled fields not in `fieldOrder` should be appended to the end of the list. 
 
 * A list of providers, such as social providers or SAML providers.  Providers
   are found by looking at the account store mappings of the specified
@@ -187,8 +210,10 @@ password=mypassword
 
 * The `login` field value can be either a username or email.
 
-* If either field is omitted, an error will be raised and the page will be
+* If any required field is omitted, an error will be raised and the page will be
 re-rendered.
+
+* Additional configured login form parameters will be ignored by the framework integration, but should be exposed to the application via the [pre and post login handlers](https://github.com/stormpath/stormpath-framework-spec/blob/master/handlers.md#post-login-handler).
 
 **Social login**
 

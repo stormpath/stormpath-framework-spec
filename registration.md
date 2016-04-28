@@ -40,13 +40,14 @@ The form MAY be configured by the developer, allowing them to:
 * Remove the `givenName` and `surname` fields (`enabled: false`).
 * Enable other default Stormpath Account fields (`username`, `middleName`).
 * Enable the a password confirmation field.
+* Make fields hidden, but submittable. 
 * Define custom fields.
 
 ## <a name="Options"></a> Options
 
 This is the set of default configuration for the registration feature, it
 defines the default fields we support and which ones we want to show by
-default.  If a field is `enabled`, it should be shown on the registration form.
+default.  If a field is `enabled`, it will allow data to be POSTed as that parameter. If a field is `visible`, it will be shown on the registration form.
 If it's `required` then an error should be returned if the value is not
 supplied by the user.
 
@@ -66,42 +67,49 @@ stormpath:
         fields:
           givenName:
             enabled: true
+            visible: true
             label: "First Name"
             placeholder: "First Name"
             required: true
             type: "text"
           middleName:
             enabled: false
+            visible: true
             label: "Middle Name"
             placeholder: "Middle Name"
             required: true
             type: "text"
           surname:
             enabled: true
+            visible: true
             label: "Last Name"
             placeholder: "Last Name"
             required: true
             type: "text"
           username:
             enabled: false
+            visible: true
             label: "Username"
             placeholder: "Username"
             required: true
             type: "text"
           email:
             enabled: true
+            visible: true
             label: "Email"
             placeholder: "Email"
             required: true
             type: "email"
           password:
             enabled: true
+            visible: true
             label: "Password"
             placeholder: "Password"
             required: true
             type: "password"
           confirmPassword:
             enabled: false
+            visible: true
             label: "Confirm Password"
             placeholder: "Confirm Password"
             required: true
@@ -154,7 +162,9 @@ A map of field definitions.  The name of the property, e.g. `givenName`, should
 be applied to the HTML input element as the `name` attribute.  Each field
 definition must have the following properties:
 
-* `enabled` - Determines if this field should be shown in the registration form.
+* `enabled` - Allows the other options to take effect, and saves data if applications to POST to this parameter. 
+
+* `visible` - Determines if this field should be shown in the registration form. If false, this field should not be present in the view model or HTML. 
 
 * `label` - The value that is shown as a descriptive label for the field.
 
@@ -201,7 +211,7 @@ The model should have:
 * A list of fields, as defined by `stormpath.web.register.form.fields`, and
   ordered by `stormpath.web.register.form.fieldOrder`.  Fields should only be in
   the list if their `enabled` property is `true`.  As such the enabled property
-  can be omitted from each list element.
+  can be omitted from each list element. Any enabled fields not in `fieldOrder` should be appended to the end of the list. 
 
 * A list of providers, such as social providers or SAML providers.  Providers
   are found by looking at the account store mappings of the specified
@@ -321,7 +331,9 @@ Custom fields can be supplied on the root of the post body, or as child
 properties of the custom data field.  Regardless of how they are supplied, the
 library should apply these properties to the account's custom data object.
 
-If the post contains a custom field that it NOT defined by the developer, the
+### Disabled or Unknown Fields
+
+If the post contains a field that is disabled or not defined by the developer, the
 library MUST reject the request with an error.  We do not allow arbitrary data
 to be posted to an account's custom data object.
 
