@@ -85,9 +85,9 @@ When the callback URL is requested with a GET request, the user is being
 redirected back to the server after authentication with the provider.  The
 callback handler must complete the following tasks:
 
-  * Parse the callback data from the provider to get the access token or code
-  * Create or update the account in Stormpath, by making a call to the
-    `application.getAccount()` method in the SDK of the framework language
+  * Parse the callback data from the provider to get the authorization code
+  * Perform the authorization code exchange, if needed. 
+  * Retrieve or create the account, by posting the provider data to Stormpath
   * Create the OAuth2 token cookies for the user
   * Redirect the user to `stormpath.web.login.nextUri`
 
@@ -96,6 +96,8 @@ and the next task should not be attempted.
 
 The error should be displayed on the login form in the same way other login
 errors are shown.
+
+Recommendation: the callback endpoints should not handle access tokens in the query string because applications that log URLs will inadvertently log access tokens, which presents a security risk. 
 
 ## Implementing Popup-Based Workflows
 
@@ -106,6 +108,36 @@ a GET request to the login or registration endpoint, to fetch the view model
 as JSON.  The view model will contain the necessary information.  See [login][]
 and [registration][] pages for the view model definitions.
 
+## Access Tokens and Authorization Codes
+
+This is a reference to supported functionality from both Stormpath and different social providers with their OAuth flows. 
+
+**Stormpath REST API Support**
+
+|Social Provider|Authorization Code|Access Token|
+|---|---|---|
+|Facebook|NO|YES|
+|Google|YES|YES|
+|LinkedIn|YES|YES|
+|GitHub|NO|YES|
+
+**Social Provider OAuth Support**
+
+|Social Provider|Authorization Code|Implicit|
+|---|---|---|
+|Facebook|YES|YES|
+|Google|YES|NO|
+|LinkedIn|YES|NO|
+|GitHub|YES|NO|
+
+Implementation of social login is up to the framework integration, but here are some potential ways to approach it: 
+
+* **Facebook**: Use the Facebook [Javascript SDK](https://developers.facebook.com/docs/facebook-login/web) and use the popup-based workflow to get an access token, and POST it to the `/callbacks/facebook` endpoint. Send the access token to Stormpath. 
+* **Facebook**: Redirect the user to the [Facebook OAuth server](https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow). The user will be redirected back to the `/callbacks/facebook` endpoint. Perform the authorization code exchange for an access token, and send the access token to Stormpath. 
+* **Google**: Redirect the user to the [Google OAuth server](https://developers.google.com/identity/protocols/OAuth2WebServer#preparing-to-start-the-oauth-20-flow). The user will be redirected to the `/callbacks/google` endpoint. Send the authorization code to Stormpath, which will do the exchange. 
+* **LinkedIn**: Redirect the user to the [LinkedIn OAuth server](https://developer.linkedin.com/docs/oauth2). The user will be redirected to the `/callbacks/linkedin` endpoint. Send the authorization code to Stormpath, which will do the exchange. 
+* **GitHub**: Redirect the user to the [GitHub OAuth server](https://developer.github.com/v3/oauth/). The user will be redirected to the `/callbacks/github` endpoint. Perform the authorization code exchange for an access token, and send the access token to Stormpath. 
+ 
 <a href="#top">Back to Top</a>
 
 [login]: login.md
