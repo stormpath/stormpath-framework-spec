@@ -13,13 +13,13 @@ The configuration options inherently refer to high level features that the
 framework integration should implement, you will find that each high level
 feature has it's own markdown file in this repository.
 
-## Application resolution
+## Application validation
 
 Our framework integrations will need to know which Stormpath Application should
 be used (as all authentication features of Stormpath are tied to Applications).
 
 The developer needs to specify the application, by name or href, using one of
-these configuration properties (in the SDK configuration):
+these configuration properties:
 
 ```yaml
 stormpath:
@@ -28,31 +28,36 @@ stormpath:
     href: null
 ```
 
-If neither of these are specified, the integration should attempt to use the
-tenant's only application (if the tenant only has one application).  **NOTE**:
-all tenants have an application called "Stormpath", this application cannot be
-modified and should be excluded when looking to see if the tenant only has one
-application.
+At startup, the integration should use these validation rules:
 
-If the developer does not specify any application configuration, and more
-applications exist beyond the default 'My Application', then an error should be
-given to the developer - it should let them know that they need to define an
-application.
+* If the key `application.href` exists, but does not contain the substring `/applications/`, throw an error. This is a simple sanity check to see if the href provided is a valid Stormpath application href. Use this exception message:
 
-The following exception messages should be used.
-
-* Application could not be found when defined by HREF:
+   > `'(the invalid href)' is not a valid Stormpath Application href.`
+   
+* If the key `application.href` exists, try to look up the Stormpath Application with that href. If the application can't be found, use this error message:
 
   > The provided application could not be found. The provided application
     href was: %href%
 
-* Application could not be found when defined by name:
+* If the key `application.name` exists, try to look up the Stormpath Application with that name. If the application can't be found, use this error message:
 
   > The provided application could not be found. The provided application
     name was: %name%
 
-* Application was not defined, and could not be automatically resolved to the
-  only application in the tenant:
+* If neither `application.href` or `application.name` are specified, attempt to resolve the application using the rules below.
+
+## Application resolution
+
+If an application is not specified in configuration, the integration should attempt to use the
+tenant's only application (if the tenant only has one application).
+
+**NOTE**: all tenants have an application called "Stormpath". This application cannot be
+modified and should be **excluded** when looking to see if the tenant only has one
+application.
+
+* If a single application (besides "Stormpath") exists in the tenant, use that application.
+
+* If zero or more than one applications (besides "Stormpath") exist in the tenant, throw this error:
 
   > Could not automatically resolve a Stormpath Application. Please specify
     your Stormpath Application in your configuration.
