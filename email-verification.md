@@ -41,9 +41,9 @@ request handling procedure that is defined below.
 
  * Attempt to verify the `sptoken`, using the SDK, then:
 
-  * If the token is valid and `autoLogin` is enabled, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and responding with the account object)
+  * If the token is valid and `autoLogin` is enabled on the registration route, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and responding with the account object)
 
-  * If the token is valid and `autoLogin` is disabled, respond with `200 OK` and an empty body
+  * If the token is valid and `autoLogin` is disabled on the registration route, respond with `200 OK` and an empty body
 
   * If validation fails, respond with the JSON error from the API, according to
     the [Error Handling][] specification.
