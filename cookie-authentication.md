@@ -28,7 +28,7 @@ cookies as the secure storage location on the client.
 
   * If the access token is valid, authenticate the request
 
-  * If the access token is invalid, attempt to use the refresh token to get a
+  * If the access token is invalid or missing, attempt to use the refresh token to get a
   new access token.
 
   * If a new access token is obtained, authenticate the request and store this
