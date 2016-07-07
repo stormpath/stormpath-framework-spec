@@ -82,4 +82,4 @@ this exception should be thrown:
 
 * If external provider directories are mapped to the application, but `stormpath.web.callback.enabled` has been set to `false`, the end user cannot complete the SAML workflow and this warning should be logged:
 
-  > stormpath.web.callback.enabled is set to false, but SAML directories are mapped to this application.  SAML workflows cannot be completed if this callback endpoint is disabled.
+  > stormpath.web.callback.enabled is set to false, but SAML directories are mapped to this application.  Provider login workflows cannot be completed if this callback endpoint is disabled.
