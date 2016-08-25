@@ -79,3 +79,7 @@ this exception should be thrown:
 
   > No default account store is mapped to the specified application. A default
     account store is required for registration.
+
+## Account Schema
+
+If the account schema is requiring a field, but the developer attempts to override the requirement with `stormpath.web.register.form.fields.<field>.required = false`, we should provide a warning to the developer, as this is an invalid configuration, because the account schema will be the setting that is used, and the field will still be required when processing the registration form.
