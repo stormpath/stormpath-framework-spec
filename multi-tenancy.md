@@ -9,3 +9,4 @@ Features that need to be implemented:
 * Developer needs to proivded with resolved accont store context
 
 * Unresolved case: what if you're not using subdomains, and you need the end user to specify the organization that they are logging into?
+  *   Tom:  Can we reuse the properties for ID Site for this? showOrganizationField?
