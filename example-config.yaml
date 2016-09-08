@@ -132,6 +132,13 @@ stormpath:
       view: "login"
       form:
         fields:
+          organizationNameKey:
+            enabled: false
+            visible: true
+            label: "Organization"
+            placeholder: "e.g. my-company"
+            required: true
+            type: "text"
           login:
             enabled: true
             visible: true
