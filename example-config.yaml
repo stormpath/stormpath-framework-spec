@@ -49,6 +49,15 @@ stormpath:
       - application/json
       - text/html
 
+    # For the common account fields (givenName, surname, etc) the `required`
+    # property is derived from the account schema of the default account store
+    # of the application or organization.  This value can be locally overridden
+    # as `true`, even if `false` in the account schema.  This will provide form
+    # validation at the framework level only.  Attempting to override with `false`
+    # when the schema defines `true` will result in a configuration warning, and
+    # a the end-user will receive a form submission error if the required field
+    # is not provided.
+
     register:
       enabled: true
       uri: "/register"
@@ -61,35 +70,35 @@ stormpath:
             visible: true
             label: "First Name"
             placeholder: "First Name"
-            required: true
+            required: null
             type: "text"
           middleName:
             enabled: false
             visible: true
             label: "Middle Name"
             placeholder: "Middle Name"
-            required: true
+            required: null
             type: "text"
           surname:
             enabled: true
             visible: true
             label: "Last Name"
             placeholder: "Last Name"
-            required: true
+            required: null
             type: "text"
           username:
             enabled: false
             visible: true
             label: "Username"
             placeholder: "Username"
-            required: true
+            required: null
             type: "text"
           email:
             enabled: true
             visible: true
             label: "Email"
             placeholder: "Email"
-            required: true
+            required: null
             type: "email"
           password:
             enabled: true
@@ -186,8 +195,8 @@ stormpath:
 
     # A callback so Stormpath can pass information to the web application. This is
     # currently being used for ID Site, but may be used in the future for SAML,
-    # Stormpath handled social login, webhooks, and other messages from Stormpath. 
-    callback: 
+    # Stormpath handled social login, webhooks, and other messages from Stormpath.
+    callback:
       enabled: true
       uri: "/stormpathCallback"
 

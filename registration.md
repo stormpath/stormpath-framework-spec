@@ -312,14 +312,6 @@ Every POST body MUST contain, at a minimum, these fields:
 If those fields are omitted, it is an error.  If any of the required fields are
 omitted, that is also an error.
 
-### givenName and surname fields
-
-If the `givenName` and `surname` account properties are not specified by the
-user in the POST, and the developer has configured these fields to be optional
-(`required: false`), or has disabled them entirely (`enabled: false`), our
-library MUST set the value to 'UNKNOWN' when we create the account via the
-Stormpath REST API (as the API requires these fields to be populated).
-
 ### Custom Fields
 
 The developer should be able to define their own fields in the
