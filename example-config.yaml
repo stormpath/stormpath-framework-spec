@@ -2,9 +2,25 @@ stormpath:
   application:
     href: null
     name: null
-    
+
   web:
+
     basePath: null
+
+    baseDomain: null  # Required if using subdomain-based multi-tenancy
+
+    multiTenancy:
+      # When enabled, and useSubdomain=true, we try to resolve the organization
+      # context by looking at the subdomain, e.g. org-a.example.com.  In cases
+      # where the organization cannot be automatically resolved, we will render
+      # a form field that requires the user to enter this value.  This automatic
+      # behavior can be disabled by setting this configuration:
+      #
+      #   stormpath.web.login.form.field.organizationNameKey = false
+      #
+      enabled: false
+      useSubdomain: true
+
 
     oauth2:
       enabled: true
@@ -77,6 +93,17 @@ stormpath:
             placeholder: "Last Name"
             required: true
             type: "text"
+          # Unless specifically set to false, the organizationNameKey field will
+          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
+          # and an organization cannot be resolved (the default organization
+          # resolver does not return an organization).
+          organizationNameKey:
+            enabled: null
+            visible: true
+            label: "Organization"
+            placeholder: "e.g. my-company"
+            required: true
+            type: "text"
           username:
             enabled: false
             visible: true
@@ -132,8 +159,12 @@ stormpath:
       view: "login"
       form:
         fields:
+          # Unless specifically set to false, the organizationNameKey field will
+          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
+          # and an organization cannot be resolved (the default organization
+          # resolver does not return an organization).
           organizationNameKey:
-            enabled: false
+            enabled: null
             visible: true
             label: "Organization"
             placeholder: "e.g. my-company"
@@ -193,8 +224,8 @@ stormpath:
 
     # A callback so Stormpath can pass information to the web application. This is
     # currently being used for ID Site, but may be used in the future for SAML,
-    # Stormpath handled social login, webhooks, and other messages from Stormpath. 
-    callback: 
+    # Stormpath handled social login, webhooks, and other messages from Stormpath.
+    callback:
       enabled: true
       uri: "/stormpathCallback"
 
