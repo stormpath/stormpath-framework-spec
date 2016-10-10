@@ -22,7 +22,7 @@ The following design guidelines must be followed when adding multi-tenancy featu
 
     - If `stormpath.web.multiTenancy.useSubDomain=true` and `stormpath.web.baseDomain` is defined, e.g. `example.com`, then a request with the `Host` header specified as `org-a.example.com` should return the `Organization` that has the `nameKey` of `org-a`.
     - If the request provides an access token (it is an authenticated request), and the token has an `org` claim, then this value indicates the organization that the user authenticated against, and this is can be uses as the organization context.  But if `stormpath.web.multiTenancy.useSubDomain=true`, we must also assert that the request is for a subdomain that matches the same organization as the token.  If this is not true the request should be rejected (401).
-    - As a final fallback, if the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.
+    - As a final fallback, if the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.  This should only be done when user is posting a form field that our framework handles, and that form needs the organization context.
     - The subdomain value should take precedence over the form value if both are provided.    
     
 
