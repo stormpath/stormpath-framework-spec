@@ -13,20 +13,22 @@ The following design guidelines must be followed when adding multi-tenancy featu
 * The resolution should be achieved with an "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.  
 
 * The resolver type/interface should have the following characteristics:
+
     - It receives a HTTP request for inspection (some may also provide the response, if available).
     - It returns an Organization if one can be resolved.
     - It attaches the resolved Organization to the request, so that the developer can make use of this context.
 
-* The default organization resolver should have the following characteristics:
+* The default organization resolver should follow this procedure to determine the organization:
 
-    - If `stormpath.web.baseDomain` is defined, e.g. `example.com`, then a request with the `Host` header specified as `org-a.example.com` should return the `Organization` that has the `nameKey` of `org-a`.
-    - If the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.  This covers the case where the user is supplying the org key in a form field.
-    - The subdomain value should take precedence over the form value.
+    - If `stormpath.web.multiTenancy.useSubDomain=true` and `stormpath.web.baseDomain` is defined, e.g. `example.com`, then a request with the `Host` header specified as `org-a.example.com` should return the `Organization` that has the `nameKey` of `org-a`.
+    - If the request provides an access token (it is an authenticated request), and the token has an `org` claim, then this value indicates the organization that the user authenticated against, and this is can be uses as the organization context.  But if `stormpath.web.multiTenancy.useSubDomain=true`, we must also assert that the request is for a subdomain that matches the same organization as the token.  If this is not true the request should be rejected (401).
+    - As a final fallback, if the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.
+    - The subdomain value should take precedence over the form value if both are provided.    
+    
 
-* If `stormpath.web.multiTenancy=true`, and the organization cannot be resolved, AND the developer has disabled the `organizationNameKey` for fields, then the operation (login, etc) will be posted against the application per normal.
 
-* When authenticating requests with access tokens, the `org` claim of of the access token must match the resolved organization for the request.  If this is
-not true the request should be rejected and the user should be required to authenticate for a new token.  If the access token was sent in a cookie header, the response should delete this cookie.
+* If `stormpath.web.multiTenancy=true`, and the organization cannot be resolved, AND the developer has disabled the `organizationNameKey` form fields, then the operation (login, etc) will be posted against the application per normal.
+
 
 * When processing a email verification request:
     - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<baseDomain>/verify`, and render a field that allows them to specify their organization name.

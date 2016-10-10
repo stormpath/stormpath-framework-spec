@@ -10,15 +10,23 @@ stormpath:
     baseDomain: null  # Required if using subdomain-based multi-tenancy
 
     multiTenancy:
-      # When enabled, and useSubdomain=true, we try to resolve the organization
-      # context by looking at the subdomain, e.g. org-a.example.com.  In cases
-      # where the organization cannot be automatically resolved, we will render
-      # a form field that requires the user to enter this value.  This automatic
-      # behavior can be disabled by setting this configuration:
-      #
-      #   stormpath.web.login.form.field.organizationNameKey = false
-      #
+
+      # When enabled, the framework will require the user to authenticate against
+      # a specific Organization.  The authenticated organization is persisted in
+      # the access token that is issued.
+
       enabled: false
+
+      # If useSubdomain=true, we attempt to resolve the organization context by
+      # looking at the subdomain, e.g. org-a.example.com.  Otherwise we will
+      # render a form field that requires the user to enter this value.  This
+      # automatic behavior can be disabled by explicitly disabling those form
+      # fields (see below).
+      #
+      # When useSubdomain is true, and the user is authenticating with an access
+      # token that contains an organization, we assert that this is the same
+      # organization that is identified by the subdomain.
+
       useSubdomain: true
 
 
@@ -95,8 +103,7 @@ stormpath:
             type: "text"
           # Unless specifically set to false, the organizationNameKey field will
           # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved (the default organization
-          # resolver does not return an organization).
+          # and an organization cannot be resolved.
           organizationNameKey:
             enabled: null
             visible: true
@@ -161,8 +168,7 @@ stormpath:
         fields:
           # Unless specifically set to false, the organizationNameKey field will
           # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved (the default organization
-          # resolver does not return an organization).
+          # and an organization cannot be resolved.
           organizationNameKey:
             enabled: null
             visible: true
