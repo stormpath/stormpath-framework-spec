@@ -99,18 +99,12 @@ stormpath:
     oauth2:
       client_credentials:
         enabled: true
-        accessToken:
-          ttl: 3600
 ```
 
 #### stormpath.web.oauth2.client_credentials.enabled
 
 If set to false, the endpoint should return the `unsupported_grant_type` error
 (see above).
-
-#### stormpath.web.oauth2.client_credentials.accessToken.ttl
-
-Determines how long the issued token should be valid for, as seconds.
 
 ## Password Grant Flow
 

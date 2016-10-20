@@ -35,8 +35,6 @@ stormpath:
       uri: "/oauth/token"
       client_credentials:
         enabled: true
-        accessToken:
-          ttl: 3600 # seconds
       password:
         enabled: true
         validationStrategy: "local"
