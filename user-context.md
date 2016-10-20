@@ -74,3 +74,37 @@ stormpath:
       expand:
         groups: true
 ```
+
+For collection resources, the default behavior should be to include **all** items in the expanded collection. Optionally, the framework integration can allow the developer to override this behavior.
+
+#### Expanded response
+
+If a linked collection is expanded (such as `groups`), the response should follow this format:
+
+```json
+"collection": {
+  "size": 10,
+  "items": [
+    { "stuff": "here" },
+    { "stuff2": "here2" }
+  ]
+}
+```
+
+One or more expanded collections may be included in the `/me` endpoint response, like so:
+
+```json
+{
+  "account": {
+    "href": "https://api.stormpath.com/v1/accounts/xxx",
+    "groups": {
+      "size": 10,
+      "items": [
+        { "stuff": "here" },
+        { "stuff2": "here2" }
+      ]
+    },
+    "otherStuff": "(truncated for example)"
+  }
+}
+```
