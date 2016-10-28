@@ -61,7 +61,7 @@ The format of the request is (JSON example):
 Regardless of whether or not the email address is associated with a user
 account, we must do the following:
 
-* If the request prefers `application/html`, redirect the user to
+* If the request prefers `text/html`, redirect the user to
   `stormpath.web.forgotPassword.nextUri`
 
 * If the request prefers `application/json`, respond with `200 OK` and no body.
