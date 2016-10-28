@@ -39,7 +39,7 @@ The form MAY be configured by the developer, allowing them to:
 * Make the `givenName` and `surname` fields optional (`required: false`).
 * Remove the `givenName` and `surname` fields (`enabled: false`).
 * Enable other default Stormpath Account fields (`username`, `middleName`).
-* Enable the a password confirmation field.
+* Enable a password confirmation field.
 * Make fields hidden, but submittable. 
 * Define custom fields.
 
