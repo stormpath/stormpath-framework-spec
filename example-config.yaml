@@ -7,7 +7,7 @@ stormpath:
 
     basePath: null
 
-    baseDomain: null  # Required if using subdomain-based multi-tenancy
+    domainName: null  # Required if using subdomain-based multi-tenancy
 
     multiTenancy:
 
