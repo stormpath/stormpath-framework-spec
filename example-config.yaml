@@ -87,9 +87,10 @@ stormpath:
       autoLogin: false
       form:
         fields:
-          # Unless specifically set to false, the organizationNameKey field will
-          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved.
+          # This field will be shown as the only field if the user is visiting
+          # the parent domain of a sub-domain based multi-tenant configuration.
+          # The user will be redirected to the correct subdomain to finish the
+          # workflow.
           organizationNameKey:
             enabled: null
             visible: true
@@ -174,9 +175,10 @@ stormpath:
       view: "login"
       form:
         fields:
-          # Unless specifically set to false, the organizationNameKey field will
-          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved.
+          # This field will be shown as the only field if the user is visiting
+          # the parent domain of a sub-domain based multi-tenant configuration.
+          # The user will be redirected to the correct subdomain to finish the
+          # workflow.
           organizationNameKey:
             enabled: null
             visible: true

@@ -14,11 +14,12 @@ The following design guidelines must be followed when adding multi-tenancy featu
 
 * The resolution should be achieved with a "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.  The point of this resolver is to provide our view controllers with the organization to be use with REST API requests.
 
-* The default resolver should have the following characteristics:
+* The default resolver must have the following characteristics:
 
     - It receives a HTTP request for inspection
     - It returns an Organization if one can be resolved from the request context.
     - It should only return an Organization that is mapped to the configured application.
+    - It attaches the resolved Organization to the request, so that the developer can make use of this context.
     
 * The default resolver should follow this procedure to determine the organization:
 
@@ -31,14 +32,12 @@ The following design guidelines must be followed when adding multi-tenancy featu
 * If the user visits the root domain to specify organization context, the form should only show the organization name key field.  The user must enter a valid organization name key.  An error is shown if the org is not valid.  If the org is valid we redirect them to the same view on the correct subdomain.
 
 * When processing a email verification request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<baseDomain>/verify`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<baseDomain><verifyEmail.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
+    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<stormpath.web.domainName>/verify`, and render a field that allows them to specify their organization name.
+    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<stormpath.web.domainName><stormpath.web.verifyEmail.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
 
 * When processing a password reset request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<baseDomain>/forgot`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<baseDomain><changePassword.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
-    
-* The framework should provide a convenience the allows the developer to know the authenticated organization of an authenticated request.  This should be done by looking at the `org` claim of the access token that was used to authenticate the request.
+    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<stormpath.web.domainName>/forgot`, and render a field that allows them to specify their organization name.
+    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<stormpath.web.domainName><stormpath.web.changePassword.nextUri|stormpath.web.login.nextUri>` - *REQUIRES REST API CHANGE*
 
 ## Future Use Cases
 
