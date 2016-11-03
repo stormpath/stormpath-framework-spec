@@ -6,39 +6,39 @@ This document describes how our framework integrations should support our multi-
 
 The following design guidelines must be followed when adding multi-tenancy features to a framework integration:
 
-* This is an opt-in configuration, the developer must use `stormpath.web.multiTenancy=true` to declare that they want to opt-in to our default organization-based multi-tenant solution.
+* This is an opt-in configuration, the developer must define these properties to declare that they want to opt-in to our default organization-based multi-tenant solution:
+    -  `stormpath.web.multiTenancy=true` 
+    -  `stormpath.web.domainName=my-company.com`
 
 * On login, registration, email verification, and password reset, we need to resolve which organization should be used for the operation (all of these REST API operations accept an account store as an optional parameter, where the account store is identified by `nameKey` or `href`).  
 
-* The resolution should be achieved with an "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.  
+* The resolution should be achieved with a "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.  The point of this resolver is to provide our view controllers with the organization to be use with REST API requests.
 
-* The resolver type/interface should have the following characteristics:
+* The default resolver should have the following characteristics:
 
-    - It receives a HTTP request for inspection (some may also provide the response, if available).
-    - It returns an Organization if one can be resolved.
-    - It attaches the resolved Organization to the request, so that the developer can make use of this context.
-
-* The default organization resolver should follow this procedure to determine the organization:
-
-    - If `stormpath.web.multiTenancy.useSubDomain=true` and `stormpath.web.domainName` is defined, e.g. `example.com`, then a request with the `Host` header specified as `org-a.example.com` should return the `Organization` that has the `nameKey` of `org-a`.
-    - If the request provides an access token (it is an authenticated request), and the token has an `org` claim, then this value indicates the organization that the user authenticated against, and this is can be uses as the organization context.  But if `stormpath.web.multiTenancy.useSubDomain=true`, we must also assert that the request is for a subdomain that matches the same organization as the token.  If this is not true the request should be rejected (401).
-    - As a final fallback, if the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.  This should only be done when user is posting a form field that our framework handles, and that form needs the organization context.
-    - The subdomain value should take precedence over the form value if both are provided.    
+    - It receives a HTTP request for inspection
+    - It returns an Organization if one can be resolved from the request context.
+    - It should only return an Organization that is mapped to the configured application.
     
+* The default resolver should follow this procedure to determine the organization:
 
+    - If the request `Host` header is `org-a.example.com` we return the `Organization` that has the `nameKey` of `org-a`.
+    - If the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.
+    - The subdomain value should take precedence over the form value if both are provided.    
 
-* If `stormpath.web.multiTenancy=true`, and the organization cannot be resolved, AND the developer has disabled the `organizationNameKey` form fields, then the operation (login, etc) will be posted against the application per normal.
+* If the user visits any view that requires organization context (e.g. login), and the subdomain does not resolve to a organization, we should redirect the user to `<stormpath.web.domainName>/<view>`, so that the user can provide their organization context.
 
+* If the user visits the root domain to specify organization context, the form should only show the organization name key field.  The user must enter a valid organization name key.  An error is shown if the org is not valid.  If the org is valid we redirect them to the same view on the correct subdomain.
 
 * When processing a email verification request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<domainName>/verify`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<domainName><verifyEmail.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
+    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<baseDomain>/verify`, and render a field that allows them to specify their organization name.
+    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<baseDomain><verifyEmail.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
 
 * When processing a password reset request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<domainName>/forgot`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<domainName><changePassword.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
-
-* When the user submits an organization name key, and that organization does not exist, the error message to the end user should not leak information about organizations that do or do not exist.  In this situation the error message should read to the effect "Username or password is invalid, or Organization does not exist".
+    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<baseDomain>/forgot`, and render a field that allows them to specify their organization name.
+    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<baseDomain><changePassword.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
+    
+* The framework should provide a convenience the allows the developer to know the authenticated organization of an authenticated request.  This should be done by looking at the `org` claim of the access token that was used to authenticate the request.
 
 ## Future Use Cases
 
