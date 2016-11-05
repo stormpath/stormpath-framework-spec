@@ -7,50 +7,53 @@ This document describes how our framework integrations should support our multi-
 The following design guidelines must be followed when adding multi-tenancy features to a framework integration:
 
 * This is an opt-in configuration, the developer must define these properties to declare that they want to opt-in to our default organization-based multi-tenant solution:
-    -  `stormpath.web.multiTenancy=true` 
-    -  `stormpath.web.domainName=my-company.com`
+
+    ````yaml
+    stormpath.web.multiTenancy.enabled: true
+    stormpath.web.multiTenancy.strategy: "subodmain"
+    stormpath.web.domainName: "my-company.com
+    ````
+If the first property is enabled, but the others are not present, this should be a configuration warning, and the feature should not be enabled.
 
 * On login, registration, email verification, and password reset, we need to resolve which organization should be used for the operation (all of these REST API operations accept an account store as an optional parameter, where the account store is identified by `nameKey` or `href`).  
 
-* The resolution should be achieved with a "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.  The point of this resolver is to provide our view controllers with the organization to be use with REST API requests.
+* The resolution should be achieved with a "Organization Resolver".  The developer should be able to provide their own resolver, but our framework should provide a default resolver.
+
+### Default Organization Resolver
 
 * The default resolver must have the following characteristics:
 
     - It receives a HTTP request for inspection
     - It returns an Organization if one can be resolved from the request context.
-    - It should only return an Organization that is mapped to the configured application.
+    - It only returns an Organization that is mapped to the configured application.
     - It attaches the resolved Organization to the request, so that the developer can make use of this context.
-    
-* The default resolver should follow this procedure to determine the organization:
+    - If the request `Host` header is `org-a.example.com` it returns the `Organization` that has the `nameKey` of `org-a`.
+    - If the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` is returned.
+    - The `Host` header value takes precedence over the form value if both are provided.    
 
-    - If the request `Host` header is `org-a.example.com` we return the `Organization` that has the `nameKey` of `org-a`.
-    - If the request body has a field of `organizationNameKey=org-a`, then the `Organization` which has the `nameKey` of `org-a` should be returned.
-    - The subdomain value should take precedence over the form value if both are provided.    
+* The default resolver may have the following characteristics:
+    - It can be used as a standalone request filter/middleware component, so that the developer can make use of the resolution without opting in to the rest of the behavior that is described in this document.
 
-* If the user visits any view that requires organization context (e.g. login), and the subdomain does not resolve to a organization, we should redirect the user to `<stormpath.web.domainName>/<view>`, so that the user can provide their organization context.
+### Changes to standard workflows
 
-* If the user visits the root domain to specify organization context, the form should only show the organization name key field.  The user must enter a valid organization name key.  An error is shown if the org is not valid.  If the org is valid we redirect them to the same view on the correct subdomain.
+If the developer has opted in to the subdomain strategy, the framework should do the following:
 
-* When processing a email verification request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<stormpath.web.domainName>/verify`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<stormpath.web.domainName><stormpath.web.verifyEmail.nextUri|login.nextUri>` - *REQUIRES REST API CHANGE*
+* If the user requests a view that we control and the subdomain does not resolve to a organization, we should redirect the user to the parent domain, `<stormpath.web.domainName>/<view>`, so that the user can provide their organization context.
 
-* When processing a password reset request:
-    - If the key has expired or cannot be found, and an organization cannot be resolved, redirect the user to `<stormpath.web.domainName>/forgot`, and render a field that allows them to specify their organization name.
-    - If the key is valid, the REST API response needs to include the organization name key on the response, so that we can redirect the user to `<orgNameKey>.<stormpath.web.domainName><stormpath.web.changePassword.nextUri|stormpath.web.login.nextUri>` - *REQUIRES REST API CHANGE*
+* If the user visits the root domain to specify organization context, the form should only show a field for specifying an organization name key.  The user must enter a valid organization name key.  An error is shown if the org is not valid.  If the org is valid we redirect them back to the same view on the correct subdomain.
 
-## Future Use Cases
+### Email Veficiation & Password Reset
 
-Here are some notes we have collected about possible future use cases:
+While it is possible to specify an account store when generating tokens for email verification and password reset, this context is not retained in the 
+token/resource that is generated.  This means that we can't know which organization the user intends to use when they are arriving on the webapp with an sptoken.  We will likely fix this via the  REST API in the future, but in the meantime the following options are available to the developer:
 
-### Self-service Organization Creation
+* **Use a distinct directory per Organization**.  This will allow them to define a subdomain-specific Link Base URL in the email templates for the directory, so that the user will always land on the correct subdomain when they click the link in their email.
 
-AKA the "Slack" model:
+* **Use the parent domain as the Link Base Url**.  In this situation, the end user will always land on the parent domain with the `sptoken` in the URL.  The user must enter their organization name to get redirected to the correct subdomain, carrying the `sptoken` through, where they can complete the operation on the subdomain.
 
-- Org Registration always occurs on naked domain
-- Login & forgot password may happen through naked domain or subdomain
-    + Naked domain requires user to specify account store name key in form
-- Requires a forgot-tenant solution 
-- How is the new organization name resolved?
-    + End user defines the name during signup
-    + Automatically derived from the domain of the email address
+## Out of Scope
+
+The following features are currently out of scope, but please use documentation to suggest implementation strategies, if possible:
+
+* A "Forgot Organization" feature for the end-user.
+* Self-service creation of new organizations.
