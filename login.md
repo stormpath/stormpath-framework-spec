@@ -121,7 +121,7 @@ The form MUST:
 
 The login view model should be returned to the client if the GET request
 prefers `application/json` and `stormpath.web.produces` contains
-`application/json`.  This is for front-end or movile clients that need to
+`application/json`.  This is for front-end or mobile clients that need to
 dynamically know how to render the login form.
 
 The model should have:
