@@ -14,20 +14,14 @@ stormpath:
       # When enabled, the framework will require the user to authenticate against
       # a specific Organization.  The authenticated organization is persisted in
       # the access token that is issued.
+      #
+      # At the moment we only support a sub-domain based strategy, wherby the
+      # user must arrive on the subdomain that correlates with their tenant in
+      # order to authenticate.  If they visit the parent domain, they will be
+      # required to identify the organization they wish to use.
 
       enabled: false
-
-      # If useSubdomain=true, we attempt to resolve the organization context by
-      # looking at the subdomain, e.g. org-a.example.com.  Otherwise we will
-      # render a form field that requires the user to enter this value.  This
-      # automatic behavior can be disabled by explicitly disabling those form
-      # fields (see below).
-      #
-      # When useSubdomain is true, and the user is authenticating with an access
-      # token that contains an organization, we assert that this is the same
-      # organization that is identified by the subdomain.
-
-      useSubdomain: true
+      strategy: "subdomain"
 
 
     oauth2:
@@ -87,9 +81,10 @@ stormpath:
       autoLogin: false
       form:
         fields:
-          # Unless specifically set to false, the organizationNameKey field will
-          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved.
+          # This field will be shown as the only field if the user is visiting
+          # the parent domain of a sub-domain based multi-tenant configuration.
+          # The user will be redirected to the correct subdomain to finish the
+          # workflow.
           organizationNameKey:
             enabled: null
             visible: true
@@ -174,9 +169,10 @@ stormpath:
       view: "login"
       form:
         fields:
-          # Unless specifically set to false, the organizationNameKey field will
-          # automatically be shown when stormpath.web.multiTenancy.enabled=true,
-          # and an organization cannot be resolved.
+          # This field will be shown as the only field if the user is visiting
+          # the parent domain of a sub-domain based multi-tenant configuration.
+          # The user will be redirected to the correct subdomain to finish the
+          # workflow.
           organizationNameKey:
             enabled: null
             visible: true
@@ -207,6 +203,18 @@ stormpath:
       enabled: true
       uri: "/logout"
       nextUri: "/"
+
+    # If using subdoain multi-tenancy, this form is shown on the parent domain
+    # when organization context is unkonwn.  Configuration of this form is limited
+    # to label, placeholder and view template location.
+
+    organizationSelect:
+      view: "organization-select"
+      form:
+        fields:
+          organizationNameKey:
+            label: "Enter your organization name to continue"
+            placeholder: "e.g. my-company"
 
     # Unless forgotPassword.enabled is explicitly set to false, this feature
     # will be automatically enabled if the default account store for the defined
