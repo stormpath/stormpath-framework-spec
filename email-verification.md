@@ -18,7 +18,7 @@ request handling procedure that is defined below.
 
 * If there is a `?sptoken` query parameter in the URL:
 
- * Attempt to verify the `sptoken`.
+ * Attempt to consume the `sptoken` by posting it to the tenant collection, `/v1/accounts/emailVerificationTokens/:sptoken`
 
  * If the token is valid and `autoLogin` is enabled, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and redirecting the user)
 
@@ -39,7 +39,7 @@ request handling procedure that is defined below.
 
 * If there is a `?sptoken` query parameter in the URL:
 
- * Attempt to verify the `sptoken`, using the SDK, then:
+ * Attempt to consume the `sptoken` by posting it to the tenant collection, `/v1/accounts/emailVerificationTokens/:sptoken`
 
   * If the token is valid and `autoLogin` is enabled on the registration route, follow the standard [post login logic](login.md#-post-response-handling) (like setting cookies, and responding with the account object)
 
@@ -61,21 +61,23 @@ request handling procedure that is defined below.
 #### POST Requests
 
 This endpoint accepts post requests from the form which allows you to request
-a new link by entering your email address.  The endpoint should parse the POST
+a new link by entering your email address or username.  The endpoint should parse the POST
 body as `application/json` and `application/x-www-form-urlencoded`.
 
 The format of the request is (JSON example):
 
 ```javascript
 {
-  "email": "foo@bar.com"
+  "login": "foo@bar.com"
 }
 ```
+
+This data should be posed to the `/v1/applications/:id/verificationEmails` endpoint.
 
 Regardless of whether or not the email address is associated with a user
 account, we should respond according to the request preference:
 
-  * `text/html`, redirect to `stormpath.web.verifyEmail.nextUri` and
+  * `text/html`, redirect to `stormpath.web.login.uri` and
     append `?status=unverified`
 
   * `application/json`, the status of the response should be `200 OK` with no
