@@ -1,4 +1,4 @@
-# Social Provider Integrations
+# Social Provider Integrations v2
 
 ## Feature Description
 
@@ -11,11 +11,212 @@ support:
 * Google
 * LinkedIn
 
+Coming Soon:
+
+* Twitter
+* Generic OAuth
+
 ## Background: Social Login Workflows
 
-Social providers typically implement two authentication workflows, which we will
-describe in detail:
+Social providers typically implement two authentication workflows: [page-based redirect](#page-based) workflow and [ajax-based](#ajax-based) worflow.
 
+The framework integration interacts with Stormpath via the Stormpath Client API in a uniform way - regardless of the social provider.
+
+The Stormpath Client API interacts with the Stormpath REST API which in turn, interacts directly with the social provider using its page-based redirect workflow.
+
+All of these details are hidden from the framework integration. The framework integration can implement an ajax-based workflow or a page-based workflow as it sees fit.
+
+There are two primary responsibilties of the framework integration:
+
+1. Obtain a URL to interact with the Client API
+2. Validate and parse a Stormpath JWT assertion response
+
+## Obtain a URL to interact with the Client API
+
+The Social Provider login flow starts with a call to the `/authorize` endpoint of the Client API. There are two ways to obtain the proper URL:
+
+1. Get the URL directly from the Client API's `/login` model
+    * recommended as the easiest way to get the fully qualified URL to start the social login flow
+2. Construct the URL and add it to the framework integration's `/login` model.
+    * useful if the framework integration has extended the `/login` model beyond the framework specification or uses any custom form fields
+
+### Obtain the `/authorize` URL via the Client API `/login` model
+
+In order to interact with the Client API, you need the `webConfig` from the backend `/application` endpoint:
+
+`GET /applications/:applicationId?expand=webConfig`
+
+This returns a response like:
+
+```
+{
+    ...
+    "webConfig": {
+        ...
+        "dnsLabel": "elegant-lynx",
+        "domainName": "elegant-lynx.apps.dev.stormpath.io",
+        ...
+        "login": {
+            "enabled": true
+        },
+        ...
+        "status": "ENABLED",
+        ...
+    }
+    ...
+}
+```
+
+Once you have the `webConfig.domainName`, you can get the `/login` model from the Client API: `https://elegant-lynx.apps.dev.stormpath.io/login`.
+
+The response from the Client API will look like this:
+
+```
+{
+   "form":{
+      ...
+   },
+   "accountStores":[
+      {
+         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded linkedin dir href>",
+         "name":"LinkedIn",
+         "provider":{
+            "href":"<linkedin dir href>/provider",
+            "providerId":"linkedin",
+            "clientId":"<client id>",
+            "scope":"r_basicprofile r_emailaddress"
+         },
+         "href":"<linkedin dir href>"
+      },
+      {
+         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded facebook fir href>",
+         "name":"Facebook Dir",
+         "provider":{
+            "href":"<facebook dir href>/provider",
+            "providerId":"facebook",
+            "clientId":"<client id>",
+            "scope":"public_profile email"
+         },
+         "href":"<facebook dir href>"
+      }
+   ]
+}
+```
+
+The available `/authorize` URL(s) can be used as-is to kick of the social login flow. There are additional parameters that can be added to the `/authorize` URL as described [here](#optional-query-parameters).
+
+### Construct the `/authorize` URL
+
+This part of the flow will constuct a valid `/authorize` URL for the Client API. This will be included in the [`/login` model](login.md) when a supported Stormpath Social Provider Directory is mapped to the application. Or, the link to `/authorize` will be followed when the social provider button is clicked on in HTML login form.
+
+Below is an example of the expected login model response from the `/login` endpoint of the framework integration when LinkedIn and Facebook social providers are mapped to the application.
+
+```
+{
+   "form":{
+      ...
+   },
+   "accountStores":[
+      {
+         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded linkedin dir href>",
+         "name":"LinkedIn",
+         "provider":{
+            "href":"<linkedin dir href>/provider",
+            "providerId":"linkedin",
+            "clientId":"<client id>",
+            "scope":"r_basicprofile r_emailaddress"
+         },
+         "href":"<linkedin dir href>"
+      },
+      {
+         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded facebook fir href>",
+         "name":"Facebook Dir",
+         "provider":{
+            "href":"<facebook dir href>/provider",
+            "providerId":"facebook",
+            "clientId":"<client id>",
+            "scope":"public_profile email"
+         },
+         "href":"<facebook dir href>"
+      }
+   ]
+}
+```
+
+#### Hints for framework integrations in constructing `/authorize` URLs:
+
+In order to determine the webConfig domain, the framework integration must expand the `webConfig` property of the Stormpath Application.
+
+As a Stormpath REST API call, it looks like this:
+
+`GET /applications/:applicationId?expand=webConfig`
+
+The response looks like this:
+
+```
+{
+    ...
+    "webConfig": {
+        ...
+        "dnsLabel": "elegant-lynx",
+        "domainName": "elegant-lynx.apps.dev.stormpath.io",
+        ...
+        "login": {
+            "enabled": true
+        },
+        ...
+        "status": "ENABLED",
+        ...
+    }
+    ...
+}
+```
+
+The conditions necessary to include the `authorizeUri` provider URL in the framework integration's `accountStores` login model are:
+
+* A Social Provider Directory must be mapped to the Application
+* webConfig.status = ENABLED
+* webConfig.login.enabled = true
+
+### Optional Query Parameters
+
+#### `redirect_uri`
+
+The `redirect_uri` query parameter indicates the "last leg" of the flow. It should be a fully qualified url and it *must* be in the list of `authorizedCallbackUris` from the `/applications/:appID` endpoint.
+
+If this query parameter is not included on the `/authorize` URL, then the first element of the `authorizedCallbackUris` list will be used.
+
+#### `scope`
+
+A default `scope` for an individual social provider is automatically set on the backend. This can be overridden by providing the `scope` query parameter.
+
+#### `state`
+
+If the `state` parameter is included, it will be passed back in the final leg of the flow to your application via the `redirect_uri`.
+
+This parameter can be user like a CSRF token. That is, during `/authorize` URL construction, you can save the `state` value and then compare it to the `state` value that's passed back in the final leg of the flow.
+
+## `redirect_uri` response
+
+The last leg of the social interaction is to send a `302` redirect to the browser. The `Location` will be the `redirect_uri` originally set in the `/authorize` URL at the beginning of the flow. It will include a `jwtResponse` query parameter as well as a `state` query parameter (if it was included at the beginning of the flow).
+
+The JWT set as the `jwtResponse` has an `stt` header parameter of `assertion`. It should be processed in the usual way by the framework integration.
+
+## Look and Feel
+
+All of the integrations, regardless of language, should have a consistent look and feel for the rendered buttons for social providers.
+
+**Recommendation:**
+
+The [Social Buttons for Bootstrap](https://lipis.github.io/bootstrap-social/) has a very clean consistent look and feel and has been adopted into the Java SDK. Cons for this approach are a dependency on Bootstrap.
+
+![social buttons](images/socialbuttons.png)
+
+**Pros:** Consistent, clean look and feel across all of Stormpath's integrations.
+
+**Cons:** Depends on Bootstrap
+
+<a name="page-based"></a>
 ### Page-based Redirect Workflow
 
 In this situation, the user leaves your login page by redirect and is taken to
@@ -25,14 +226,7 @@ an access token or access code as a query parameter.  Your server uses a
 confidential keypair of the provider to validate the token/code, then retrieves
 the account data of the authenticated user.
 
-In order to support this workflow, the framework integration must:
-
-* Parse the provider configuration of the specified Stormpath application (see
-  next section).
-
-* Provide callback handlers for this workflow.  See "Implementing Page-Based
-  Workflows" in this document.
-
+<a name="ajax-based"></a>
 ### AJAX-based Workflow
 
 In this situation the user does not leave your login page.  Instead a popup
@@ -45,99 +239,6 @@ must send to your server and validate with your confidential provider
 credentials.  At this point the workflow is identical to the page-base redirect
 workflow.
 
-In order to support this worklow, the framework integration must do the
-following:
-
-  * Parse the provider configuration of the specified Stormpath application (see
-    next section).
-
-  * Accept the access token or code via the login endpoint that this framework
-    provides, see [login][] for implementation spec.
-
-  * Render buttons for social login, on the registration and login views (or
-    view model), see [login][] and [registration][].
-
-
-## Parsing Provider Configuration
-
-During framework bootstrap, the specified Stormpath application should be parsed
-for it's account store mappings.  If any of these account stores are a social
-provider, the following must be done:
-
-* Render a login button on the login page (see [login][]).
-
-* Create a callback handler for the provider's page-based redirect flow (see
-  next section)
-
-
-## Implementing Page-Based Workflows
-
-The library must implement provider callbacks for all social provider
-directories that are mapped to the specified Stormpath application.  The
-callback URLs for each provider should take the form of:
-
-> `<stormpath.web.social.[providerId].uri>`
-
-Where `providerId` is the property that is found in the `provider` object of
-the Stormpath directory, e.g. `google` or `facebook`.
-
-When the callback URL is requested with a GET request, the user is being
-redirected back to the server after authentication with the provider.  The
-callback handler must complete the following tasks:
-
-  * Parse the callback data from the provider to get the authorization code
-  * Perform the authorization code exchange, if needed. 
-  * Retrieve or create the account, by posting the provider data to Stormpath
-  * Create the OAuth2 token cookies for the user
-  * Redirect the user to `stormpath.web.login.nextUri`
-
-If any of these tasks fail, an error should be immediately rendered to the user
-and the next task should not be attempted.
-
-The error should be displayed on the login form in the same way other login
-errors are shown.
-
-Recommendation: the callback endpoints should not handle access tokens in the query string because applications that log URLs will inadvertently log access tokens, which presents a security risk. 
-
-## Implementing Popup-Based Workflows
-
-Single-page applications will need to query the server to determine which social
-providers are configured, and which fields to render for the login or
-registration views.  In either context, the front-end application should make
-a GET request to the login or registration endpoint, to fetch the view model
-as JSON.  The view model will contain the necessary information.  See [login][]
-and [registration][] pages for the view model definitions.
-
-## Access Tokens and Authorization Codes
-
-This is a reference to supported functionality from both Stormpath and different social providers with their OAuth flows. 
-
-**Stormpath REST API Support**
-
-|Social Provider|Authorization Code|Access Token|
-|---|---|---|
-|Facebook|NO|YES|
-|Google|YES|YES|
-|LinkedIn|YES|YES|
-|GitHub|NO|YES|
-
-**Social Provider OAuth Support**
-
-|Social Provider|Authorization Code|Implicit|
-|---|---|---|
-|Facebook|YES|YES|
-|Google|YES|NO|
-|LinkedIn|YES|NO|
-|GitHub|YES|NO|
-
-Implementation of social login is up to the framework integration, but here are some potential ways to approach it: 
-
-* **Facebook**: Use the Facebook [Javascript SDK](https://developers.facebook.com/docs/facebook-login/web) and use the popup-based workflow to get an access token, and POST it to the `/callbacks/facebook` endpoint. Send the access token to Stormpath. 
-* **Facebook**: Redirect the user to the [Facebook OAuth server](https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow). The user will be redirected back to the `/callbacks/facebook` endpoint. Perform the authorization code exchange for an access token, and send the access token to Stormpath. 
-* **Google**: Redirect the user to the [Google OAuth server](https://developers.google.com/identity/protocols/OAuth2WebServer#preparing-to-start-the-oauth-20-flow). The user will be redirected to the `/callbacks/google` endpoint. Send the authorization code to Stormpath, which will do the exchange. 
-* **LinkedIn**: Redirect the user to the [LinkedIn OAuth server](https://developer.linkedin.com/docs/oauth2). The user will be redirected to the `/callbacks/linkedin` endpoint. Send the authorization code to Stormpath, which will do the exchange. 
-* **GitHub**: Redirect the user to the [GitHub OAuth server](https://developer.github.com/v3/oauth/). The user will be redirected to the `/callbacks/github` endpoint. Perform the authorization code exchange for an access token, and send the access token to Stormpath. 
- 
 <a href="#top">Back to Top</a>
 
 [login]: login.md
