@@ -200,7 +200,45 @@ This parameter can be user like a CSRF token. That is, during `/authorize` URL c
 
 The last leg of the social interaction is to send a `302` redirect to the browser. The `Location` will be the `redirect_uri` originally set in the `/authorize` URL at the beginning of the flow. It will include a `jwtResponse` query parameter as well as a `state` query parameter (if it was included at the beginning of the flow).
 
-The JWT set as the `jwtResponse` has an `stt` header parameter of `assertion`. It should be processed in the usual way by the framework integration.
+The JWT set as the `jwtResponse` has an `stt` header parameter of `assertion`.
+
+### Verifying the `jwtResponse` JWT
+
+The JWT in the `jwtResponse` is signed by the Client API. As such, the same signing key must be used to verify the JWT.
+
+The Client API signing key can be retrieved by using the Stormpath API endpoint specified in the `signingApiKey` of the Application's `webConfig`:
+
+```
+"webConfig": {
+	...
+    "signingApiKey": {
+        "href": "https://<Stormpath API Host>/v1/apiKeys/<API Key ID>"
+    },
+    "status": "ENABLED",
+	...
+}
+```
+
+Retrieving this URL returns an api key response that includes the API Key Secret used to sign the `jwtResponse`:
+
+```
+{
+    "account": {
+        "href": "<account href>"
+    },
+    "description": "<description>",
+    "href": "<apiKeys href>",
+    "id": "<API Key ID>",
+    "name": "<name>",
+    "secret": "<API Key Secret>",
+    "status": "ENABLED",
+    "tenant": {
+        "href": "<tenant href>"
+    }
+}
+```
+
+Once verified, the `jwtResponse` should be processed in the usual way by the framework integration for an AUTHENTICATED response as indicated [here](/login.md#post-response-handling).
 
 ## Look and Feel
 
