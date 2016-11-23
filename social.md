@@ -238,7 +238,7 @@ Retrieving this URL returns an api key response that includes the API Key Secret
 }
 ```
 
-Once verified, the `jwtResponse` should be processed in the usual way by the framework integration for an AUTHENTICATED response as indicated [here](/login.md#post-response-handling).
+Once verified, the `jwtResponse` should be processed in the usual way by the framework integration for an AUTHENTICATED response as indicated [here](/login.md#-post-response-handling).
 
 ## Look and Feel
 
