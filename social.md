@@ -24,23 +24,14 @@ The Stormpath Client API interacts with the Stormpath REST API which in turn, in
 
 All of these details are hidden from the framework integration. The framework integration can implement an ajax-based workflow or a page-based workflow as it sees fit.
 
-There are two primary responsibilties of the framework integration:
+There are two primary responsibilities of the framework integration:
 
-1. Obtain a URL to interact with the Client API
+1. Include a Client API `authorizeUri` link in its login model for each configured social provider
 2. Validate and parse a Stormpath JWT assertion response
 
-## Obtain a URL to interact with the Client API
+## Client API `authorizeUri` link
 
-The Social Provider login flow starts with a call to the `/authorize` endpoint of the Client API. There are two ways to obtain the proper URL:
-
-1. Get the URL directly from the Client API's `/login` model
-    * recommended as the easiest way to get the fully qualified URL to start the social login flow
-2. Construct the URL and add it to the framework integration's `/login` model.
-    * useful if the framework integration has extended the `/login` model beyond the framework specification or uses any custom form fields
-
-### Obtain the `/authorize` URL via the Client API `/login` model
-
-In order to interact with the Client API, you need the `webConfig` from the backend `/application` endpoint:
+In order to interact with the Client API, the integration needs the `webConfig` from the backend `/application` endpoint:
 
 `GET /applications/:applicationId?expand=webConfig`
 
@@ -64,6 +55,24 @@ This returns a response like:
     ...
 }
 ```
+
+The conditions necessary to include the `authorizeUri` provider URL in the framework integration's `accountStores` login model are:
+
+* A Social Provider Directory must be mapped to the Application
+* webConfig.status = ENABLED
+* webConfig.login.enabled = true
+
+The `authorizeUri` has the following minimum format:
+
+`https://<Client API Domain>/authorize?response_type=stormpath&account_store_href=<url encoded social directory href>`
+
+There are additional parameters that can be added to the `/authorize` URL as described [here](#optional-query-parameters).
+
+How the integration includes the `authorizeUri` in its login model is an implementation detail left to the integration developers.
+
+Two example approaches are presented below.
+
+### Use the Client API login model
 
 Once you have the `webConfig.domainName`, you can get the `/login` model from the Client API: `https://elegant-lynx.apps.dev.stormpath.io/login`.
 
@@ -105,84 +114,20 @@ The available `/authorize` URL(s) can be used as-is to kick off the social login
 
 ### Construct the `/authorize` URL
 
-This part of the flow will constuct a valid `/authorize` URL for the Client API. This will be included in the [`/login` model](login.md) when a supported Stormpath Social Provider Directory is mapped to the application. Or, the link to `/authorize` will be followed when the social provider button is clicked on in HTML login form.
+The integration has all the information is needs to build the `authorizeUri` for inclusion in its login model. This minimum required information is:
 
-Below is an example of the expected login model response from the `/login` endpoint of the framework integration when LinkedIn and Facebook social providers are mapped to the application.
-
-```
-{
-   "form":{
-      ...
-   },
-   "accountStores":[
-      {
-         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded linkedin dir href>",
-         "name":"LinkedIn",
-         "provider":{
-            "href":"<linkedin dir href>/provider",
-            "providerId":"linkedin",
-            "clientId":"<client id>",
-            "scope":"r_basicprofile r_emailaddress"
-         },
-         "href":"<linkedin dir href>"
-      },
-      {
-         "authorizeUri":"https://<webConfig domain name>/authorize?response_type=stormpath_token&account_store_href=<url encoded facebook fir href>",
-         "name":"Facebook Dir",
-         "provider":{
-            "href":"<facebook dir href>/provider",
-            "providerId":"facebook",
-            "clientId":"<client id>",
-            "scope":"public_profile email"
-         },
-         "href":"<facebook dir href>"
-      }
-   ]
-}
-```
-
-#### Hints for framework integrations in constructing `/authorize` URLs:
-
-In order to determine the webConfig domain, the framework integration must expand the `webConfig` property of the Stormpath Application.
-
-As a Stormpath REST API call, it looks like this:
-
-`GET /applications/:applicationId?expand=webConfig`
-
-The response looks like this:
-
-```
-{
-    ...
-    "webConfig": {
-        ...
-        "dnsLabel": "elegant-lynx",
-        "domainName": "elegant-lynx.apps.dev.stormpath.io",
-        ...
-        "login": {
-            "enabled": true
-        },
-        ...
-        "status": "ENABLED",
-        ...
-    }
-    ...
-}
-```
-
-The conditions necessary to include the `authorizeUri` provider URL in the framework integration's `accountStores` login model are:
-
-* A Social Provider Directory must be mapped to the Application
-* webConfig.status = ENABLED
-* webConfig.login.enabled = true
+1. Client API domain name (obtained from the `webConfig` above)
+2. Stormpath Social Provider Directory href
 
 ### Optional Query Parameters
+
+Each of the query parameters below should be individually url encoded if included as part of the `/authorize` url.
 
 #### `redirect_uri`
 
 The `redirect_uri` query parameter indicates the "last leg" of the flow. It should be a fully qualified url and it *must* be in the list of `authorizedCallbackUris` from the `/applications/:appID` endpoint.
 
-If this query parameter is not included on the `/authorize` URL, then the first element of the `authorizedCallbackUris` list will be used.
+If this query parameter is not included on the `/authorize` URL, then the first element of the `authorizedCallbackUris` list associated with the Application will be used.
 
 #### `scope`
 
@@ -203,6 +148,8 @@ The JWT set as the `jwtResponse` has an `stt` header parameter of `assertion`.
 ### Verifying the `jwtResponse` JWT
 
 The JWT in the `jwtResponse` is signed by the Client API. As such, the same signing key must be used to verify the JWT.
+
+The `kid` header parameter identifies the key id used to sign the JWT. If it is *not* the same key id that the framework integration is using, then the signing key can be retrieved from the Client API.
 
 The Client API signing key can be retrieved by using the Stormpath API endpoint specified in the `signingApiKey` of the Application's `webConfig`:
 
