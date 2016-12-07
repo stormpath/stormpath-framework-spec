@@ -18,8 +18,6 @@ Coming Soon:
 
 ## Background: Social Login Workflows
 
-Social providers typically implement two authentication workflows: [page-based redirect](#page-based) workflow and [ajax-based](#ajax-based) worflow.
-
 The framework integration interacts with Stormpath via the Stormpath Client API in a uniform way - regardless of the social provider.
 
 The Stormpath Client API interacts with the Stormpath REST API which in turn, interacts directly with the social provider using its page-based redirect workflow.
@@ -103,7 +101,7 @@ The response from the Client API will look like this:
 }
 ```
 
-The available `/authorize` URL(s) can be used as-is to kick of the social login flow. There are additional parameters that can be added to the `/authorize` URL as described [here](#optional-query-parameters).
+The available `/authorize` URL(s) can be used as-is to kick off the social login flow. There are additional parameters that can be added to the `/authorize` URL as described [here](#optional-query-parameters).
 
 ### Construct the `/authorize` URL
 
@@ -194,7 +192,7 @@ A default `scope` for an individual social provider is automatically set on the 
 
 If the `state` parameter is included, it will be passed back in the final leg of the flow to your application via the `redirect_uri`.
 
-This parameter can be user like a CSRF token. That is, during `/authorize` URL construction, you can save the `state` value and then compare it to the `state` value that's passed back in the final leg of the flow.
+This parameter can be used like a CSRF token. That is, during `/authorize` URL construction, you can save the `state` value and then compare it to the `state` value that's passed back in the final leg of the flow.
 
 ## `redirect_uri` response
 
@@ -243,39 +241,6 @@ Once verified, the `jwtResponse` should be processed in the usual way by the fra
 ## Look and Feel
 
 All of the integrations, regardless of language, should have a consistent look and feel for the rendered buttons for social providers.
-
-**Recommendation:**
-
-The [Social Buttons for Bootstrap](https://lipis.github.io/bootstrap-social/) has a very clean consistent look and feel and has been adopted into the Java SDK. Cons for this approach are a dependency on Bootstrap.
-
-![social buttons](images/socialbuttons.png)
-
-**Pros:** Consistent, clean look and feel across all of Stormpath's integrations.
-
-**Cons:** Depends on Bootstrap
-
-<a name="page-based"></a>
-### Page-based Redirect Workflow
-
-In this situation, the user leaves your login page by redirect and is taken to
-the provider for authentication.  Once authentication is complete, the user is
-redirected back to a "callback" URI on your website.  This callback will provide
-an access token or access code as a query parameter.  Your server uses a
-confidential keypair of the provider to validate the token/code, then retrieves
-the account data of the authenticated user.
-
-<a name="ajax-based"></a>
-### AJAX-based Workflow
-
-In this situation the user does not leave your login page.  Instead a popup
-window is created, and the user authenticates with the provider in that window.
-The popup window is created by a JavaScript API in the browser, and when the
-user is done with the popup window (either by authenticating or rejecting the
-prompt) the JavaScript API will call back to your JavaScript application.  If
-the user has authenticated you will be provided with a token/code, which you
-must send to your server and validate with your confidential provider
-credentials.  At this point the workflow is identical to the page-base redirect
-workflow.
 
 <a href="#top">Back to Top</a>
 
