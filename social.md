@@ -64,7 +64,7 @@ The conditions necessary to include the `authorizeUri` provider URL in the frame
 
 The `authorizeUri` has the following minimum format:
 
-`https://<Client API Domain>/authorize?response_type=stormpath&account_store_href=<url encoded social directory href>`
+`https://<webConfig domain name>/authorize?response_type=stormpath&account_store_href=<url encoded social directory href>`
 
 There are additional parameters that can be added to the `/authorize` URL as described [here](#optional-query-parameters).
 
